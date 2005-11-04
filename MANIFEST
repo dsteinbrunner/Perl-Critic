@@ -65,7 +65,14 @@ README
 README.developer
 t/00_modules.t
 t/01_config.t
-t/02_policies.t
+t/02_policies_builtinfunctions.t
+t/02_policies_classhierarchies.t
+t/02_policies_codelayout.t
+t/02_policies_namingconventions.t
+t/02_policies_subroutines.t
+t/02_policies_testinganddebugging.t
+t/02_policies_valuesandexpressions.t
+t/02_policies_variables.t
 t/03_pragmas.t
 t/04_criticize.t
 t/05_utils.t
