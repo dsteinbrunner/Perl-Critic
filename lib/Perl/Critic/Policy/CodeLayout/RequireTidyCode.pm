@@ -2,7 +2,7 @@ package Perl::Critic::Policy::CodeLayout::RequireTidyCode;
 
 use strict;
 use warnings;
-use Perl::Tidy;
+use English qw(-no_match_vars);
 use Perl::Critic::Utils;
 use Perl::Critic::Violation;
 use base 'Perl::Critic::Policy';
@@ -19,6 +19,10 @@ sub new {
     my ( $class, %args ) = shift;
     my $self = bless {}, $class;
     $self->{_tested} = 0;
+    eval { require Perl::Tidy; };
+    if ($EVAL_ERROR) {
+        $self->{_missing_dependency} = 1;
+    }
     return $self;
 }
 
@@ -26,6 +30,9 @@ sub violates {
     my ( $self, $elem, $doc ) = @_;
     return if $self->{_tested};    #Only test this once!
     $self->{_tested} = 1;
+
+    # If Perl::Tidy is missing, silently pass this test
+    return if $self->{_missing_dependency};
 
     my $source  = "$doc";
     my $dest    = $EMPTY;
