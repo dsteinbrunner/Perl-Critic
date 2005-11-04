@@ -220,6 +220,7 @@ sub default_policies {
       InputOutput::ProhibitOneArgSelect
       Modules::ProhibitMultiplePackages
       Modules::ProhibitSpecificModules
+      Modules::RequireEndWithOne
       Modules::RequireExplicitPackage
       Modules::RequireBarewordIncludes
       Modules::RequireVersionVar
@@ -302,6 +303,7 @@ sub pbp_policies {
 }
 
 
+1;
 
 __END__
 

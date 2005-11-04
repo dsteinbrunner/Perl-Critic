@@ -32,19 +32,12 @@ sub violates {
     $self->{_tested} = 1;
 
     # You can configure this policy to exclude scripts
-    return if $self->{_exempt_scripts} && _is_script($doc);
+    return if $self->{_exempt_scripts} && is_script($doc);
 
     my $match = $doc->find_first( sub { $_[1]->significant() } ) || return;
     return
       if $match->isa('PPI::Statement::Package');   #First statement is 'package'
     return Perl::Critic::Violation->new( $desc, $expl, $match->location() );
-}
-
-sub _is_script {
-    my $doc = shift;
-    my $first_comment = $doc->find_first('PPI::Token::Comment') || return;
-    $first_comment->location()->[0] == 1 || return;
-    return $first_comment =~ m{ \A \#\! }mx;
 }
 
 1;

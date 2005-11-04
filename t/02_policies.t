@@ -7,7 +7,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 149;
+use Test::More tests => 158;
 use Perl::Critic::Config;
 use Perl::Critic;
 
@@ -1003,6 +1003,92 @@ our $Version;
 END_PERL
 
 $policy = 'Modules::RequireVersionVar';
+is( critique($policy, \$code), 1, $policy);
+
+#----------------------------------------------------------------
+
+$code = <<'END_PERL';
+1;
+END_PERL
+
+$policy = 'Modules::RequireEndWithOne';
+is( critique($policy, \$code), 0, $policy);
+
+#----------------------------------------------------------------
+
+$code = <<'END_PERL';
+1;
+__END__
+END_PERL
+
+$policy = 'Modules::RequireEndWithOne';
+is( critique($policy, \$code), 0, $policy);
+
+#----------------------------------------------------------------
+
+$code = <<'END_PERL';
+1;
+__DATA__
+END_PERL
+
+$policy = 'Modules::RequireEndWithOne';
+is( critique($policy, \$code), 0, $policy);
+
+#----------------------------------------------------------------
+
+$code = <<'END_PERL';
+1;
+# The end
+END_PERL
+
+$policy = 'Modules::RequireEndWithOne';
+is( critique($policy, \$code), 0, $policy);
+
+#----------------------------------------------------------------
+
+$code = <<'END_PERL';
+1; # final true value
+END_PERL
+
+$policy = 'Modules::RequireEndWithOne';
+is( critique($policy, \$code), 0, $policy);
+
+#----------------------------------------------------------------
+
+$code = <<'END_PERL';
+0;
+END_PERL
+
+$policy = 'Modules::RequireEndWithOne';
+is( critique($policy, \$code), 1, $policy);
+
+#----------------------------------------------------------------
+
+$code = <<'END_PERL';
+1;
+sub foo {}
+END_PERL
+
+$policy = 'Modules::RequireEndWithOne';
+is( critique($policy, \$code), 1, $policy);
+
+#----------------------------------------------------------------
+
+$code = <<'END_PERL';
+1;
+END {}
+END_PERL
+
+$policy = 'Modules::RequireEndWithOne';
+is( critique($policy, \$code), 1, $policy);
+
+#----------------------------------------------------------------
+
+$code = <<'END_PERL';
+'Larry';
+END_PERL
+
+$policy = 'Modules::RequireEndWithOne';
 is( critique($policy, \$code), 1, $policy);
 
 #----------------------------------------------------------------

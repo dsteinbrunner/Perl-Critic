@@ -8,7 +8,7 @@
 use blib;
 use strict;
 use warnings;
-use Test::More tests => 254;
+use Test::More tests => 259;
 use English qw(-no_match_vars);
 
 our $VERSION = '0.13';

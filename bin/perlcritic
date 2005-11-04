@@ -473,6 +473,10 @@ Write C<require Module> instead of C<require 'Module.pm'>
 
 Don't use evil modules
 
+=head2 L<Perl::Critic::Policy::Modules::RequireEndWithOne>
+
+Always conclude modules with C<1;>
+
 =head2 L<Perl::Critic::Policy::Modules::RequireExplicitPackage>
 
 Always make the C<package> explicit

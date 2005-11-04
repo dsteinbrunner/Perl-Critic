@@ -29,6 +29,7 @@
 [-InputOutput::ProhibitOneArgSelect]
 [-Modules::ProhibitMultiplePackages]
 [-Modules::ProhibitSpecificModules]
+[-Modules::RequireEndWithOne]
 [-Modules::RequireExplicitPackage]
 [-Modules::RequireBarewordIncludes]
 [-Modules::RequireVersionVar]

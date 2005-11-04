@@ -42,6 +42,9 @@ priority = 5
 modules = Evil::Module SuperEvil::Module
 priority = 5
 
+[Modules::RequireEndWithOne]
+priority = 6
+
 [Modules::RequireExplicitPackage]
 exempt_scripts = 1
 priority = 5

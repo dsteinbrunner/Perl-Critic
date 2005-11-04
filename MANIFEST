@@ -30,6 +30,7 @@ lib/Perl/Critic/Policy/Miscellanea/RequireRcsKeywords.pm
 lib/Perl/Critic/Policy/Modules/ProhibitMultiplePackages.pm
 lib/Perl/Critic/Policy/Modules/ProhibitSpecificModules.pm
 lib/Perl/Critic/Policy/Modules/RequireBarewordIncludes.pm
+lib/Perl/Critic/Policy/Modules/RequireEndWithOne.pm
 lib/Perl/Critic/Policy/Modules/RequireExplicitPackage.pm
 lib/Perl/Critic/Policy/Modules/RequireVersionVar.pm
 lib/Perl/Critic/Policy/NamingConventions/ProhibitMixedCaseSubs.pm
