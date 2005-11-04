@@ -5,6 +5,12 @@
 # $Revision$
 ########################################################################
 
+     Moved is_script into Perl::Critic::Utils
+
+     New Policy modules:
+     * Modules::RequireEndWithOne
+     * Subroutines::RequireFinalReturn
+
 [0.13] Released on 051031
 
      Production release of 0.12_03.  No code major changes.

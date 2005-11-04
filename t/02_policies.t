@@ -7,7 +7,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 158;
+use Test::More tests => 168;
 use Perl::Critic::Config;
 use Perl::Critic;
 
@@ -1725,6 +1725,103 @@ END_PERL
 
 $policy = 'Subroutines::ProhibitBuiltinHomonyms';
 is( critique($policy, \$code), 0, $policy);
+
+#----------------------------------------------------------------
+
+$code = <<'END_PERL';
+sub foo { }
+END_PERL
+
+$policy = 'Subroutines::RequireFinalReturn';
+is( critique($policy, \$code), 0, $policy);
+
+#----------------------------------------------------------------
+
+$code = <<'END_PERL';
+sub foo { return; }
+END_PERL
+
+$policy = 'Subroutines::RequireFinalReturn';
+is( critique($policy, \$code), 0, $policy);
+
+#----------------------------------------------------------------
+
+$code = <<'END_PERL';
+sub foo { return {some => [qw(complicated data)], q{ } => /structure/}; }
+END_PERL
+
+$policy = 'Subroutines::RequireFinalReturn';
+is( critique($policy, \$code), 0, $policy);
+
+#----------------------------------------------------------------
+
+$code = <<'END_PERL';
+sub foo { if (1) { return; } else { return; } }
+END_PERL
+
+$policy = 'Subroutines::RequireFinalReturn';
+is( critique($policy, \$code), 0, $policy);
+
+#----------------------------------------------------------------
+
+$code = <<'END_PERL';
+sub foo { if (1) { return; } elsif (2) { return; } else { return; } }
+END_PERL
+
+$policy = 'Subroutines::RequireFinalReturn';
+is( critique($policy, \$code), 0, $policy);
+
+#----------------------------------------------------------------
+
+TODO:
+{
+local $TODO = 'we are not yet detecting ternaries';
+$code = <<'END_PERL';
+sub foo { 1 ? return : 2 ? return : return; }
+END_PERL
+
+$policy = 'Subroutines::RequireFinalReturn';
+is( critique($policy, \$code), 0, $policy);
+}
+
+#----------------------------------------------------------------
+
+$code = <<'END_PERL';
+sub foo { return 1 ? 1 : 2 ? 2 : 3; }
+END_PERL
+
+$policy = 'Subroutines::RequireFinalReturn';
+is( critique($policy, \$code), 0, $policy);
+
+#----------------------------------------------------------------
+
+$code = <<'END_PERL';
+sub foo { 'Club sandwich'; }
+END_PERL
+
+$policy = 'Subroutines::RequireFinalReturn';
+is( critique($policy, \$code), 1, $policy);
+
+#----------------------------------------------------------------
+
+# This one IS valid to a human or an optimizer, but it's too rare and
+# too hard to detect so we disallow it
+
+$code = <<'END_PERL';
+sub foo { while (1==1) { return; } }
+END_PERL
+
+$policy = 'Subroutines::RequireFinalReturn';
+is( critique($policy, \$code), 1, $policy);
+
+#----------------------------------------------------------------
+
+$code = <<'END_PERL';
+sub foo { if (1) { $foo = 'bar'; } else { return; } }
+END_PERL
+
+$policy = 'Subroutines::RequireFinalReturn';
+is( critique($policy, \$code), 1, $policy);
 
 #----------------------------------------------------------------
 
