@@ -14,12 +14,12 @@ my $expl = q{Implicit return values are confusing};
 
 #---------------------------------------------------------------------------
 
+sub applies_to {
+    return 'PPI::Statement::Sub';
+}
+
 sub violates {
     my ( $self, $elem, $doc ) = @_;
-
-    if (!$elem->isa('PPI::Statement::Sub')) {
-        return; # OK
-    }
 
     my @blocks = grep {$_->isa('PPI::Structure::Block')} $elem->schildren();
     if (@blocks != 1) {  # sanity check

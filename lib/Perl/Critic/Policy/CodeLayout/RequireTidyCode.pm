@@ -15,24 +15,16 @@ my $expl = [33];
 
 #----------------------------------------------------------------------------
 
-sub new {
-    my ( $class, %args ) = shift;
-    my $self = bless {}, $class;
-    $self->{_tested} = 0;
-    eval { require Perl::Tidy; };
-    if ($EVAL_ERROR) {
-        $self->{_missing_dependency} = 1;
-    }
-    return $self;
+sub applies_to {
+    return 'PPI::Document';
 }
 
 sub violates {
     my ( $self, $elem, $doc ) = @_;
-    return if $self->{_tested};    #Only test this once!
-    $self->{_tested} = 1;
 
     # If Perl::Tidy is missing, silently pass this test
-    return if $self->{_missing_dependency};
+    eval { require Perl::Tidy; };
+    return if $EVAL_ERROR;
 
     my $source  = "$doc";
     my $dest    = $EMPTY;

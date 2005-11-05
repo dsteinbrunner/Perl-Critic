@@ -14,10 +14,12 @@ my $desc = q{Module does not end with '1;'};
 
 #----------------------------------------------------------------------------
 
+sub applies_to {
+    return 'PPI::Document';
+}
+
 sub violates {
     my ( $self, $elem, $doc ) = @_;
-    return if $self->{_tested};    # Only do this once!
-    $self->{_tested} = 1;
 
     return if is_script($doc);
 
