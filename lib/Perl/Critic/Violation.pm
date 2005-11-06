@@ -22,9 +22,10 @@ $VERSION = eval $VERSION;    ## no critic
 
 #Class variables...
 our $FORMAT = "%m at line %l, column %c. %e.\n"; #Default stringy format
-our %DIAGNOSTICS = ();  #Cache of diagnositc messages
+our %DIAGNOSTICS = ();  #Cache of diagnostic messages
 
 #----------------------------------------------------------------------------
+
 
 sub import {
 
@@ -45,6 +46,15 @@ sub import {
     return; #ok!
 }
 
+#---------------------------
+
+sub sort_by_location {
+   my $class = shift;
+   return sort {    (($a->{_location}->[0] || 0) <=> ($b->{_location}->[0] || 0))
+                 || (($a->{_location}->[1] || 0) <=> ($b->{_location}->[1] || 0)) } @_
+}
+
+#---------------------------
 
 sub new {
     my ( $class, $desc, $expl, $loc ) = @_;
@@ -70,14 +80,6 @@ sub new {
     $self->{_policy}      = caller;
 
     return $self;
-}
-
-#---------------------------
-
-sub by_location {
-    # Intended for use by sort()
-    return (   ($a->{_location}->[0] || 0) <=> ($b->{_location}->[0] || 0)
-            || ($a->{_location}->[1] || 0) <=> ($b->{_location}->[1] || 0));
 }
 
 #---------------------------
@@ -137,8 +139,8 @@ sub to_string {
 
 sub _mod2file {
     my $module = shift;
-    $module  =~ s{::}{/}mxg;         
-    $module .= '.pm';
+    require File::Spec;
+    $module = File::Spec->catfile(split m/::/xms, $module) . '.pm';
     return $INC{$module} || $EMPTY;
 }
 
@@ -204,7 +206,21 @@ and column number, in that order.
 
 =back
 
-=head1 METHODS
+=head1 CLASS METHODS
+
+=over 8
+
+=item sort_by_location()
+
+If you need to sort Violations by location, use this handy routine:
+
+   @violations = Perl::Critic::Violation->sort_by_location @violations;
+
+Note the arrow in the above example.
+
+=back
+
+=head1 INSTANCE METHODS
 
 =over 8
 
@@ -221,12 +237,6 @@ an array of page numbers in PBB.
 
 Returns a two-element list containing the line and column number where the 
 violation occurred.
-
-=item by_location()
-
-If you need to sort Violations by location, use this handy routine:
-
-   @violations = sort Perl::Critic::Violation::by_location @violations;
 
 =item diagnostics( void )
 
