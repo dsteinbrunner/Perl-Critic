@@ -109,6 +109,9 @@ or 'v-strings.'  However, this Policy only insists that the
 C<$VERSION> be defined somehow.  I may try to extend this in the
 future.
 
+Conway recommends a three-part version number.  This policy does not
+currently enforce that part of his recommendation.
+
 =head1 AUTHOR
 
 Jeffrey Ryan Thalhammer <thaljef@cpan.org>

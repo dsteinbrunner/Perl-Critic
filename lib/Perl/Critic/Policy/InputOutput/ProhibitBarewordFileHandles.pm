@@ -17,7 +17,7 @@ our $VERSION = '0.13';
 $VERSION = eval $VERSION; ## no critic
 
 my $desc = q{Bareword file handle opened};
-my $expl = [ 224 ];
+my $expl = [ 202, 204 ];
 
 #--------------------------------------------------------------------------
 

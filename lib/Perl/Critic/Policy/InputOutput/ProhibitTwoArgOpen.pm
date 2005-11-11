@@ -17,7 +17,7 @@ our $VERSION = '0.13';
 $VERSION = eval $VERSION; ## no critic
 
 my $desc = q{Two-argument 'select' used};
-my $expl = [224];
+my $expl = [207];
 
 #--------------------------------------------------------------------------
 

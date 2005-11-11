@@ -17,7 +17,7 @@ our $VERSION = '0.13';
 $VERSION = eval $VERSION;    ## no critic
 
 my $desc = q{C-style 'for' loop used};
-my $expl = [97];
+my $expl = [100];
 
 #----------------------------------------------------------------------------
 

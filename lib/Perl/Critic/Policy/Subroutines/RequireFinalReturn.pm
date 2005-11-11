@@ -19,7 +19,7 @@ $VERSION = eval $VERSION;    ## no critic
 #---------------------------------------------------------------------------
 
 my $desc = q{Subroutine does not end with return};
-my $expl = q{Implicit return values are confusing};
+my $expl = [197]; # q{Implicit return values are confusing};
 
 #---------------------------------------------------------------------------
 
