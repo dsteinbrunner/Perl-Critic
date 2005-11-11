@@ -159,6 +159,9 @@ priority = 10
 [Miscellanea::RequireRcsKeywords]
 priority = 10
 
+[NamingConventions::ProhibitAmbiguousNames]
+priority = 10
+
 [InputOutput::ProhibitTwoArgOpen]
 priority = 10
 

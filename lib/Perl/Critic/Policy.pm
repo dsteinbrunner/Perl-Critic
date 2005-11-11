@@ -52,7 +52,7 @@ implementation must behave as described below.
 =head1 IMPORTANT CHANGES
 
 As new Policy modules were added to Perl::Critic, the overall
-performance started to deteriorate rapidily.  Since each module would
+performance started to deteriorate rapidly.  Since each module would
 traverse the document (several times for some modules), a lot of time
 was spent iterating over the same document nodes.  So starting in
 version 0.11, I have switched to a stream-based approach where the
@@ -73,7 +73,7 @@ ControlStrucutres::* modules for some good examples.
 
 Returns a reference to a new subclass of Perl::Critic::Policy. If
 your Policy requires any special arguments, they should be passed
-in here as key-value paris.  Users of L<perlcritic> can specify
+in here as key-value pairs.  Users of L<perlcritic> can specify
 these in their config file.  Unless you override the C<new> method,
 the default method simply returns a reference to an empty hash that
 has been blessed into your subclass.
@@ -87,7 +87,7 @@ Policy.  If there are no violations, then it returns an empty list.
 L<Perl::Critic> will call C<violates()> on every C<$element> in the
 C<$document>.  Some Policies may need to look at the entire
 C<$document> and probably only need to be executed once.  In that
-case, you should write C<violates()> so that it short-circuts if the
+case, you should write C<violates()> so that it short-circuits if the
 Policy has already been executed.  See
 L<Perl::Critic::Policy::Modules::ProhibitUnpackagedCode> for an
 example of such a Policy.
@@ -118,7 +118,7 @@ using the f<.perlcriticrc> file.
 =head1 DOCUMENTATION
 
 When your Policy module first C<use>s L<Perl::Critic::Violation>, it
-will try and extrace the DESCRIPTION section of your Policy module's
+will try and extract the DESCRIPTION section of your Policy module's
 POD.  This information is displayed by Perl::Critic if the verbosity
 level is set accordingly.  Therefore, please include a DESCRIPTION
 section in the POD for any Policy modules that you author.  Thanks.

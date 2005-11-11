@@ -45,7 +45,7 @@ Perl::Critic::Policy::ControlStructures::ProhibitUnlessBlocks
 
 =head1 DESCRIPTION
 
-Conway discourages using C<unless> becuase it leads to double-negatives
+Conway discourages using C<unless> because it leads to double-negatives
 that are hard to understand.  Instead, reverse the logic and use C<if>.
 
   unless($condition) { do_something() } #not ok
@@ -53,7 +53,7 @@ that are hard to understand.  Instead, reverse the logic and use C<if>.
   if( ! $condition)  { do_something() } #ok
 
 This Policy only covers the block-form of C<unless>.  For the postfix
-variety, see 'ProhibitPostfixControls'.
+variety, see ControlStructures::ProhibitPostfixControls.
 
 =head1 SEE ALSO
 

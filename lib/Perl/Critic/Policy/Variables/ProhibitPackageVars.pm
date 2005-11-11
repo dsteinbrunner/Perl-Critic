@@ -103,7 +103,7 @@ In practice though, its not really practical prohibit all package
 variables.  Common variables like C<$VERSION> and C<@EXPORT> need to
 be global, as do any variables that you want to Export.  To work
 around this, the Policy overlooks any variables that are in ALL_CAPS.
-This forces you to put all your expored variables in ALL_CAPS too, which
+This forces you to put all your exported variables in ALL_CAPS too, which
 seems to be the usual practice anyway.
 
 =head1 BUGS

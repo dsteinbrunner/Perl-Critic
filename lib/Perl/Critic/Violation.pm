@@ -179,12 +179,12 @@ Perl::Critic::Violation - Represents policy violations
 
   my $loc  = $node->location();   #$node is a PPI::Node object
   my $desc = 'Offending code';    #Describe the violation
-  my $expl = [1,45,67];           #Page numbers from PBB
+  my $expl = [1,45,67];           #Page numbers from PBP
   my $vio  = Perl::Critic::Violation->new($desc, $expl, $loc);
 
 =head1 DESCRIPTION
 
-Perl::Critic::Violation is the generic represntation of an individual
+Perl::Critic::Violation is the generic representation of an individual
 Policy violation.  Its primary purpose is to provide an abstraction
 layer so that clients of L<Perl::Critic> don't have to know anything
 about L<PPI>.  The C<violations> method of all L<Perl::Critic::Policy>
@@ -197,10 +197,10 @@ objects.
 
 =item new( $description, $explanation, $location )
 
-Retruns a reference to a new C<Perl::Critic::Violation> object. The
+Returns a reference to a new C<Perl::Critic::Violation> object. The
 arguments are a description of the violation (as string), an
 explanation for the policy (as string) or a series of page numbers in
-PBB (as an ARRAY ref), and the location of the violation (as an ARRAY
+PBP (as an ARRAY ref), and the location of the violation (as an ARRAY
 ref).  The C<$location> must have two elements, representing the line
 and column number, in that order.
 
@@ -226,12 +226,12 @@ Note the arrow in the above example.
 
 =item description ( void )
 
-Returns a brief description of the policy that has been volated as a string.
+Returns a brief description of the policy that has been violated as a string.
 
 =item explanation( void )
 
 Returns the explanation for this policy as a string or as reference to
-an array of page numbers in PBB.
+an array of page numbers in PBP.
 
 =item location( void )
 
@@ -251,7 +251,7 @@ Returns the name of the Perl::Critic::Policy module that created this Violation.
 
 =item to_string( void )
 
-Returns a string repesentation of this violation.  The content of the
+Returns a string representation of this violation.  The content of the
 string depends on the current value of the C<$FORMAT> package
 variable.  See C<"OVERLOADS"> for the details.
 

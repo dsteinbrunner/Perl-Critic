@@ -138,6 +138,8 @@ __END__
 
 =pod
 
+=for stopwords DGR Vim-fu minibuffer -noprofile
+
 =head1 NAME
 
 perlcritic - Command-line interface to critique Perl source
@@ -146,7 +148,7 @@ perlcritic - Command-line interface to critique Perl source
 
  perlcritic [options] FILE1 [ FILE2 FILE3... ]  #Read from FILE(s)
  perlcritic [options]                           #Read from STDIN
- perlciritc -man                                #To see the manual
+ perlcritic -man                                #To see the manual
 
 =head1 DESCRIPTION
 

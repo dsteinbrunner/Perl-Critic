@@ -63,6 +63,7 @@ Makefile.PL
 MANIFEST			This list of files
 META.yml
 README
+README.developer
 t/00_modules.t
 t/01_config.t
 t/02_policy.t
@@ -82,7 +83,6 @@ t/20_policies_subroutines.t
 t/20_policies_testinganddebugging.t
 t/20_policies_valuesandexpressions.t
 t/20_policies_variables.t
-t/40_criticize.t
 t/98_pod-syntax.t
 t/99_pod-coverage.t
 t/samples/perlcriticrc

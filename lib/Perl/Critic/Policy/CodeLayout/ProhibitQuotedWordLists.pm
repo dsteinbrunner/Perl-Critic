@@ -88,7 +88,7 @@ Perl::Critic::Policy::CodeLayout::ProhibitQuotedWordLists
 Conway doesn't mention this, but I think C<qw()> is an underutilized
 feature of Perl.  Whenever you need to declare a list of one-word
 literals, the C<qw()> operator is wonderfully concise and saves you
-lots of keystrokes.  And uusing C<qw()> makes it easy to add to the
+lots of keystrokes.  And using C<qw()> makes it easy to add to the
 list in the future.
 
   @list = ('foo', 'bar', 'baz');  #not ok
@@ -114,10 +114,11 @@ cases that I haven't covered.  If you find one, send me a note.
 
 =head1 IMPORTANT CHANGES
 
-This policy was formerly called "RequireQuotedWords" which seemed a
-little counterintuitive.  If you get lots of "Cannot load policy
-module" errors, then you probably need to change "RequireQuotedWords"
-to "ProhibitQuotedWordLists" in your F<.perlcriticrc> file.
+Prior to v0.13, this policy was formerly called
+CodeLayout::RequireQuotedWords which seemed a little counterintuitive.
+If you get lots of "Cannot load policy module" errors, then you
+probably need to change CodeLayout::RequireQuotedWords to
+CodeLayout::ProhibitQuotedWordLists in your F<.perlcriticrc> file.
 
 
 =head1 AUTHOR

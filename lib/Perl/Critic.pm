@@ -171,6 +171,8 @@ __END__
 
 =pod
 
+=for stopwords DGR
+
 =head1 NAME
 
 Perl::Critic - Critique Perl source for style and standards

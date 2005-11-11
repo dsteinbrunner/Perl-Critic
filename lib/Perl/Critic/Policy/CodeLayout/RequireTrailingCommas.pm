@@ -44,9 +44,9 @@ sub violates {
     (grep { $_ eq $COMMA } @children) > 1 || return; 
 
     #Is the last element a comma?
-    my $last = $children[-1] || return;
-    if ( ! ($last->isa('PPI::Token::Operator') &&  $last eq $COMMA) ) {
-	return Perl::Critic::Violation->new($desc, $expl, $last->location() );
+    my $final = $children[-1] || return;
+    if ( ! ($final->isa('PPI::Token::Operator') &&  $final eq $COMMA) ) {
+	return Perl::Critic::Violation->new($desc, $expl, $final->location() );
     }
 
     return; #ok!

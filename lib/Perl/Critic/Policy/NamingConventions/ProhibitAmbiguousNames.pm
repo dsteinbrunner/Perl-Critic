@@ -1,3 +1,10 @@
+#######################################################################
+#      $URL$
+#     $Date$
+#   $Author$
+# $Revision$
+########################################################################
+
 package Perl::Critic::Policy::NamingConventions::ProhibitAmbiguousNames;
 
 use strict;
@@ -64,11 +71,14 @@ sub violates {
         #FALSE POSITIVE BUG: this can erroneously catch the assignment half of a variable statement
 
         my $symbols = $elem->find('PPI::Token::Symbol');
-        for my $symbol (@$symbols) {
-            # strip off sigil and any leading "Package::"
-            my ($name) = $symbol =~ m/ (\w+) \z /xms;
-            if ($self->{_forbid}->{$name}) {
-                push @viols, Perl::Critic::Violation->new( $desc, $expl, $elem->location() );
+        if ($symbols)
+        {
+            for my $symbol (@$symbols) {
+                # strip off sigil and any leading "Package::"
+                my ($name) = $symbol =~ m/ (\w+) \z /xms;
+                if ($self->{_forbid}->{$name}) {
+                    push @viols, Perl::Critic::Violation->new( $desc, $expl, $elem->location() );
+                }
             }
         }
         return @viols;
@@ -78,6 +88,10 @@ sub violates {
 1;
 
 __END__
+
+=pod
+
+=for stopwords bioinformatics
 
 =head1 NAME
 

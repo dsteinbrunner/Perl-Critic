@@ -264,8 +264,8 @@ is considered a hash key:
 
 Given a L<PPI::Element> that is presumed to be a function call (which
 is usually a L<PPI::Token::Word>, returns true if the function is a
-method being called on some reference.  Baically, it just looks to see
-if the preceding operator is "->".  This is usefull for distinguishing
+method being called on some reference.  Basically, it just looks to see
+if the preceding operator is "->".  This is useful for distinguishing
 static from object methods.
 
 =item parse_arg_list( $element )

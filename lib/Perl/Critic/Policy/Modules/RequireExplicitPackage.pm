@@ -93,10 +93,11 @@ should do it too.
 
 =head1 IMPORTANT CHANGES
 
-This policy was formerly called "ProhibitUnpackagedCode" which sounded
-a bit odd.  If you get lots of "Cannot load policy module" errors,
-then you probably need to change "ProhibitUnpackagedCode" to
-"RequireExplicitPackage" in your F<.perlcriticrc> file.
+Prior to v0.12, this policy was formerly called
+Modules::ProhibitUnpackagedCode which sounded a bit odd.  If you get
+lots of "Cannot load policy module" errors, then you probably need to
+change Modules::ProhibitUnpackagedCode to
+Modules::RequireExplicitPackage in your F<.perlcriticrc> file.
 
 =head1 AUTHOR
 

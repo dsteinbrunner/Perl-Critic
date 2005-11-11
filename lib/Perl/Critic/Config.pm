@@ -68,7 +68,7 @@ sub add_policy {
     };
 
     if ($EVAL_ERROR) {
-        carp qq{Failed to create polcy '$policy': $EVAL_ERROR};
+        carp qq{Failed to create policy '$policy': $EVAL_ERROR};
         return;
     }
 
@@ -311,7 +311,7 @@ precedence.
 
 =item add_policy( -policy => $policy_name, -config => \%config_hash )
 
-TODO: Document this mehtod
+TODO: Document this method
 
 =item policies( void )
 
@@ -355,7 +355,7 @@ first, and then in your home directory.  Alternatively, you can set
 the PERLCRITIC environment variable to explicitly point to a different
 file in another location.  If none of these files exist, and the
 C<-profile> option is not given to the constructor,
-Perl::Critic::Config defaults to inlucde all the policies that are
+Perl::Critic::Config defaults to include all the policies that are
 shipped with Perl::Critic.
 
 The format of the configuration file is a series of named sections
@@ -373,7 +373,7 @@ C<Perl::Critic::Policy::Category::PolicyName> is the full name of a
 module that implements the policy.  The Policy modules distributed
 with Perl::Critic have been grouped into categories according to the
 table of contents in Damian Conway's book B<Perl Best Practices>. For
-brevity, you can ommit the C<'Perl::Critic::Policy'> part of the
+brevity, you can omit the C<'Perl::Critic::Policy'> part of the
 module name.  All Policy modules must be a subclass of
 L<Perl::Critic::Policy>.
 

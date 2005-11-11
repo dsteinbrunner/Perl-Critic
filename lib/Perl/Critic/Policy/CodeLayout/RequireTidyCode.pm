@@ -40,11 +40,18 @@ sub violates {
     my $dest    = $EMPTY;
     my $stderr  = $EMPTY;
 
-    Perl::Tidy::perltidy(
-        source      => \$source,
-        destination => \$dest,
-        stderr      => \$stderr,
-    );
+    {
+        # Temporarily clear any @ARGV to workaround a weird conflict
+        # where Perl::Tidy disallows the "source" flag if there's anything
+        # on @ARGV
+        local @ARGV = ();
+
+        Perl::Tidy::perltidy(
+           source      => \$source,
+           destination => \$dest,
+           stderr      => \$stderr,
+        );
+    }
 
     if ($stderr) {
 
