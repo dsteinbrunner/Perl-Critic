@@ -96,7 +96,7 @@ for my $foo (@list) {
 
 ## use critic
 my $noisy = '!';
-
+1;
 END_PERL
 
 is( critique(\$code, {-profile => $profile} ), 1);

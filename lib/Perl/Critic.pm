@@ -84,7 +84,11 @@ sub critique {
     $doc->index_locations();
 
     # Filter exempt code, if desired
-    $self->{_force} ||  _filter_code($doc);
+    my %is_line_disabled;
+    if (!$self->{_force})
+    {
+       %is_line_disabled = _filter_code($doc);
+    }
 
     # Remove the magic shebang fix
     _unfix_shebang($doc);
@@ -99,7 +103,10 @@ sub critique {
     for my $pol ( @pols ) {
         for my $type ( $pol->applies_to() ) {
             $types{$type} ||= [ grep {$_->isa($type)} @{$types{'PPI::Element'}} ];
-            push @violations, map { $pol->violates($_, $doc) } @{$types{$type}};
+            push @violations,
+              grep { !$is_line_disabled{$_->location->[0]} }
+                map { $pol->violates($_, $doc) }
+                  @{$types{$type}};
         }
     }
     return Perl::Critic::Violation->sort_by_location( @violations );
@@ -115,29 +122,42 @@ sub _filter_code {
     my $no_critic  = qr{\A \s* \#\# \s* no  \s+ critic}mx;
     my $use_critic = qr{\A \s* \#\# \s* use \s+ critic}mx;
 
+    my %disabled_lines;
+
   PRAGMA:
     for my $pragma ( grep { $_ =~ $no_critic } @{$nodes_ref} ) {
 
         #Handle single-line usage
         if ( my $sib = $pragma->sprevious_sibling() ) {
             if ( $sib->location->[0] == $pragma->location->[0] ) {
-                $sib->statement->delete();
+                $disabled_lines{$pragma->location->[0]} = 1;
                 next PRAGMA;
             }
         }
 
+        #Handle multi-line usage
+        # This is either a "no critic" .. "use critic" region or a
+        # block where "no critic" persists to the end of the scope The
+        # start is the always the "no critic".  We have to search for
+        # the end
+
+        my $start = $pragma;
+        my $end = $pragma;
+
       SIB:
-        while ( my $sib = $pragma->next_sibling() ) {
-            my $ended = $sib->isa('PPI::Token::Comment') && $sib =~ $use_critic;
-            $sib->delete();    #$sib is undef now.
-            last SIB if $ended;
+        while ( my $sib = $end->next_sibling() ) {
+            $end = $sib; # keep track of last sibling encountered in this scope
+            last SIB if $sib->isa('PPI::Token::Comment') && $sib =~ $use_critic;
+        }
+
+        # We either found an end or hit the end of the scope.
+        # Flag all intervening lines
+        for my $line ($start->location->[0] .. $end->location->[0]) {
+            $disabled_lines{$line} = 1;
         }
     }
-    continue {
-        $pragma->delete();
-    }
 
-    return 1;
+    return %disabled_lines;
 }
 
 sub _unfix_shebang {
