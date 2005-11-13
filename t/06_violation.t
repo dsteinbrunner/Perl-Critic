@@ -66,16 +66,13 @@ like(ViolationTest->get_violation()->diagnostics(),
 # location sorting
 # test data:
 my %l = (
-   no_col  => [1,undef],
-   no_line => [undef,1],
-   nothing => [undef,undef],
-   l1_1     => [1,1],
-   l1_10    => [1,10],
-   l1_15    => [1,15],
-   l2_1     => [2,1],
-   l2_10    => [2,10],
    l3_1     => [3,1],
+   l2_10    => [2,10],
+   l2_1     => [2,1],
+   l1_15    => [1,15],
+   l1_10    => [1,10],
+   l1_1     => [1,1],
 );
 my @v = map {Perl::Critic::Violation->new('', '', $_)} values %l;
 is_deeply([map {$_->location()} Perl::Critic::Violation->sort_by_location(@v)],
-          [@l{qw(nothing no_line no_col l1_1 l1_10 l1_15 l2_1 l2_10 l3_1)}], 'sort_by_location');
+          [@l{qw(l1_1 l1_10 l1_15 l2_1 l2_10 l3_1)}], 'sort_by_location');

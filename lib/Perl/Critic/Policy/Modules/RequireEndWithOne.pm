@@ -32,11 +32,13 @@ sub violates {
 
     # Last statement should be just "1;"
     my @significant = $doc->schildren();
-    @significant = grep {!$_->isa('PPI::Statement::End') && !$_->isa('PPI::Statement::Data')} @significant;
+    @significant = grep {
+             !$_->isa('PPI::Statement::End')
+          && !$_->isa('PPI::Statement::Data')
+    } @significant;
     my $match = $significant[-1];
-    if ($match && (ref $match) eq 'PPI::Statement' && $match eq '1;')
-    {
-       return;
+    if ( $match && ( ref $match ) eq 'PPI::Statement' && $match eq '1;' ) {
+        return;
     }
 
     return Perl::Critic::Violation->new( $desc, $expl, $match->location() );

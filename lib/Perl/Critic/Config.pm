@@ -11,7 +11,8 @@ use strict;
 use warnings;
 use File::Spec;
 use Config::Tiny;
-use Module::Pluggable (search_path => ['Perl::Critic::Policy'], require => 1);
+use Module::Pluggable ( search_path => ['Perl::Critic::Policy'],
+                        require     => 1 );
 use English qw(-no_match_vars);
 use List::MoreUtils qw(any none);
 use Perl::Critic::Utils;
@@ -21,7 +22,7 @@ our $VERSION = '0.13';
 $VERSION = eval $VERSION;    ## no critic
 
 #This finds all Perl::Critic::Policy::* modules and requires them.
-my @SITE_POLICIES = plugins();  #Imported from Module::Pluggable
+my @SITE_POLICIES = plugins();    #Imported from Module::Pluggable
 
 #-------------------------------------------------------------------------
 
@@ -34,17 +35,17 @@ sub new {
     # Set defaults
     my $profile_path = $args{-profile}  || $EMPTY;
     my $min_priority = $args{-priority} || 1;
-    my $excludes_ref = $args{-exclude}  || [];  #empty array
-    my $includes_ref = $args{-include}  || [];  #empty array
+    my $excludes_ref = $args{-exclude}  || [];       #empty array
+    my $includes_ref = $args{-include}  || [];       #empty array
 
     # Allow null config.  This is useful for testing
     return $self if $profile_path eq 'NONE';
 
     # Load user's profile, then filter and create Policies
-    my $profile_ref = _load_profile( $profile_path ) || {};
-    while ( my ( $policy, $params ) = each %{ $profile_ref } ) {
-        next if any  { $policy =~ m{ $_ }imx } @{ $excludes_ref };
-        next if none { $policy =~ m{ $_ }imx } @{ $includes_ref };
+    my $profile_ref = _load_profile($profile_path) || {};
+    while ( my ( $policy, $params ) = each %{$profile_ref} ) {
+        next if any  { $policy =~ m{ $_ }imx } @{$excludes_ref};
+        next if none { $policy =~ m{ $_ }imx } @{$includes_ref};
         next if ( $params->{priority} ||= 0 ) > $min_priority;
         $self->add_policy( -policy => $policy, -config => $params );
     }
@@ -58,12 +59,12 @@ sub new {
 sub add_policy {
 
     my ( $self, %args ) = @_;
-    my $policy      = $args{-policy} || return;
-    my $config      = $args{-config} || {};
+    my $policy = $args{-policy} || return;
+    my $config = $args{-config} || {};
     my $module_name = _long_name($policy);
 
     eval {
-        my $policy_obj  = $module_name->new( %{$config} );
+        my $policy_obj = $module_name->new( %{$config} );
         push @{ $self->{_policies} }, $policy_obj;
     };
 
@@ -87,22 +88,23 @@ sub policies {
 
 sub _load_profile {
 
-    my $profile = shift || $EMPTY;
+    my $profile  = shift || $EMPTY;
     my $ref_type = ref $profile;
 
     #Load profile in various ways
-    my $user_prefs  =  $ref_type eq 'SCALAR' ?  _load_from_string( $profile )
-                    :  $ref_type eq 'ARRAY'  ?  _load_from_array( $profile )
-                    :  $ref_type eq 'HASH'   ?  _load_from_hash( $profile )
-                    :                           _load_from_file( $profile );
+    my $user_prefs =
+        $ref_type eq 'SCALAR' ? _load_from_string($profile)
+      : $ref_type eq 'ARRAY'  ? _load_from_array($profile)
+      : $ref_type eq 'HASH'   ? _load_from_hash($profile)
+      :                         _load_from_file($profile);
 
     #Apply profile
     my %final = ();
-    for my $policy ( @SITE_POLICIES ) {
+    for my $policy (@SITE_POLICIES) {
         my $short_name = _short_name($policy);
         next if exists $user_prefs->{"-$short_name"};
         my $params = $user_prefs->{$short_name} || {};
-	$final{ $policy } = $params;
+        $final{$policy} = $params;
     }
 
     return \%final;
@@ -113,7 +115,7 @@ sub _load_profile {
 sub _load_from_file {
     my $file = shift;
     $file ||= find_profile_path() || return {};
-    croak qq{'$file' is not a file} if ! -f $file;
+    croak qq{'$file' is not a file} if !-f $file;
     return Config::Tiny->read($file);
 }
 
@@ -121,15 +123,15 @@ sub _load_from_file {
 
 sub _load_from_array {
     my $array_ref = shift;
-    my $joined    = join qq{\n}, @{ $array_ref };
-    return Config::Tiny->read_string( $joined );
+    my $joined = join qq{\n}, @{$array_ref};
+    return Config::Tiny->read_string($joined);
 }
 
 #------------------------------------------------------------------------
 
 sub _load_from_string {
     my $string = shift;
-    return Config::Tiny->read_string( ${ $string } );
+    return Config::Tiny->read_string( ${$string} );
 }
 
 #------------------------------------------------------------------------
@@ -143,7 +145,7 @@ sub _load_from_hash {
 
 sub _long_name {
     my $module_name = shift;
-    my $namespace = 'Perl::Critic::Policy';
+    my $namespace   = 'Perl::Critic::Policy';
     if ( $module_name !~ m{ \A $namespace }mx ) {
         $module_name = $namespace . q{::} . $module_name;
     }
@@ -152,7 +154,7 @@ sub _long_name {
 
 sub _short_name {
     my $module_name = shift;
-    my $namespace = 'Perl::Critic::Policy';
+    my $namespace   = 'Perl::Critic::Policy';
     $module_name =~ s{\A $namespace ::}{}mx;
     return $module_name;
 }
@@ -185,7 +187,7 @@ sub find_profile_path {
 #----------------------------------------------------------------------------
 
 sub site_policies {
-    return @SITE_POLICIES
+    return @SITE_POLICIES;
 }
 
 sub native_policies {

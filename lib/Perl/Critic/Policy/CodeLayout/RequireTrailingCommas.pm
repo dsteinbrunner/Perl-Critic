@@ -18,8 +18,8 @@ $VERSION = eval $VERSION;    ## no critic
 
 #----------------------------------------------------------------------------
 
-my $desc  = q{List declaration without trailing comma};
-my $expl  = [ 17 ];
+my $desc = q{List declaration without trailing comma};
+my $expl = [17];
 
 #----------------------------------------------------------------------------
 
@@ -41,15 +41,16 @@ sub violates {
 
     #Does the list have more than 1 element?
     my @children = $expr->schildren();
-    (grep { $_ eq $COMMA } @children) > 1 || return; 
+    ( grep { $_ eq $COMMA } @children ) > 1 || return;
 
     #Is the last element a comma?
     my $final = $children[-1] || return;
-    if ( ! ($final->isa('PPI::Token::Operator') &&  $final eq $COMMA) ) {
-	return Perl::Critic::Violation->new($desc, $expl, $final->location() );
+    if ( !( $final->isa('PPI::Token::Operator') && $final eq $COMMA ) ) {
+        return Perl::Critic::Violation->new( $desc, $expl,
+                                             $final->location() );
     }
 
-    return; #ok!
+    return;    #ok!
 }
 
 1;

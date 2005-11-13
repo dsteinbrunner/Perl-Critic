@@ -16,11 +16,11 @@ use base 'Perl::Critic::Policy';
 our $VERSION = '0.13';
 $VERSION = eval $VERSION;    ## no critic
 
-my $desc     = 'Ambiguous name for variable or subroutine';
-my $expl     = [48];
+my $desc = 'Ambiguous name for variable or subroutine';
+my $expl = [48];
 
 my @default_forbid = qw(
-   last set left right no abstract contract record second close bases
+  last set left right no abstract contract record second close bases
 );
 
 #---------------------------------------------------------------------------
@@ -31,18 +31,17 @@ sub new {
 
     #Set configuration, if defined
     if ( defined $args{forbid} ) {
-	my @forbid = split m{ \s+ }mx, $args{forbid};
-	$self->{_forbid} = { map {$_ => 1} @forbid };
+        my @forbid = split m{ \s+ }mx, $args{forbid};
+        $self->{_forbid} = { map { $_ => 1 } @forbid };
     }
     else {
-        $self->{_forbid} = { map {$_ => 1} @default_forbid };
+        $self->{_forbid} = { map { $_ => 1 } @default_forbid };
     }
 
     return $self;
 }
 
-sub default_forbidden_words
-{
+sub default_forbidden_words {
     return @default_forbid;
 }
 
@@ -53,31 +52,38 @@ sub applies_to {
 sub violates {
     my ( $self, $elem, $doc ) = @_;
 
-    if ( $elem->isa('PPI::Statement::Sub')) {
-        my @words = grep {$_->isa('PPI::Token::Word')} $elem->schildren();
+    if ( $elem->isa('PPI::Statement::Sub') ) {
+        my @words = grep { $_->isa('PPI::Token::Word') } $elem->schildren();
         for my $word (@words) {
+
             # strip off any leading "Package::"
             my ($name) = $word =~ m/ (\w+) \z /xms;
-            if ($self->{_forbid}->{$name}) {
-                return Perl::Critic::Violation->new( $desc, $expl, $elem->location() );
+            if ( $self->{_forbid}->{$name} ) {
+                return Perl::Critic::Violation->new( $desc, $expl,
+                                                     $elem->location() );
             }
         }
-        return;  # ok
+        return;    # ok
     }
-    else { # PPI::Statement::Variable
-        # Accumulate them since there can be more than one violation per variable statement
+    else {         # PPI::Statement::Variable
+
+        # Accumulate them since there can be more than one violation
+        # per variable statement
         my @viols;
 
-        #FALSE POSITIVE BUG: this can erroneously catch the assignment half of a variable statement
+        # TODO: false positive bug - this can erroneously catch the
+        # assignment half of a variable statement
 
         my $symbols = $elem->find('PPI::Token::Symbol');
-        if ($symbols)
-        {
+        if ($symbols) {
             for my $symbol (@$symbols) {
+
                 # strip off sigil and any leading "Package::"
                 my ($name) = $symbol =~ m/ (\w+) \z /xms;
-                if ($self->{_forbid}->{$name}) {
-                    push @viols, Perl::Critic::Violation->new( $desc, $expl, $elem->location() );
+                if ( $self->{_forbid}->{$name} ) {
+                    push @viols,
+                      Perl::Critic::Violation->new( $desc, $expl,
+                                                    $elem->location() );
                 }
             }
         }

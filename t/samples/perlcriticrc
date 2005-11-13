@@ -1,2 +1,6 @@
 [Miscellanea::RequireRcsKeywords]
 keywords = URL Date Author Revision
+
+[CodeLayout::RequireTidyCode]
+perltidyrc = t/samples/perltidyrc
+options = hanging_ternary

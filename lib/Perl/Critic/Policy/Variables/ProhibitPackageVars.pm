@@ -24,11 +24,14 @@ my $expl = [ 73, 75 ];
 
 #---------------------------------------------------------------------------
 
-sub priority   { return $PRIORITY_MEDIUM }
+sub priority { return $PRIORITY_MEDIUM }
+
 sub applies_to {
-    return qw( PPI::Token::Symbol
-               PPI::Statement::Variable
-               PPI::Statement::Include );
+    return qw(
+      PPI::Token::Symbol
+      PPI::Statement::Variable
+      PPI::Statement::Include
+    );
 }
 
 #---------------------------------------------------------------------------
@@ -36,9 +39,9 @@ sub applies_to {
 sub violates {
     my ( $self, $elem, $doc ) = @_;
 
-    if (   _is_package_var($elem)
-        || _is_our_var($elem)
-        || _is_vars_pragma($elem) )
+    if (    _is_package_var($elem)
+         || _is_our_var($elem)
+         || _is_vars_pragma($elem) )
     {
         return Perl::Critic::Violation->new( $desc, $expl, $elem->location() );
     }

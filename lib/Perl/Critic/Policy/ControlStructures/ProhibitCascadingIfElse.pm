@@ -37,7 +37,7 @@ sub applies_to {
 
 sub violates {
     my ( $self, $elem, $doc ) = @_;
-    return if !($elem->type() eq 'if');
+    return if !( $elem->type() eq 'if' );
     if ( _count_elsifs($elem) > $self->{_max} ) {
         return Perl::Critic::Violation->new( $desc, $expl, $elem->location() );
     }
@@ -100,5 +100,3 @@ Copyright (c) 2005 Jeffrey Ryan Thalhammer.  All rights reserved.
 This program is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.  The full text of this license
 can be found in the LICENSE file included with this module.
-
-

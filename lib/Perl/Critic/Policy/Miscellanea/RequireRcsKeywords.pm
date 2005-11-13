@@ -17,18 +17,18 @@ use base 'Perl::Critic::Policy';
 our $VERSION = '0.13';
 $VERSION = eval $VERSION;    ## no critic
 
-my $expl = [ 441 ];
+my $expl = [441];
 
 #---------------------------------------------------------------------------
 
 sub new {
-    my ($class, %config) = @_;
+    my ( $class, %config ) = @_;
     my $self = bless {}, $class;
-    $self->{_keywords} = [ qw(Revision Source Date) ];
+    $self->{_keywords} = [qw(Revision Source Date)];
 
     #Set configuration, if defined.
     if ( defined $config{keywords} ) {
-	$self->{_keywords} = [ split m{ \s+ }mx, $config{keywords} ];
+        $self->{_keywords} = [ split m{ \s+ }mx, $config{keywords} ];
     }
 
     return $self;
@@ -38,27 +38,27 @@ sub applies_to {
     return 'PPI::Document';
 }
 
-
 sub violates {
     my ( $self, $elem, $doc ) = @_;
     my @viols;
 
     my $nodes = $doc->find( \&_wanted );
     for my $keyword ( @{ $self->{_keywords} } ) {
-	if ( (!$nodes) || none { $_ =~ m{ \$$keyword.*\$ }mx } @{$nodes} ) {
-	  my $desc = qq{RCS keyword '\$$keyword\$' not found};
-	  push @viols, Perl::Critic::Violation->new( $desc, $expl, [0,0] );
-	}
+        if ( ( !$nodes ) || none { $_ =~ m{ \$$keyword.*\$ }mx } @{$nodes} ) {
+            my $desc = qq{RCS keyword '\$$keyword\$' not found};
+            push @viols,
+              Perl::Critic::Violation->new( $desc, $expl, [ 0, 0 ] );
+        }
     }
 
     return @viols;
 }
 
 sub _wanted {
-    my ($doc, $elem) = @_;
-    return    $elem->isa('PPI::Token::Comment')
-           || $elem->isa('PPI::Token::Quote::Single')
-           || $elem->isa('PPI::Token::Quote::Literal');
+    my ( $doc, $elem ) = @_;
+    return $elem->isa('PPI::Token::Comment')
+      || $elem->isa('PPI::Token::Quote::Single')
+      || $elem->isa('PPI::Token::Quote::Literal');
 }
 
 1;

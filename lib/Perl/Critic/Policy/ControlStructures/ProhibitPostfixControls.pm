@@ -16,22 +16,20 @@ use base 'Perl::Critic::Policy';
 our $VERSION = '0.13';
 $VERSION = eval $VERSION;    ## no critic
 
-my %pages_of = (
-    if     => [ 93, 94 ],
-    unless => [ 96, 97 ],
-    until  => [ 96, 97 ],
-    for    => [ 96     ],
-    while  => [ 96     ],
+my %pages_of = ( if     => [ 93, 94 ],
+                 unless => [ 96, 97 ],
+                 until  => [ 96, 97 ],
+                 for    => [96],
+                 while  => [96],
 );
 
-my %exemptions = (
-    warn    => 1, 
-    die     => 1, 
-    carp    => 1,
-    croak   => 1,  
-    cluck   => 1, 
-    confess => 1,
-    goto    => 1,
+my %exemptions = ( warn    => 1,
+                   die     => 1,
+                   carp    => 1,
+                   croak   => 1,
+                   cluck   => 1,
+                   confess => 1,
+                   goto    => 1,
 );
 
 #----------------------------------------------------------------------------
@@ -65,16 +63,16 @@ sub violates {
     # Skip Compound variety (these are good)
     my $stmnt = $elem->statement() || return;
     return if $stmnt->isa('PPI::Statement::Compound');
-    
+
     #Handle special cases
     if ( $elem eq 'if' ) {
-	#Postfix 'if' allowed with loop breaks, or other
-	#flow-controls like 'die', 'warn', and 'croak'
-	return if $stmnt->isa('PPI::Statement::Break');
-	return if defined $exemptions{ $stmnt->schild(0) };
+
+        #Postfix 'if' allowed with loop breaks, or other
+        #flow-controls like 'die', 'warn', and 'croak'
+        return if $stmnt->isa('PPI::Statement::Break');
+        return if defined $exemptions{ $stmnt->schild(0) };
     }
-	
-	
+
     # If we get here, it must be postfix.
     my $desc = qq{Postfix control '$elem' used};
     my $expl = $pages_of{$elem};

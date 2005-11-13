@@ -14,7 +14,7 @@ use Perl::Critic::Violation;
 use base 'Perl::Critic::Policy';
 
 our $VERSION = '0.13';
-$VERSION = eval $VERSION; ## no critic;
+$VERSION = eval $VERSION;    ## no critic;
 
 #------------------------------------------------------------------------
 
@@ -23,21 +23,21 @@ my $expl = [168];
 
 #------------------------------------------------------------------------
 
-sub priority   { return $PRIORITY_HIGHEST  }
+sub priority   { return $PRIORITY_HIGHEST }
 sub applies_to { return 'PPI::Token::Word' }
 
 #------------------------------------------------------------------------
 
 sub violates {
-    my ($self, $elem, $doc) = @_;
-    return if !($elem eq 'select');
+    my ( $self, $elem, $doc ) = @_;
+    return if !( $elem eq 'select' );
     return if is_method_call($elem);
     return if is_hash_key($elem);
 
-    if ( 3 == grep {$_->[0] eq 'undef' } parse_arg_list($elem) ){
-	return Perl::Critic::Violation->new($desc, $expl, $elem->location() );
+    if ( 3 == grep { $_->[0] eq 'undef' } parse_arg_list($elem) ) {
+        return Perl::Critic::Violation->new( $desc, $expl, $elem->location() );
     }
-    return; #ok!
+    return;    #ok!
 }
 
 1;

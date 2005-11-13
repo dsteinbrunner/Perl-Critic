@@ -39,7 +39,7 @@ sub violates {
     if ( !exists $exempt{$elem} ) {
         return Perl::Critic::Violation->new( $desc, $expl, $elem->location() );
     }
-    return;                               #ok!
+    return;    #ok!
 }
 
 1;

@@ -31,8 +31,8 @@ sub new {
     my $self = bless {}, $class;
 
     #Set config, if defined
-    $self->{_allow_leading_tabs} =
-      defined $args{allow_leading_tabs} ? $args{allow_leading_tabs} : 1;
+    $self->{_allow_leading_tabs}
+      = defined $args{allow_leading_tabs} ? $args{allow_leading_tabs} : 1;
 
     return $self;
 }

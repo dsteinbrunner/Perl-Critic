@@ -18,8 +18,8 @@ $VERSION = eval $VERSION;    ## no critic
 
 #---------------------------------------------------------------------------
 
-my $desc     = q{List of quoted literal words};
-my $expl     = q{Use 'qw()' instead};
+my $desc = q{List of quoted literal words};
+my $expl = q{Use 'qw()' instead};
 
 #---------------------------------------------------------------------------
 
@@ -29,7 +29,7 @@ sub applies_to { return 'PPI::Structure::List' }
 #---------------------------------------------------------------------------
 
 sub new {
-    my ($class, %args) = @_;
+    my ( $class, %args ) = @_;
     my $self = bless {}, $class;
 
     #Set configuration if defined
@@ -53,11 +53,11 @@ sub violates {
     @children || return;
 
     my $count = 0;
-    for my $child ( @children ) {
-	next if $child->isa('PPI::Token::Operator')  && $child eq $COMMA;
-	return if ! _is_literal($child);
-	return if $child =~ m{ \s }mx;
-	$count++;
+    for my $child (@children) {
+        next if $child->isa('PPI::Token::Operator') && $child eq $COMMA;
+        return if !_is_literal($child);
+        return if $child =~ m{ \s }mx;
+        $count++;
     }
 
     #Were there enough?
@@ -70,7 +70,7 @@ sub violates {
 sub _is_literal {
     my $elem = shift;
     return $elem->isa('PPI::Token::Quote::Single')
-	|| $elem->isa('PPI::Token::Quote::Literal');
+      || $elem->isa('PPI::Token::Quote::Literal');
 }
 
 1;

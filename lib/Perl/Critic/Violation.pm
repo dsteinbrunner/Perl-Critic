@@ -21,11 +21,10 @@ our $VERSION = '0.13';
 $VERSION = eval $VERSION;    ## no critic
 
 #Class variables...
-our $FORMAT = "%m at line %l, column %c. %e.\n"; #Default stringy format
-our %DIAGNOSTICS = ();  #Cache of diagnostic messages
+our $FORMAT = "%m at line %l, column %c. %e.\n";    #Default stringy format
+our %DIAGNOSTICS = ();    #Cache of diagnostic messages
 
 #----------------------------------------------------------------------------
-
 
 sub import {
 
@@ -33,25 +32,27 @@ sub import {
     return if exists $DIAGNOSTICS{$caller};
 
     if ( my $file = _mod2file($caller) ) {
-	if ( my $diags = _get_diagnostics($file) ) {
-	       $DIAGNOSTICS{$caller} = $diags;
-	       return; #ok!
-	   }
+        if ( my $diags = _get_diagnostics($file) ) {
+            $DIAGNOSTICS{$caller} = $diags;
+            return;       #ok!
+        }
     }
 
     #If we get here, then we couldn't get diagnostics
     my $no_diags = "    No diagnostics available\n";
     $DIAGNOSTICS{$caller} = $no_diags;
 
-    return; #ok!
+    return;               #ok!
 }
 
 #---------------------------
 
 sub sort_by_location {
-   my $class = shift;
-   return sort {    (($a->{_location}->[0] || 0) <=> ($b->{_location}->[0] || 0))
-                 || (($a->{_location}->[1] || 0) <=> ($b->{_location}->[1] || 0)) } @_
+    my $class = shift;
+    return sort {
+             $a->{_location}->[0] <=> $b->{_location}->[0]
+          or $a->{_location}->[1] <=> $b->{_location}->[1]
+    } @_;
 }
 
 #---------------------------
@@ -84,42 +85,42 @@ sub new {
 
 #---------------------------
 
-sub location { 
+sub location {
     my $self = shift;
     return $self->{_location};
 }
 
 #---------------------------
 
-sub diagnostics { 
+sub diagnostics {
     my $self = shift;
-    my $pol = $self->policy();
+    my $pol  = $self->policy();
     return $DIAGNOSTICS{$pol};
 }
 
 #---------------------------
 
-sub description { 
-    my $self = shift; 
+sub description {
+    my $self = shift;
     return $self->{_description};
 }
 
 #---------------------------
 
-sub explanation { 
+sub explanation {
     my $self = shift;
     my $expl = $self->{_explanation};
-    if( ref $expl eq 'ARRAY' ) {
-	my $page = @{$expl} > 1 ? 'pages' : 'page';
-	$page .= $SPACE . join $COMMA, @{$expl};
-	$expl = "See $page of PBP";
+    if ( ref $expl eq 'ARRAY' ) {
+        my $page = @{$expl} > 1 ? 'pages' : 'page';
+        $page .= $SPACE . join $COMMA, @{$expl};
+        $expl = "See $page of PBP";
     }
     return $expl;
 }
 
 #---------------------------
 
-sub policy { 
+sub policy {
     my $self = shift;
     return $self->{_policy};
 }
@@ -128,11 +129,14 @@ sub policy {
 
 sub to_string {
     my $self = shift;
-    my %fspec = ( l => $self->location->[0], c => $self->location->[1],
-		  m => $self->description(), e => $self->explanation(),
-		  p => $self->policy(),      d => $self->diagnostics(), 
+    my %fspec = ( l => $self->location->[0],
+                  c => $self->location->[1],
+                  m => $self->description(),
+                  e => $self->explanation(),
+                  p => $self->policy(),
+                  d => $self->diagnostics(),
     );
-    return stringf($FORMAT, %fspec);
+    return stringf( $FORMAT, %fspec );
 }
 
 #---------------------------
@@ -140,7 +144,7 @@ sub to_string {
 sub _mod2file {
     my $module = shift;
     require File::Spec;
-    $module = File::Spec->catfile(split m/::/xms, $module) . '.pm';
+    $module = File::Spec->catfile( split m/::/xms, $module ) . '.pm';
     return $INC{$module} || $EMPTY;
 }
 
@@ -151,15 +155,15 @@ sub _get_diagnostics {
     my $file = shift;
 
     # Extract POD out to a filehandle
-    my $handle = IO::String->new();         
+    my $handle = IO::String->new();
     my $parser = Pod::PlainText->new();
-    $parser->select('DESCRIPTION');    
-    $parser->parse_from_file($file, $handle);
+    $parser->select('DESCRIPTION');
+    $parser->parse_from_file( $file, $handle );
 
     # Slurp POD back in
-    $handle->pos(0);                              #Rewind to the beginning.
-    <$handle>;                                    #Throw away header
-    return do { local $RS = undef; <$handle> };   #Slurp in the rest
+    $handle->pos(0);    #Rewind to the beginning.
+    <$handle>;          #Throw away header
+    return do { local $RS = undef; <$handle> };    #Slurp in the rest
 }
 
 1;

@@ -14,7 +14,7 @@ use Perl::Critic::Violation;
 use base 'Perl::Critic::Policy';
 
 our $VERSION = '0.13';
-$VERSION = eval $VERSION; ## no critic;
+$VERSION = eval $VERSION;    ## no critic;
 
 #----------------------------------------------------------------------------
 
@@ -29,17 +29,17 @@ sub applies_to { return 'PPI::Token::Word' }
 #----------------------------------------------------------------------------
 
 sub violates {
-    my ($self, $elem, $doc) = @_;
-    return if !($elem eq 'substr');
+    my ( $self, $elem, $doc ) = @_;
+    return if !( $elem eq 'substr' );
     return if is_method_call($elem);
     return if is_hash_key($elem);
 
     my $sib = $elem;
-    while ($sib = $sib->snext_sibling()) {
-	next if ! ( $sib->isa( 'PPI::Token::Operator') && $sib eq q{=} );
-	return Perl::Critic::Violation->new($desc, $expl, $sib->location() );
+    while ( $sib = $sib->snext_sibling() ) {
+        next if !( $sib->isa('PPI::Token::Operator') && $sib eq q{=} );
+        return Perl::Critic::Violation->new( $desc, $expl, $sib->location() );
     }
-    return; #ok!
+    return;    #ok!
 }
 
 1;

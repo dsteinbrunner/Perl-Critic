@@ -17,8 +17,8 @@ use base 'Perl::Critic::Policy';
 our $VERSION = '0.13';
 $VERSION = eval $VERSION;    ## no critic
 
-my $desc   = q{Code before strictures are enabled};
-my $expl   = [429];
+my $desc = q{Code before strictures are enabled};
+my $expl = [429];
 
 #---------------------------------------------------------------------------
 

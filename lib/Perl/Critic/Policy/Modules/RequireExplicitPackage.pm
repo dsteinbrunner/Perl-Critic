@@ -27,8 +27,8 @@ sub new {
     $self->{_tested} = 0;
 
     #Set config, if defined
-    $self->{_exempt_scripts} =
-      defined $args{exempt_scripts} ? $args{exempt_scripts} : 0;
+    $self->{_exempt_scripts}
+      = defined $args{exempt_scripts} ? $args{exempt_scripts} : 0;
 
     return $self;
 }
@@ -45,7 +45,7 @@ sub violates {
 
     my $match = $doc->find_first( sub { $_[1]->significant() } ) || return;
     return
-      if $match->isa('PPI::Statement::Package');   #First statement is 'package'
+      if $match->isa('PPI::Statement::Package');  #First statement is 'package'
     return Perl::Critic::Violation->new( $desc, $expl, $match->location() );
 }
 

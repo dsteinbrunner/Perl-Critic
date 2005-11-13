@@ -23,14 +23,14 @@ my $expl = [169];
 
 #----------------------------------------------------------------------------
 
-sub priority   { return $PRIORITY_HIGH     }
+sub priority   { return $PRIORITY_HIGH }
 sub applies_to { return 'PPI::Token::Word' }
 
 #----------------------------------------------------------------------------
 
 sub violates {
     my ( $self, $elem, $doc ) = @_;
-    return if !($elem eq 'grep');
+    return if !( $elem eq 'grep' );
     return if is_method_call($elem);
     return if is_hash_key($elem);
 
@@ -41,7 +41,6 @@ sub violates {
     #Must not be a block
     return Perl::Critic::Violation->new( $desc, $expl, $elem->location() );
 }
-
 
 1;
 

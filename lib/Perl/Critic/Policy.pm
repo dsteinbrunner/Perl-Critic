@@ -16,9 +16,9 @@ $VERSION = eval $VERSION;    ## no critic
 
 #----------------------------------------------------------------------------
 
-sub new        { return bless {}, shift    }
-sub applies_to { return qw(PPI::Element)   }
-sub priority   { return $PRIORITY_LOWEST   }
+sub new { return bless {}, shift }
+sub applies_to { return qw(PPI::Element) }
+sub priority   { return $PRIORITY_LOWEST }
 sub violates   { return _abstract_method() }
 
 #----------------------------------------------------------------------------
@@ -27,7 +27,7 @@ sub _abstract_method {
     my $method_name = ( caller 1 )[3];
     my ( $file, $line ) = ( caller 2 )[ 1, 2 ];
     die qq{Can't call abstract method '$method_name' at $file line $line.\n};
-    return;  #Should never get here.
+    return;    #Should never get here.
 }
 
 #----------------------------------------------------------------------------

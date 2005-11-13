@@ -1,0 +1,13 @@
+-l=79   # Max line width is 79 cols (defined by length of P::C::V->new() calls in policies)
+-i=4    # Indent level is 4 cols
+-ci=2   # Continuation indent is 2 cols
+-vt=2   # Maximal vertical tightness
+-lp     # Indent to line up with parenthesis
+-cti=0  # No extra indentation for closing brackets
+-pt=1   # Medium parenthesis tightness
+-bt=1   # Medium brace tightness
+-sbt=1  # Medium square bracket tightness
+-bbt=1  # Medium block brace tightness
+-nsfs   # No space before semicolons
+-nolq   # Don't outdent long quoted strings
+-wbb="% + - * / x != == >= <= =~ !~ < >  | & >= < = **= += *= &= <<= &&= -= /= |= >>= ||= .= %= ^= x=" #Break before all operators

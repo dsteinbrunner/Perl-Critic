@@ -32,10 +32,10 @@ sub new {
 
     # Create and init object
     my $self = bless {}, $class;
-    $self->{_force}    = $force;
+    $self->{_force} = $force;
 
     # Create configuration from profile
-    my $config = Perl::Critic::Config->new( %args );
+    my $config = Perl::Critic::Config->new(%args);
     $self->{_config} = $config;
 
     return $self;
@@ -52,14 +52,16 @@ sub config {
 
 sub add_policy {
     my ( $self, @args ) = @_;
+
     #Delegate to Perl::Critic::Config
-    return $self->config()->add_policy( @args );
+    return $self->config()->add_policy(@args);
 }
 
 #----------------------------------------------------------------------------
 
 sub policies {
     my $self = shift;
+
     #Delegate to Perl::Critic::Config
     return $self->config()->policies();
 }
@@ -67,6 +69,7 @@ sub policies {
 #----------------------------------------------------------------------------
 
 sub critique {
+
     # Here we go!
     my ( $self, $source_code ) = @_;
 
@@ -74,42 +77,41 @@ sub critique {
     my $doc = PPI::Document->new($source_code);
 
     # Bail on error
-    if( ! defined $doc ) {
-	my $errstr = PPI::Document::errstr();
-	my $file = -f $source_code ? $source_code : 'stdin';
-	die qq{Cannot parse code: $errstr of '$file'\n};
+    if ( !defined $doc ) {
+        my $errstr = PPI::Document::errstr();
+        my $file = -f $source_code ? $source_code : 'stdin';
+        die qq{Cannot parse code: $errstr of '$file'\n};
     }
 
     # Pre-index location of each node (for speed)
     $doc->index_locations();
 
-    # Filter exempt code, if desired
+    # keys of hash are line numbers to ignore for violations
     my %is_line_disabled;
-    if (!$self->{_force})
-    {
-       %is_line_disabled = _filter_code($doc);
-    }
 
     # Remove the magic shebang fix
-    _unfix_shebang($doc);
+    %is_line_disabled = ( %is_line_disabled, _unfix_shebang($doc) );
+
+    # Filter exempt code, if desired
+    if ( !$self->{_force} ) {
+        %is_line_disabled = ( %is_line_disabled, _filter_code($doc) );
+    }
 
     # Run engine, testing each Policy at each element
-    my %types = (
-       'PPI::Document' => [$doc],
-       'PPI::Element'  => $doc->find( 'PPI::Element' ) || [],
-    );
+    my %types = ( 'PPI::Document' => [$doc],
+                  'PPI::Element'  => $doc->find('PPI::Element') || [], );
     my @violations;
-    my @pols  = @{ $self->policies() };  @pols || return;   #Nothing to do!
-    for my $pol ( @pols ) {
+    my @pols = @{ $self->policies() };
+    @pols || return;    #Nothing to do!
+    for my $pol (@pols) {
         for my $type ( $pol->applies_to() ) {
-            $types{$type} ||= [ grep {$_->isa($type)} @{$types{'PPI::Element'}} ];
-            push @violations,
-              grep { !$is_line_disabled{$_->location->[0]} }
-                map { $pol->violates($_, $doc) }
-                  @{$types{$type}};
+            $types{$type}
+              ||= [ grep { $_->isa($type) } @{ $types{'PPI::Element'} } ];
+            push @violations, grep { !$is_line_disabled{ $_->location->[0] } }
+              map { $pol->violates( $_, $doc ) } @{ $types{$type} };
         }
     }
-    return Perl::Critic::Violation->sort_by_location( @violations );
+    return Perl::Critic::Violation->sort_by_location(@violations);
 }
 
 #============================================================================
@@ -130,7 +132,7 @@ sub _filter_code {
         #Handle single-line usage
         if ( my $sib = $pragma->sprevious_sibling() ) {
             if ( $sib->location->[0] == $pragma->location->[0] ) {
-                $disabled_lines{$pragma->location->[0]} = 1;
+                $disabled_lines{ $pragma->location->[0] } = 1;
                 next PRAGMA;
             }
         }
@@ -142,17 +144,18 @@ sub _filter_code {
         # the end
 
         my $start = $pragma;
-        my $end = $pragma;
+        my $end   = $pragma;
 
       SIB:
         while ( my $sib = $end->next_sibling() ) {
             $end = $sib; # keep track of last sibling encountered in this scope
-            last SIB if $sib->isa('PPI::Token::Comment') && $sib =~ $use_critic;
+            last SIB
+              if $sib->isa('PPI::Token::Comment') && $sib =~ $use_critic;
         }
 
         # We either found an end or hit the end of the scope.
         # Flag all intervening lines
-        for my $line ($start->location->[0] .. $end->location->[0]) {
+        for my $line ( $start->location->[0] .. $end->location->[0] ) {
             $disabled_lines{$line} = 1;
         }
     }
@@ -162,25 +165,26 @@ sub _filter_code {
 
 sub _unfix_shebang {
 
-
     #When you install a script using ExtUtils::MakeMaker or
     #Module::Build, it inserts some magical code into the top of the
     #file (just after the shebang).  This code allows people to call
     #your script using a shell, like `sh my_script`.  Unfortunately,
     #this code causes several Policy violations, so we just remove it.
 
-    my $doc = shift;
+    my $doc         = shift;
     my $first_stmnt = $doc->schild(0) || return;
-
 
     #Different versions of MakeMaker and Build use slightly differnt
     #shebang fixing strings.  This matches most of the ones I've found
     #in my own Perl distribution, but it may not be bullet-proof.
 
     my $fixin_rx = qr{^eval 'exec .* \$0 \${1\+"\$@"}'\s*[\r\n]\s*if.+;};
-    if ( $first_stmnt =~ $fixin_rx ) { $first_stmnt->delete() }
+    if ( $first_stmnt =~ $fixin_rx ) {
+        my $line = $first_stmnt->location->[0];
+        return ( $line => 1, $line + 1 => 1 );
+    }
 
-    return 1;
+    return;
 }
 
 1;

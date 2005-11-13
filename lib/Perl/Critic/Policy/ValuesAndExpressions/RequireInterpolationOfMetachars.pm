@@ -21,7 +21,7 @@ my $expl = [51];
 
 #---------------------------------------------------------------------------
 
-sub applies_to { 
+sub applies_to {
     return 'PPI::Token::Quote::Single', 'PPI::Token::Quote::Literal';
 }
 

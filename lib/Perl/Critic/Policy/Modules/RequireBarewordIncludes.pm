@@ -28,14 +28,13 @@ sub violates {
     my ( $self, $elem, $doc ) = @_;
     my $child = $elem->schild(1) || return;
 
-    if( $child->isa('PPI::Token::Quote') ) {
-	my $type = $elem->type();
-	my $desc = qq{'$type' statement with library name as string};
-	return Perl::Critic::Violation->new( $desc, $expl, $elem->location() );
+    if ( $child->isa('PPI::Token::Quote') ) {
+        my $type = $elem->type();
+        my $desc = qq{'$type' statement with library name as string};
+        return Perl::Critic::Violation->new( $desc, $expl, $elem->location() );
     }
-    return; #ok!
+    return;    #ok!
 }
-
 
 1;
 

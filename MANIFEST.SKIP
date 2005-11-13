@@ -30,6 +30,7 @@ RCS
 \.old$
 ^t/(?:\d+_)?local_.*t$
 ^t/perlcriticrc$
+\.tdy$
 
 # Temp/backup files
 ~$

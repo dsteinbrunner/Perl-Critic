@@ -14,7 +14,7 @@ use Perl::Critic::Violation;
 use base 'Perl::Critic::Policy';
 
 our $VERSION = '0.13';
-$VERSION = eval $VERSION; ## no critic
+$VERSION = eval $VERSION;    ## no critic
 
 my $desc = q{Bareword file handle opened};
 my $expl = [ 202, 204 ];
@@ -26,18 +26,18 @@ sub applies_to {
 }
 
 sub violates {
-    my ($self, $elem, $doc) = @_;
-    return if !($elem eq 'open');
+    my ( $self, $elem, $doc ) = @_;
+    return if !( $elem eq 'open' );
     return if is_method_call($elem);
     return if is_hash_key($elem);
-    
-    my $first = ( parse_arg_list($elem) )[0] || return;
-    $first = $first->[0] || return; #Ick!
 
-    if( $first->isa('PPI::Token::Word') && !($first eq 'my') ) {
-	return Perl::Critic::Violation->new($desc, $expl, $elem->location() );
+    my $first = ( parse_arg_list($elem) )[0] || return;
+    $first = $first->[0] || return;    #Ick!
+
+    if ( $first->isa('PPI::Token::Word') && !( $first eq 'my' ) ) {
+        return Perl::Critic::Violation->new( $desc, $expl, $elem->location() );
     }
-    return; #ok!
+    return;                            #ok!
 }
 
 1;

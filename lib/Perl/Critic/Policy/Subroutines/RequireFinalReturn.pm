@@ -19,7 +19,7 @@ $VERSION = eval $VERSION;    ## no critic
 #---------------------------------------------------------------------------
 
 my $desc = q{Subroutine does not end with return};
-my $expl = [197]; # q{Implicit return values are confusing};
+my $expl = [197];            # q{Implicit return values are confusing};
 
 #---------------------------------------------------------------------------
 
@@ -31,14 +31,14 @@ sub applies_to { return 'PPI::Statement::Sub' }
 sub violates {
     my ( $self, $elem, $doc ) = @_;
 
-    my @blocks = grep {$_->isa('PPI::Structure::Block')} $elem->schildren();
-    if (@blocks != 1) {  # sanity check
-       die 'Internal error: subroutine should have exactly one block';
+    my @blocks = grep { $_->isa('PPI::Structure::Block') } $elem->schildren();
+    if ( @blocks != 1 ) {    # sanity check
+        die 'Internal error: subroutine should have exactly one block';
     }
 
     my ($block) = @blocks;
-    if (_block_is_empty($block) || _block_has_return($block)) {
-        return; # OK
+    if ( _block_is_empty($block) || _block_has_return($block) ) {
+        return;              # OK
     }
     return Perl::Critic::Violation->new( $desc, $expl, $elem->location() );
 }
@@ -46,53 +46,57 @@ sub violates {
 #------------------------
 
 sub _block_is_empty {
-    my ( $block ) = @_;
+    my ($block) = @_;
     return $block->schildren() == 0;
 }
 
 #------------------------
 
 sub _block_has_return {
-    my ( $block ) = @_;
+    my ($block)    = @_;
     my @blockparts = $block->schildren();
-    my $final = $blockparts[-1];
-    return $final && (_is_explicit_return($final) ||
-                      _is_compound_return($final));
+    my $final      = $blockparts[-1];
+    return $final
+      && (    _is_explicit_return($final)
+           || _is_compound_return($final) );
 }
 
 #-------------------------
 
 sub _is_explicit_return {
-    my ( $final ) = @_;
-    return $final->isa('PPI::Statement::Break') &&
-           $final =~ m/ \A return\b /xms;
+    my ($final) = @_;
+    return $final->isa('PPI::Statement::Break')
+      && $final =~ m/ \A return\b /xms;
 }
 
 #-------------------------
 
 sub _is_compound_return {
-    my ( $final ) = @_;
+    my ($final) = @_;
 
-    if (!$final->isa('PPI::Statement::Compound')) {
-        return; #fail
+    if ( !$final->isa('PPI::Statement::Compound') ) {
+        return;    #fail
     }
 
-    my $begin = $final->schild(0) || return; #fail
-    if (!($begin->isa('PPI::Token::Word') && $begin eq 'if')) {
-        return; #fail
+    my $begin = $final->schild(0) || return;    #fail
+    if ( !( $begin->isa('PPI::Token::Word') && $begin eq 'if' ) ) {
+        return;                                 #fail
     }
 
-    my @blocks = grep {!$_->isa('PPI::Structure::Condition') &&
-                       !$_->isa('PPI::Token')} $final->schildren();
+    my @blocks
+      = grep { !$_->isa('PPI::Structure::Condition') && !$_->isa('PPI::Token') }
+      $final->schildren();
+
     # Sanity check:
-    if (scalar grep {!$_->isa('PPI::Structure::Block')} @blocks) { 
-        die 'Internal error: expected only conditions, blocks and tokens in the if statement';
-        return; #fail
+    if ( scalar grep { !$_->isa('PPI::Structure::Block') } @blocks ) {
+        die
+          'Internal error: expected only conditions, blocks and tokens in the if statement';
+        return;                                 #fail
     }
 
     for my $block (@blocks) {
-        if (!_block_has_return($block)) {
-            return; #fail
+        if ( !_block_has_return($block) ) {
+            return;                             #fail
         }
     }
 

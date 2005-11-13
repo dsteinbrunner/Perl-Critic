@@ -89,6 +89,7 @@ t/samples/perlcriticrc
 t/samples/perlcriticrc.all
 t/samples/perlcriticrc.levels
 t/samples/perlcriticrc.none
+t/samples/perltidyrc
 t/tlib/PerlCriticTestUtils.pm
 t/tlib/ViolationTest.pm
 t/tlib/ViolationTest2.pm

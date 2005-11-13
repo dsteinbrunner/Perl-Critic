@@ -17,7 +17,7 @@ our $VERSION = '0.13';
 $VERSION = eval $VERSION;    ## no critic
 
 my $desc = q{Regular expression without '/x' flag};
-my $expl = [ 236 ];
+my $expl = [236];
 
 #----------------------------------------------------------------------------
 
@@ -31,10 +31,10 @@ sub violates {
     #Note: as of PPI 1.103, 'modifiers' is not part of the published
     #API.  I'm cheating by accessing it here directly.
 
-    if ( ! defined $elem->{modifiers}->{x} ) {
-	return Perl::Critic::Violation->new( $desc, $expl, $elem->location() );
+    if ( !defined $elem->{modifiers}->{x} ) {
+        return Perl::Critic::Violation->new( $desc, $expl, $elem->location() );
     }
-    return; #ok!;
+    return;    #ok!;
 }
 
 1;

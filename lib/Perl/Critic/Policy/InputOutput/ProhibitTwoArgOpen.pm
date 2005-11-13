@@ -14,7 +14,7 @@ use Perl::Critic::Violation;
 use base 'Perl::Critic::Policy';
 
 our $VERSION = '0.13';
-$VERSION = eval $VERSION; ## no critic
+$VERSION = eval $VERSION;    ## no critic
 
 my $desc = q{Two-argument 'select' used};
 my $expl = [207];
@@ -26,15 +26,15 @@ sub applies_to {
 }
 
 sub violates {
-    my ($self, $elem, $doc) = @_;
-    return if !($elem eq 'open');
+    my ( $self, $elem, $doc ) = @_;
+    return if !( $elem eq 'open' );
     return if is_method_call($elem);
     return if is_hash_key($elem);
-    
-    if( scalar parse_arg_list($elem) == 2 ) {
-	return Perl::Critic::Violation->new($desc, $expl, $elem->location() );
+
+    if ( scalar parse_arg_list($elem) == 2 ) {
+        return Perl::Critic::Violation->new( $desc, $expl, $elem->location() );
     }
-    return; #ok!
+    return;    #ok!
 }
 
 1;

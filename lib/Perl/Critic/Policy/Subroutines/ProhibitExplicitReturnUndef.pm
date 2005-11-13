@@ -19,7 +19,7 @@ $VERSION = eval $VERSION;    ## no critic
 #---------------------------------------------------------------------------
 
 my $desc = q{'return' statement with explicit 'undef'};
-my $expl = [ 199 ];
+my $expl = [199];
 
 #---------------------------------------------------------------------------
 
@@ -30,7 +30,7 @@ sub applies_to { return 'PPI::Token::Word' }
 
 sub violates {
     my ( $self, $elem, $doc ) = @_;
-    return if !($elem eq 'return');  # PPI v1.103 doesn't support "ne"
+    return if !( $elem eq 'return' );    # PPI v1.103 doesn't support "ne"
     return if is_hash_key($elem);
 
     my $sib = $elem->snext_sibling() || return;
