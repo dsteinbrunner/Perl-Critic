@@ -160,16 +160,13 @@ is( pcritique($policy, \$code), 0, $policy);
 
 #----------------------------------------------------------------
 
-TODO:
-{
-local $TODO = 'we are not yet detecting ternaries';
+# return in ternary is not recognized or recommended
 $code = <<'END_PERL';
 sub foo { 1 ? return : 2 ? return : return; }
 END_PERL
 
 $policy = 'Subroutines::RequireFinalReturn';
-is( pcritique($policy, \$code), 0, $policy);
-}
+is( pcritique($policy, \$code), 1, $policy);
 
 #----------------------------------------------------------------
 
