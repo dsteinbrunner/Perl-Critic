@@ -7,8 +7,9 @@
 
 use strict;
 use warnings;
-use Test::More tests => 51;
+use Test::More tests => 48;
 use List::MoreUtils qw(all any none);
+use English qw(-no_match_vars);
 use Perl::Critic::Utils;
 use Perl::Critic::Config (-test => 1);
 use Perl::Critic;
@@ -266,25 +267,15 @@ ok( @{[any {/builtinfunc/imx} @pol_names]}, 'pattern match' );
 #--------------------------------------------------------------
 
 {
-    #Trap warnings here.
-    my $caught_warning = q{};
-    local $SIG{__WARN__} = sub { $caught_warning = shift };
-
-    my $config = Perl::Critic::Config->new();
-
-    my $returned = $config->add_policy( -policy => 'Variables::ProhibitLocalVars');
-    ok( defined $returned && $returned->isa('Perl::Critic::Config') );
-    ok( ! $caught_warning );
-
-    $returned = $config->add_policy( -policy => 'Bogus::Policy');
-    ok( !defined $returned );
-    ok( $caught_warning );
+    #Trap death
+    eval { $config->add_policy( -policy => 'Bogus::Policy') };
+    ok( $EVAL_ERROR, 'Bogus policy is fatal' );
 }
 
 #--------------------------------------------------------------
 
 {
-    #Trap death here.
+    #Trap warning here.
     my $caught_warning = q{};
     local $SIG{__WARN__} = sub { $caught_warning = shift };
 

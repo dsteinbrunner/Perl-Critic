@@ -10,12 +10,13 @@ package Perl::Critic::Config;
 
 use strict;
 use warnings;
-use Carp qw(carp croak);
-use Config::Tiny;
+use Carp qw(carp confess);
+use Config::Tiny qw();
 use English qw(-no_match_vars);
-use File::Spec;
-use File::Spec::Unix;
+use File::Spec qw();
+use File::Spec::Unix qw();
 use List::MoreUtils qw(any none);
+use Scalar::Util qw(blessed);
 use Perl::Critic::Utils;
 
 our $VERSION = 0.20;
@@ -41,7 +42,7 @@ sub import {
     };
 
     if ( $EVAL_ERROR ) {
-        croak qq{Can't load Policies from namespace '$NAMESPACE': $EVAL_ERROR};
+        confess qq{Can't load Policies from namespace '$NAMESPACE': $EVAL_ERROR};
     }
     elsif ( ! @SITE_POLICIES ) {
         carp qq{No Policies found in namespace '$NAMESPACE'};
@@ -79,61 +80,66 @@ sub new {
     $self->{_policies}  = [];
 
     # Set defaults
-    my $profile_path = $args{-profile};
-    my $min_severity = $args{-severity}  || $SEVERITY_HIGHEST;
-    my $excludes_ref = $args{-exclude}   || [];  #empty array
-    my $includes_ref = $args{-include}   || [];  #empty array
+    my $profile_path    = $args{-profile};
+    my $min_severity    = $args{-severity}  || $SEVERITY_HIGHEST;
+    my $excludes_ref    = $args{-exclude}   || [];  #empty array
+    my $includes_ref    = $args{-include}   || [];  #empty array
+    my $wanted_themes   = $args{-theme}     || [];  #empty array
+    my $unwanted_themes = $args{-notheme}   || [];  #empty array
 
 
     # Allow null config.  This is useful for testing
     return $self if defined $profile_path && $profile_path eq 'NONE';
 
     # Load user's profile.
-    my $profile_ref = _load_profile( $profile_path ) || {};
+    my $profile = _load_profile( $profile_path ) || {};
 
     # Smell-test the user's profile.
-    _screen_user_profile( $profile_ref, $NAMESPACE );
+    _screen_user_profile( $profile, $NAMESPACE );
 
     # Apply logic to decide if Policy should be loaded
-    for my $policy_long ( @SITE_POLICIES ) {
+    for my $policy_long_name ( @SITE_POLICIES ) {
 
-        my $policy_short = _short_name($policy_long, $NAMESPACE);
-        my $params = $profile_ref->{$policy_long} || $profile_ref->{$policy_short} || {};
+        # First, create an instance of the policy w/ user's parameters
+        my $params = _get_policy_params_from_profile( $policy_long_name, $profile );
+        my $policy = _create_policy( $policy_long_name, $params );
 
-        #Start by assuming the policy should be loaded
+        # Start by assuming the policy should be loaded
         my $load_me = $TRUE;
 
-        #Don't load policy if it does not comply with the current API
-        if ( !$policy_long->can('default_severity') || !$policy_long->can('applies_to') ) {
-            carp "Policy $policy_short does not comply with the current API, skipping";
-            $load_me = $FALSE;
-            next; # don't perform any other tests.  This one trumps the rest
-        }
-
-        #Don't load policy if it is negated in the profile
-        if ( exists $profile_ref->{"-$policy_short"} || exists $profile_ref->{"-$policy_long"} ) {
+        # Don't load policy if it is negated in the profile
+        if ( _policy_is_disabled( $policy_long_name, $profile ) ){
             $load_me = $FALSE;
         }
 
-        #Don't load policy if it is below the severity threshold
-        my $severity = $params->{severity} || $policy_long->default_severity;
-        if ( $severity < $min_severity ) {
+        # Don't load policy if it is below the severity threshold
+        if ( $policy->get_severity() < $min_severity ) {
             $load_me = $FALSE;
         }
 
-        #Do load if policy matches one of the inclusions patterns
-        if (any { $policy_long =~ m{ $_ }imx } @{ $includes_ref } ) {
+        # Load policy if it matches a theme
+        if ( _theme_match( $policy->get_theme(), $wanted_themes ) ){
+            #$load_me = $FALSE;
+        }
+
+        # Don't load policy if it matches a no_theme
+        if ( _theme_match( $policy->get_theme(), $unwanted_themes ) ){
+            #$load_me = $FALSE;
+        }
+
+        # Do load if policy matches one of the inclusions patterns
+        if (any { $policy_long_name =~ m{ $_ }imx } @{ $includes_ref } ) {
             $load_me = $TRUE;
         }
 
-        #But don't load if policy matches any of the exclusion patterns
-        if (any  { $policy_long =~ m{ $_ }imx } @{ $excludes_ref } ) {
+        # But don't load if policy matches any of the exclusion patterns
+        if (any  { $policy_long_name =~ m{ $_ }imx } @{ $excludes_ref } ) {
             $load_me = $FALSE;
         }
 
         #Now load (or not)
         if( $load_me ){
-            $self->add_policy( -policy => $policy_long, -config => $params );
+            $self->add_policy( -policy => $policy );
         }
     }
 
@@ -141,34 +147,78 @@ sub new {
     return $self;
 }
 
+sub _create_policy {
+    my ($policy_long_name, $params) = @_;
+
+    # Pull base attributes from user config
+    my $user_severity  = delete $params->{severity};
+    my $user_set_theme = delete $params->{set_theme};
+    my $user_add_theme = delete $params->{add_theme};
+
+    # Construct policy from remaining configs
+    my $policy = $policy_long_name->new( %{ $params } );
+
+    # Set base attributes
+    if ( $user_severity ) {
+        $policy->set_severity( $user_severity );
+    }
+
+    if ( $user_set_theme ) {
+        $policy->set_theme( [ split m/\s+/mx, $user_set_theme ] );
+    }
+
+    if ( $user_add_theme ) {
+        $policy->add_theme( [ split m/\s+/mx, $user_add_theme ] );
+    }
+
+    # Return constructed object
+    return $policy;
+}
+
+sub _get_policy_params_from_profile {
+    my ($policy_long_name, $profile) = @_;
+    my $policy_short_name = _short_name($policy_long_name, $NAMESPACE);
+    return $profile->{$policy_long_name} ||  $profile->{$policy_short_name} || {};
+}
+
+sub _policy_is_disabled {
+    my ($policy_long_name, $profile) = @_;
+    my $policy_short_name = _short_name($policy_long_name, $NAMESPACE);
+    return exists $profile->{"-$policy_short_name"} ||
+        exists $profile->{"-$policy_long_name"};
+}
+
+sub _theme_match {
+    my ($theme_ref1, $theme_ref2) = @_;
+    my $lc_theme_ref1 = [ map{ lc } @{ $theme_ref1 } ];
+    my $lc_theme_ref2 = [ map{ lc } @{ $theme_ref2 } ];
+    return _intersection($lc_theme_ref1, $lc_theme_ref2);
+}
+
+sub _intersection {
+    my ($array_ref1, $array_ref2) = @_;
+    return;
+}
+
 #------------------------------------------------------------------------
 
 sub add_policy {
 
     my ( $self, %args ) = @_;
-    my $policy      = $args{-policy} || return;
-    my $config_ref  = $args{-config} || {};
-    my $severity    = $config_ref->{severity};
-    my $module_name = _long_name($policy, $NAMESPACE);
+    my $policy  = $args{-policy} || return;
+    my $config  = $args{-config} || {};
 
-    eval {
-        my $policy_obj  = $module_name->new( %{ $config_ref } );
+    if( not blessed($policy) ) {
 
-        if( defined $severity ) {
-            my $normal_severity = _normalize_severity( $severity );
-            $policy_obj->set_severity( $normal_severity );
+        my $policy_long_name = _long_name($policy, $NAMESPACE);
+        eval { $policy  = _create_policy($policy_long_name, $config) };
+
+        if ($EVAL_ERROR) {
+            confess qq{Failed to create policy "$policy": $EVAL_ERROR};
         }
-
-        push @{ $self->{_policies} }, $policy_obj;
-    };
-
-
-    if ($EVAL_ERROR) {
-        carp qq{Failed to create policy '$policy': $EVAL_ERROR};
-        return;  #Not fatal!
     }
 
-
+    push @{ $self->{_policies} }, $policy;
     return $self;
 }
 
@@ -196,7 +246,7 @@ sub _load_profile {
     );
 
     my $handler_ref = $handlers{$ref_type};
-    croak qq{Can't create Config from $ref_type} if ! $handler_ref;
+    confess qq{Can't create Config from $ref_type} if ! $handler_ref;
     return $handler_ref->($profile);
 }
 
@@ -205,7 +255,7 @@ sub _load_profile {
 sub _load_from_file {
     my $file = shift;
     $file ||= find_profile_path() || return {};
-    croak qq{'$file' is not a file} if ! -f $file;
+    confess qq{'$file' is not a file} if ! -f $file;
     return Config::Tiny->read($file);
 }
 

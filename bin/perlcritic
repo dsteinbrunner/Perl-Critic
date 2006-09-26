@@ -78,14 +78,10 @@ sub get_options {
 #-----------------------------------------------------------------------------
 
 sub _parse_command_line {
-
     my %opts      = ();
-    my @opt_specs = qw(severity=i profile=s noprofile verbose=s force list
-        help|? man Version Safari quiet top:i 5 4 3 2 1 include=s@ exclude=s@);
-
+    my @opt_specs = _get_option_specification();
     Getopt::Long::Configure('no_ignore_case');
     GetOptions( \%opts, @opt_specs ) || pod2usage();           #Exits
-
     return %opts;
 }
 
@@ -97,7 +93,6 @@ sub _dispatch_special_requests {
     if ( $opts{man}     ) { pod2usage( -verbose => 2 )      }  #Exits
     if ( $opts{Version} ) { print "$VERSION\n"; exit 0;     }  #Exits
     if ( $opts{list}    ) { print policy_listing(); exit 0; }  #Exits
-
     return 1;
 }
 
@@ -109,22 +104,22 @@ sub _validate_options {
 
 
     if ( $opts{noprofile} && $opts{profile} ) {
-        $msg .= qq{Warning: Can't use -noprofile with -profile option.\n};
+        $msg .= qq{Warning: Cannot use -noprofile with -profile option.\n};
     }
 
     if ( $opts{verbose} && $opts{verbose} !~ m{(?: \d+ | %[mflcedrps] )}mx){
-        $msg .= qq{Warning: -verbose arg '$opts{verbose}' looks odd.  };
-        $msg .= qq{Perhaps you meant to say '-verbose 3 $opts{verbose}'\n};
+        $msg .= qq{Warning: -verbose arg "$opts{verbose}" looks odd.  };
+        $msg .= qq{Perhaps you meant to say "-verbose 3 $opts{verbose}"\n};
     }
 
     if ( exists $opts{top} && $opts{top} < 0 ) {
-        $msg .= qq{Warning: -top argument '$opts{top}' is negative.  };
-        $msg .= qq{Perhaps you meant to say '$opts{top} -top'.\n};
+        $msg .= qq{Warning: -top argument "$opts{top}" is negative.  };
+        $msg .= qq{Perhaps you meant to say "$opts{top} -top".\n};
     }
 
     if (exists $opts{severity} && ($opts{severity}<1 || $opts{severity}>5)){
-        $msg .= qq{Warning: -severity arg '$opts{severity}' out of range.  };
-        $msg .= qq{Severities range from '1' (lowest) to '5' (highest).\n};
+        $msg .= qq{Warning: -severity arg "$opts{severity}" out of range.  };
+        $msg .= qq{Severities range from ""'(lowest) to "5" (highest).\n};
     }
 
 
@@ -227,6 +222,31 @@ sub render_report {
 
     print @violations;
     return scalar @violations;
+}
+
+#-----------------------------------------------------------------------------
+
+sub _get_option_specification {
+
+    return qw(
+        5 4 3 2 1
+        Safari
+        Version
+        exclude=s@
+        force
+        help|?
+        include=s@
+        list
+        man
+        noprofile
+        notheme=s@
+        profile=s
+        quiet
+        severity=i
+        theme=s@
+        top:i
+        verbose=s
+    );
 }
 
 #-----------------------------------------------------------------------------
@@ -376,18 +396,18 @@ are also case-sensitive.
 
 =over 8
 
-=item -profile FILE
+=item C<-profile FILE>
 
 Directs C<perlcritic> to use a profile named by FILE rather than looking
 for the default F<.perlcriticrc> file in the current directory or your
 home directory.  See L<"CONFIGURATION"> for more information.
 
-=item -noprofile
+=item C<-noprofile>
 
 Directs C<perlcritic> not to load any configuration file, thus reverting
 to the default configuration for all Policies.
 
-=item -severity N
+=item C<-severity N>
 
 Directs C<perlcritic> to only report violations of Policies with a
 severity greater than C<N>.  Severity values are integers ranging from
@@ -397,7 +417,7 @@ violations.  Users can redefine the C<severity> for any Policy in
 their F<.perlcriticrc> file.  See L<"CONFIGURATION"> for more
 information.
 
-=item -5 | -4 | -3 | -2 | -1
+=item C<-5 | -4 | -3 | -2 | -1>
 
 These are shortcuts for setting the C<-severity> option.  For example,
 C<"-4"> is equivalent to C<"-severity 4">.  If multiple shortcuts are
@@ -407,19 +427,23 @@ Be careful not to put one of the severity shortcut options immediately
 after the C<-top> flag or C<perlcritic> will interpret it as the
 number of violations to report.
 
-=item -top [ N ]
+=item C<-theme THEME>
 
-Directs C<perlcritic> to report only the top C<N> Policy violations in
-each file, ranked by their severity.  If C<N> is not specified, it
-defaults to 20.  If the C<-severity> option (or one of the shortcuts)
-is not explicitly given, the C<-top> option implies that the minimum
-severity level is 1. Users can redefine the severity for any Policy in
-their F<.perlcriticrc> file.  See L<"CONFIGURATION"> for more
-information.  NOTE: Be careful not to put one of the severity shortcut
-options immediately after the C<-top> flag or C<perlcritic> will
-interpret it as the number of violations to report.
+Directs C<perlcritic> to report only violations of Policies that are
+part of C<THEME>.  The C<THEME> argument is case-insensitive, and this
+option can be repeated multiple times.  Themes are arbitrary names for
+logical groups of policies.  See the L<"POLICY THEMES"> section for
+more information.
 
-=item -include PATTERN
+=item C<-notheme THEME>
+
+Directs C<perlcritic> to not report violations of Policies that are
+part of C<THEME>.  The C<THEME> argument is case-insensitive, and this
+option can be repeated multiple times.  Themes are arbitrary names for
+logical groups of policies.  See the L<"POLICY THEMES"> section for
+more information.
+
+=item C<-include PATTERN>
 
 Directs C<perlcritic> to report additional violations of all Policy
 modules that match the regex C</PATTERN/imx>.  Use this option to
@@ -436,7 +460,7 @@ and you can use it in conjunction with the C<-exclude> option.  Note
 that C<-exclude> takes precedence over C<-include> when a Policy
 matches both patterns.
 
-=item -exclude PATTERN
+=item C<-exclude PATTERN>
 
 Directs C<perlcritic> to not report violations of any Policy modules
 that match the regex C</PATTERN/imx>.  Use this option to temporarily
@@ -452,13 +476,25 @@ options and you can use it in conjunction with the C<-include> option.
 Note that C<-exclude> takes precedence over C<-include> when a Policy
 matches both patterns.
 
-=item -force
+=item C<-top [ N ]>
+
+Directs C<perlcritic> to report only the top C<N> Policy violations in
+each file, ranked by their severity.  If C<N> is not specified, it
+defaults to 20.  If the C<-severity> option (or one of the shortcuts)
+is not explicitly given, the C<-top> option implies that the minimum
+severity level is 1. Users can redefine the severity for any Policy in
+their F<.perlcriticrc> file.  See L<"CONFIGURATION"> for more
+information.  NOTE: Be careful not to put one of the severity shortcut
+options immediately after the C<-top> flag or C<perlcritic> will
+interpret it as the number of violations to report.
+
+=item C<-force>
 
 Directs C<perlcritic> to ignore the magical C<"## no critic">
 pseudo-pragmas in the source code. See L<"BENDING THE RULES"> for more
 information.
 
-=item -verbose N | FORMAT
+=item C<-verbose N | FORMAT>
 
 Sets the verbosity level or format for reporting violations.  If given
 a number (C<N>), C<perlcritic> reports violations using one of the
@@ -469,7 +505,7 @@ depending on whether multiple files were given as arguments to
 C<perlcritic>.
 
   Verbosity     Format Specification
-  -----------   --------------------------------------------------------------------
+  -----------   ---------------------------------------------------------------
    1            "%f:%l:%c:%m\n",
    2            "%f: (%l:%c) %m\n",
    3            "%m at line %l, column %c.  %e.  (Severity: %s)\n",
@@ -487,7 +523,7 @@ explanation of the formatting capabilities.  Valid escape characters
 are:
 
   Escape    Meaning
-  -------   ------------------------------------------------------------------------
+  -------   ------------------------------------------------------------------
   %m        Brief description of the violation
   %f        Name of the file where the violation occurred.
   %l        Line number where the violation occurred
@@ -503,7 +539,7 @@ The purpose of these formats is to provide some compatibility with
 editors that have an interface for parsing certain kinds of input. See
 L<"EDITOR INTEGRATION"> for more information about that.
 
-=item -list
+=item C<-list>
 
 Displays a listing of all the L<Perl::Critic::Policy> modules that are
 found on this machine.  For each Policy, the default severity and
@@ -514,29 +550,29 @@ severity.  This can be useful for discovering the Policy modules that
 you have available and tuning the severity levels in your
 F<.perlcriticrc> file.
 
-=item -Safari
+=item C<-Safari>
 
 Report "Perl Best Practice" citations as section numbers from
 L<http://safari.oreilly.com> instead of page numbers from the actual
 book.  NOTE: This feature is not implemented yet.
 
-=item -quiet
+=item C<-quiet>
 
 Suppress the "source OK" message if no violations are found.
 
-=item -help
+=item C<-help>
 
-=item -?
+=item C<-?>
 
 Displays a brief summary of options and exits.
 
-=item -man
+=item C<-man>
 
 Displays the complete C<perlcritic> manual and exits.
 
-=item -Version
+=item C<-Version>
 
-=item -V
+=item C<-V>
 
 Displays the version number of C<perlcritic> and exits.
 

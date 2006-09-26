@@ -18,13 +18,20 @@ our $VERSION = 0.20;
 
 #----------------------------------------------------------------------------
 
-sub new              { return bless {}, shift    }
-sub applies_to       { return qw(PPI::Element)   }
-sub violates         { return _abstract_method() }
+sub new              { return bless {}, shift }
+sub applies_to       { return qw(PPI::Element) }
+sub violates         { return confess q{Can't call abstract method} }
 
 sub set_severity     { return $_[0]->{_severity} = $_[1] }
 sub get_severity     { return $_[0]->{_severity} || $_[0]->default_severity() }
 sub default_severity { return $SEVERITY_LOWEST }
+
+sub set_theme        { return $_[0]->{_theme} = $_[1] }
+sub get_theme        { return $_[0]->{_theme} || $_[0]->default_theme() }
+sub add_theme        { return push @{ $_[0]->{_theme} }, @{$_[1]} }
+sub default_theme    { return [ 'pc' ] }
+
+#----------------------------------------------------------------------------
 
 sub violation {
     my ( $self, $desc, $expl, $elem ) = @_;
@@ -34,13 +41,6 @@ sub violation {
     goto &Perl::Critic::Violation::new;
 }
 
-#----------------------------------------------------------------------------
-
-sub _abstract_method {
-    my $method_name = ( caller 1 )[3];
-    confess qq{Can't call abstract method '$method_name'};
-    return; ## no critic (UnreachableCode)
-}
 
 1;
 
@@ -132,6 +132,26 @@ Perl::Critic::Policy objects can call this method to assign a
 different severity to the Policy if they don't agree with the
 C<default_severity>.  See the C<$SEVERITY> constants in
 L<Perl::Critic::Utils> for an enumeration of possible values.
+
+=item C<default_theme()>
+
+Returns a reference to a list of the default themes associated
+with this Policy.
+
+=item C<get_theme()>
+
+Returns a reference to a list of the themes associated
+with this Policy.
+
+=item C<set_theme( \@THEMES )>
+
+Sets the themes associated with this Policy.  Any existing themes are
+overwritten.
+
+=item C<add_theme( \@THEMES )>
+
+Appends additional themes to this Policy.  Any existing themes are
+preserved.
 
 =back
 

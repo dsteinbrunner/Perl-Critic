@@ -8,7 +8,7 @@
 use strict;
 use warnings;
 use PPI::Document;
-use Test::More tests => 797;  # Add 9 for each new policy created
+use Test::More tests => 1137;  # Add 13 for each new policy created
 use English qw(-no_match_vars);
 
 our $VERSION = 0.20;
@@ -54,6 +54,11 @@ can_ok('Perl::Critic::Policy', 'applies_to');
 can_ok('Perl::Critic::Policy', 'default_severity');
 can_ok('Perl::Critic::Policy', 'get_severity');
 can_ok('Perl::Critic::Policy', 'set_severity');
+can_ok('Perl::Critic::Policy', 'default_theme');
+can_ok('Perl::Critic::Policy', 'get_theme');
+can_ok('Perl::Critic::Policy', 'set_theme');
+can_ok('Perl::Critic::Policy', 'add_theme');
+
 
 $obj = Perl::Critic::Policy->new();
 isa_ok($obj, 'Perl::Critic::Policy');
@@ -89,6 +94,10 @@ for my $mod ( Perl::Critic::Config::native_policies() ) {
     can_ok($mod, 'default_severity');
     can_ok($mod, 'get_severity');
     can_ok($mod, 'set_severity');
+    can_ok($mod, 'default_theme');
+    can_ok($mod, 'get_theme');
+    can_ok($mod, 'set_theme');
+    can_ok($mod, 'set_theme');
 
     $obj = $mod->new();
     isa_ok($obj, 'Perl::Critic::Policy');
