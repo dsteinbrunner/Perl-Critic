@@ -220,10 +220,15 @@ sub render_report {
     $fmt =~ s{ \%f }{$file}mxg;  #HACK! Violation objects don't know the file
     Perl::Critic::Violation::set_format( $fmt );
 
-    print @violations;
+    if ( $opts_ref->{-nocolor} ) {
+        print @violations;
+    }
+    else {
+        print _colorize_by_severity(@violations);
+    }
+
     return scalar @violations;
 }
-
 #-----------------------------------------------------------------------------
 
 sub _get_option_specification {
@@ -238,6 +243,7 @@ sub _get_option_specification {
         include=s@
         list
         man
+        nocolor
         noprofile
         notheme=s@
         profile=s
@@ -266,6 +272,41 @@ sub _interpolate {
     return eval "\"$literal\"";  ## no critic 'StringyEval';
 }
 
+#-----------------------------------------------------------------------------
+
+
+
+sub _colorize_by_severity {
+    my (@violations) = @_;
+    return @violations if not _at_tty();
+    return @violations if _this_is_windows();
+    return @violations if not eval { require Term::ANSIColor };
+
+    my %color_of = ( 5 => 'bold red', 4 => 'yellow');
+    return map { _colorize( "$_", $color_of{$_->severity()} ) } @violations;
+
+}
+
+#-----------------------------------------------------------------------------
+
+sub _colorize {
+    my ($string, $color) = @_;
+    return $string if not defined $color;
+    return  Term::ANSIColor::colored( $string, $color );
+}
+
+#-----------------------------------------------------------------------------
+
+sub _this_is_windows {
+    return 1 if $OSNAME =~ m/MSWin32/mx;
+    return 0;
+}
+
+#-----------------------------------------------------------------------------
+
+sub _at_tty {
+    return -t STDOUT; ##no critic ProhibitInteractivityTest
+}
 #-----------------------------------------------------------------------------
 
 
@@ -551,6 +592,13 @@ F<.perlcriticrc> file.
 Report "Perl Best Practice" citations as section numbers from
 L<http://safari.oreilly.com> instead of page numbers from the actual
 book.  NOTE: This feature is not implemented yet.
+
+=item C<-nocolor>
+
+Do not colorize the output.  Otherwise, severity 5 and 4 are colored
+red and yellow, respectively.  Colorization only happens if STDOUT is
+a tty and L<Term::ANSIColor> is installed.  And it only works on
+non-windows environments.
 
 =item C<-quiet>
 
