@@ -210,17 +210,24 @@ sub critique {
 sub render_report {
 
     my ( $file, $opts_ref, @violations ) = @_;
+    my $count = scalar @violations;
 
 
+    # Only report the number of violations, if asked.
+    if( $opts_ref->{-count} ){
+        ref $file || print "$file: ";
+        print "$count\n";
+        return $count;
+    }
+
+    # Hail all-clear unless we should shut up.
     if( !@violations && !$opts_ref->{-quiet} ) {
-        if ( ! ref $file ) {
-            print "$file ";
-        }
+        ref $file || print "$file ";
         print "source OK\n";
         return 0;
     }
 
-
+    # Otherwise, format and print violations
     $file = -f $file ? $file : 'stdin';
     my $default_verbosity = @FILES > 1 ? 4 : 3;  #@FILES is global!
     my $fmt = _get_format( $opts_ref->{-verbose} || $default_verbosity );
@@ -234,7 +241,7 @@ sub render_report {
         print _colorize_by_severity(@violations);
     }
 
-    return scalar @violations;
+    return $count;
 }
 #-----------------------------------------------------------------------------
 
@@ -244,6 +251,7 @@ sub _get_option_specification {
         5 4 3 2 1
         Safari
         Version
+        count
         exclude=s@
         force
         help|?
@@ -594,6 +602,12 @@ then the user-defined severity will be the same as the default
 severity.  This can be useful for discovering the Policy modules that
 you have available and tuning the severity levels in your
 F<.perlcriticrc> file.
+
+=item C<-count>
+
+Display only the number of violations for each file.  Use this feature
+to get a quick handle on where a large pile of code might need the
+most attention.
 
 =item C<-Safari>
 
