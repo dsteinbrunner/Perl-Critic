@@ -740,7 +740,9 @@ Each Policy is defined with one or more "themes".  Themes can be used
 to create arbitrary groups of Policies.  They are intended to provide
 an alternative mechanism for selecting your preferred set of Policies.
 The Policies that ship with Perl::Critic have themes like
-C<"cosmetic"> and C<"bugs"> and C<"security"> and C<"pbp">.
+C<"cosmetic"> and C<"bugs"> and C<"security"> and C<"pbp">.  Say
+C<`perlcritic -list`> to get a listing of all available policies and
+the themes that are associated with each one.
 
 Using the F<.perlcriticrc> file, you can override and/or append to
 the theme of any Policy.  For instance, you could append the
@@ -753,7 +755,7 @@ the code for applicaton "foo"...
   [Variables::ProhibitPackageVars]
   add_theme = app_foo
 
-  #Now say "perlcritic -theme app_foo Foo.pm"
+  #Now say `perlcritic -theme app_foo Foo.pm`
 
 Or you could set the theme to C<"no_testing"> for all the policies that
 you want to exclude when examining test scripts...
@@ -764,7 +766,7 @@ you want to exclude when examining test scripts...
   [Subroutines::ProtectPrivateSubs]
   add_theme = no_testing
 
-  #Now say "perlcritic -notheme no_testing foo.t"
+  #Now say `perlcritic -notheme no_testing foo.t`
 
 You can add multiple themes to a Policy as well...
 
