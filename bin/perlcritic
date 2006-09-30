@@ -62,6 +62,13 @@ sub get_options {
         $opts{top} ||= 20;
     }
 
+    # If -theme is specified, default the severity level to 1, unless an
+    # explicit severity is defined.  This means that a theme includes
+    # all policies, unless the user has asked for a minimum severity
+    if ( exists $opts{theme} ) {
+        $opts{severity} ||= 1;
+    }
+
     #Override profile, if -noprofile is specified
     if ( exists $opts{noprofile} ) {
         $opts{profile} = q{};
@@ -641,6 +648,8 @@ blocks like this:
 
     [Perl::Critic::Policy::Category::PolicyName]
     severity = 1
+    set_theme = foo bar
+    add_theme = baz
     arg1 = value1
     arg2 = value2
 
@@ -656,6 +665,16 @@ Policy.  All Policy modules are defined with a default severity value
 ranging from 1 (least severe) to 5 (most severe).  However, you may
 disagree with the default severity and choose to give it a higher or
 lower severity, based on your own coding philosophy.
+
+C<set_theme> sets the theme for the Policy and overrides it's default
+theme.  The argument is a string of one or more whitespace-delimited
+words.  Themes are case-insensitive.  See L<"POLICY THEMES"> for more
+information.
+
+C<add_theme> appends to the default themes for this Policy.  The
+argument is a string of one or more whitespace-delimited words.
+Themes are case-insensitive.  See L<"POLICY THEMES"> for more
+information.
 
 The remaining key-value pairs are configuration parameters that will
 be passed into the constructor of that Policy.  The constructors for
@@ -714,6 +733,43 @@ A large number of Policy modules are distributed with Perl::Critic.
 They are described briefly in the companion document
 L<Perl::Critic::PolicySummary> and in more detail in the individual
 modules themselves.
+
+=head1 POLICY THEMES
+
+Each Policy is defined with one or more "themes".  Themes can be used
+to create arbitrary groups of Policies.  They are intended to provide
+an alternative mechanism for selecting your preferred set of Policies.
+The Policies that ship with Perl::Critic have themes like
+C<"cosmetic"> and C<"bugs"> and C<"security"> and C<"pbp">.
+
+Using the F<.perlcriticrc> file, you can override and/or append to
+the theme of any Policy.  For instance, you could append the
+C<"app_foo"> theme to all the Policies that you've decided to use on
+the code for applicaton "foo"...
+
+  [CodeLayout::RequireTrailingCommas]
+  add_theme = app_foo
+
+  [Variables::ProhibitPackageVars]
+  add_theme = app_foo
+
+  #Now say "perlcritic -theme app_foo Foo.pm"
+
+Or you could set the theme to C<"no_testing"> for all the policies that
+you want to exclude when examining test scripts...
+
+  [TestingAndDebugging::RequireUseWarnings]
+  add_theme = no_testing
+
+  [Subroutines::ProtectPrivateSubs]
+  add_theme = no_testing
+
+  #Now say "perlcritic -notheme no_testing foo.t"
+
+You can add multiple themes to a Policy as well...
+
+  [ValuesAndExpressions::RequireFinalReturn]
+  add_theme = damian larry abigail
 
 =head1 BENDING THE RULES
 
