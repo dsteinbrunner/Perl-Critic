@@ -305,7 +305,7 @@ sub _this_is_windows {
 #-----------------------------------------------------------------------------
 
 sub _at_tty {
-    return -t STDOUT; ##no critic ProhibitInteractivityTest
+    return -t STDOUT; ##no critic 'InteractiveTest';
 }
 #-----------------------------------------------------------------------------
 
