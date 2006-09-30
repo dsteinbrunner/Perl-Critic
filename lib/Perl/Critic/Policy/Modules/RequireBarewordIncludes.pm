@@ -21,6 +21,7 @@ my $expl = q{Use a bareword instead};
 
 #----------------------------------------------------------------------------
 
+sub default_theme { return qw(portability) }
 sub default_severity   { return $SEVERITY_HIGHEST }
 sub applies_to { return 'PPI::Statement::Include' }
 

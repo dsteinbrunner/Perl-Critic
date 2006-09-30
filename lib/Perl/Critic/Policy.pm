@@ -70,6 +70,7 @@ sub get_theme {
 
 sub add_theme {
     my ($self, @additional_themes) = @_;
+    #By hashifying the themes, we squish duplicates
     my %merged = hashify( $self->get_theme(), @additional_themes);
     $self->{_theme} = [keys %merged];
     return $self;
