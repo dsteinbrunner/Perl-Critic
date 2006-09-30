@@ -272,7 +272,6 @@ sub _interpolate {
 sub policy_listing {
 
     my $namespace = shift;
-    my @listing = ();
 
     # Again, this require/import hack is just to delay loading of
     # Perl::Critic until we absolutely have to.
@@ -280,30 +279,27 @@ sub policy_listing {
     require Perl::Critic::Config;
     Perl::Critic::Config->import( -namespace => $namespace );
     my $config = Perl::Critic::Config->new(-severity => 1);
-    my @policies = sort {ref $a cmp ref $b}  @{ $config->policies() };
+    my @policies = _sort_objects_by_type( @{$config->policies()} );
 
-    # Append header
-    my $format = '%-60.60s %1s %1s';
-    my $header = sprintf $format, qw(PolicyName D U);
-    my $h_rule = q{-} x length $header;
-    push @listing, "$header\n", "$h_rule\n";
 
-    # Append body
+    my $format = '%1d %1d %s [%s]';
+    my @listing = ();
+
     for my $policy ( @policies ) {
         my $name = ref $policy;
         $name =~ s{\A Perl::Critic::Policy::}{}mxg;
         my $def_sev  = $policy->default_severity();
         my $user_sev = $policy->get_severity();
-        my $line = sprintf $format, $name, $def_sev, $user_sev;
+        my $themes = join $SPACE, $policy->get_theme();
+        my $line = sprintf $format, $def_sev, $user_sev, $name, $themes;
         push @listing, "$line\n";
     }
-
-    # Append footer
-    push @listing, "$h_rule\n";
-    push @listing, "D = Default severity\n";
-    push @listing, "U = User-defined severity\n";
-
     return @listing;
+}
+
+sub _sort_objects_by_type {
+    my (@objects) = @_;
+    return sort {ref $a cmp ref $b}  @objects;
 }
 
 1;
