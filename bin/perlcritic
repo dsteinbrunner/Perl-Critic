@@ -359,10 +359,11 @@ C<perlcritic> - Command-line interface to critique Perl source
 
 =head1 SYNOPSIS
 
-  perlcritic [ -12345 | -severity number ] [ -noprofile | -profile file ]
-             [ -top [ number ]] [ -include pattern ] [ -exclude pattern ]
-             [ -verbose number | format ] [ -force ] [ -Version ]
-             [ -list ] [ -help ] [ -man ] [ -quiet ] [ FILE | DIRECTORY ]
+  perlcritic [-12345 | -severity number] [-noprofile | -profile file]
+             [-top [ number ]] [-include pattern] [-exclude pattern]
+             [-theme string] [-notheme string] [-verbose number | format]
+             [-force] [-list] [-nocolor] [-Version] [-help]
+             [-man] [-quiet] [FILE | DIRECTORY | STDIN]
 
 =head1 DESCRIPTION
 
