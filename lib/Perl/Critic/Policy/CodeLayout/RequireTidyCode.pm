@@ -24,6 +24,7 @@ my $expl = [ 33 ];
 #----------------------------------------------------------------------------
 
 sub default_severity { return $SEVERITY_LOWEST }
+sub default_theme { return qw(cosmetic) };
 sub applies_to { return 'PPI::Document'  }
 
 #---------------------------------------------------------------------------

@@ -84,8 +84,8 @@ sub new {
     my $min_severity    = $args{-severity}  || $SEVERITY_HIGHEST;
     my $excludes_ref    = $args{-exclude}   || [];  #empty array
     my $includes_ref    = $args{-include}   || [];  #empty array
-    my $wanted_themes   = $args{-theme}     || [];  #empty array
-    my $unwanted_themes = $args{-notheme}   || [];  #empty array
+    my $wanted_themes   = $args{-theme}     || undef;
+    my $unwanted_themes = $args{-notheme}   || undef;
 
 
     # Allow null config.  This is useful for testing
@@ -117,14 +117,15 @@ sub new {
             $load_me = $FALSE;
         }
 
-        # Load policy if it matches a theme
-        if ( _theme_match( $policy->get_theme(), $wanted_themes ) ){
-            #$load_me = $FALSE;
+        # Don't load policy if it doesn't match a requested theme.
+        # If no themes were requested, then this policy will be loaded.
+        if ( $wanted_themes && ! _theme_match( [$policy->get_theme()], $wanted_themes ) ){
+            $load_me = $FALSE;
         }
 
-        # Don't load policy if it matches a no_theme
-        if ( _theme_match( $policy->get_theme(), $unwanted_themes ) ){
-            #$load_me = $FALSE;
+        # Don't load policy if it matches an unwanted
+        if ( _theme_match( [$policy->get_theme()], $unwanted_themes ) ){
+            $load_me = $FALSE;
         }
 
         # Do load if policy matches one of the inclusions patterns
@@ -164,11 +165,13 @@ sub _create_policy {
     }
 
     if ( $user_set_theme ) {
-        $policy->set_theme( [ split m/\s+/mx, $user_set_theme ] );
+        my @user_set_theme_list = _parse_theme_string( $user_set_theme );
+        $policy->set_theme( @user_set_theme_list );
     }
 
     if ( $user_add_theme ) {
-        $policy->add_theme( [ split m/\s+/mx, $user_add_theme ] );
+        my @user_add_theme_list = _parse_theme_string( $user_add_theme );
+        $policy->add_theme( @user_add_theme_list );
     }
 
     # Return constructed object
@@ -195,9 +198,16 @@ sub _theme_match {
     return _intersection($lc_theme_ref1, $lc_theme_ref2);
 }
 
+sub _parse_theme_string {
+    my ($theme_string) = @_;
+    return map { lc $_ } split m{ /s+ }mx, $theme_string;
+}
+
 sub _intersection {
-    my ($array_ref1, $array_ref2) = @_;
-    return;
+    my ($arrayref_1, $arrayref_2) = @_;
+    my %hashed = (); #Need a better name for this variable.
+    @hashed{ @{$arrayref_1} } = @{$arrayref_1}; #e.g. (foo) ---> (foo => foo);
+    return @hashed{ @{$arrayref_2} }; #Slicing out matching values
 }
 
 #------------------------------------------------------------------------

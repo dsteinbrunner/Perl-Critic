@@ -18,18 +18,74 @@ our $VERSION = 0.20;
 
 #----------------------------------------------------------------------------
 
-sub new              { return bless {}, shift }
-sub applies_to       { return qw(PPI::Element) }
-sub violates         { return confess q{Can't call abstract method} }
+sub new {
+    my $class = shift;
+    return bless {}, $class;
+}
 
-sub set_severity     { return $_[0]->{_severity} = $_[1] }
-sub get_severity     { return $_[0]->{_severity} || $_[0]->default_severity() }
-sub default_severity { return $SEVERITY_LOWEST }
+#----------------------------------------------------------------------------
 
-sub set_theme        { return $_[0]->{_theme} = $_[1] }
-sub get_theme        { return $_[0]->{_theme} || $_[0]->default_theme() }
-sub add_theme        { return push @{ $_[0]->{_theme} }, @{$_[1]} }
-sub default_theme    { return [ 'pc' ] }
+sub applies_to {
+    return qw(PPI::Element);
+}
+
+#----------------------------------------------------------------------------
+
+sub set_severity {
+    my ($self, $severity) = @_;
+    $self->{_severity} = $severity;
+    return $self;
+}
+
+#----------------------------------------------------------------------------
+
+sub get_severity {
+    my ($self) = @_;
+    return $self->{_severity} || $self->default_severity();
+}
+
+#----------------------------------------------------------------------------
+
+sub default_severity {
+    return $SEVERITY_LOWEST;
+}
+
+#----------------------------------------------------------------------------
+
+sub set_theme {
+    my ($self, @themes) = @_;
+    $self->{_theme} = \@themes;
+    return $self;
+}
+
+#----------------------------------------------------------------------------
+
+sub get_theme {
+    my ($self) = @_;
+    return $self->{_theme} ? sort @{ $self->{_theme} }
+                           : $self->default_theme();
+}
+
+#----------------------------------------------------------------------------
+
+sub add_theme {
+    my ($self, @additional_themes) = @_;
+    my %merged = hashify( $self->get_theme(), @additional_themes);
+    $self->{_theme} = [keys %merged];
+    return $self;
+}
+
+#----------------------------------------------------------------------------
+
+sub default_theme {
+    return ();
+}
+
+#----------------------------------------------------------------------------
+
+sub violates {
+    return confess q{Can't call abstract method};
+}
 
 #----------------------------------------------------------------------------
 

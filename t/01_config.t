@@ -7,7 +7,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 48;
+use Test::More tests => 50;
 use List::MoreUtils qw(all any none);
 use English qw(-no_match_vars);
 use Perl::Critic::Utils;
@@ -187,6 +187,7 @@ my %profile = (
 $pols = Perl::Critic->new( -severity => 1, -profile => \%profile, -include => \@in )->policies();
 is(scalar @{$pols}, $total_policies, 'pattern matching');
 
+#--------------------------------------------------------------
 
 # For this test, we'll load the default config, but deactivate some of
 # the policies using the -exclude option.  Then we make sure that none
@@ -208,6 +209,29 @@ my @pol_names = map {ref $_} @{$pols};
 is_deeply( [grep {/block/imx} @pol_names], [], 'pattern match' );
 # This odd construct arises because "any" can't be used with parens without syntax error(!)
 ok( @{[any {/builtinfunc/imx} @pol_names]}, 'pattern match' );
+
+#--------------------------------------------------------------
+
+# For this test, we'll load the default config, but screen out
+# the policies that don't match the requested theme.  Then we
+# make sure that all remaining polices have the right theme.
+
+{
+    my @theme = qw(cosmetic);
+    $pols = Perl::Critic->new( -severity => 1, -theme => \@theme )->policies();
+    my $ok = all { _intersection( [$_->get_theme()], \@theme) }  @{$pols};
+    ok($ok, 'themes matching');
+}
+
+# This test is the same as above, but tests that none of the
+# policies matching -notheme are loaded.
+
+{
+    my @no_theme = qw(cosmetic);
+    $pols = Perl::Critic->new( -severity => 1, -notheme => \@no_theme )->policies();
+    my $ok = none { _intersection( [$_->get_theme()], \@no_theme) }  @{$pols};
+    ok($ok, 'themes anti-matching');
+}
 
 #--------------------------------------------------------------
 #Testing other private subs
@@ -283,3 +307,10 @@ ok( @{[any {/builtinfunc/imx} @pol_names]}, 'pattern match' );
     ok( $caught_warning );
 }
 
+
+sub _intersection {
+    my ($arrayref_1, $arrayref_2) = @_;
+    my %hashed = (); #Need a better name for this variable.
+    @hashed{ @{$arrayref_1} } = @{$arrayref_1}; #e.g. (foo) ---> (foo => foo);
+    return @hashed{ @{$arrayref_2} };
+}

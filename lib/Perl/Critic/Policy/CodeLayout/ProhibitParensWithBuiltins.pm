@@ -66,6 +66,7 @@ my %named_unary_ops = hashify( @named_unary_ops );
 #----------------------------------------------------------------------------
 
 sub default_severity { return $SEVERITY_LOWEST }
+sub default_theme { return qw(cosmetic) };
 sub applies_to { return 'PPI::Token::Word' }
 
 #----------------------------------------------------------------------------

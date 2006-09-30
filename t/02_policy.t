@@ -43,19 +43,19 @@ is( $p->default_severity(), 1 ); #Still the same
 is( $p->get_severity(), 3 );     #Should have new value
 
 #Test default theme...
-is_deeply($p->default_theme(), ['pc'], 'default_theme');
-is_deeply($p->get_theme(), ['pc'], 'get_theme');
+is_deeply( [$p->default_theme()], [], 'default_theme');
+is_deeply( [$p->get_theme()], [], 'get_theme');
 
 #Change theme
-$p->set_theme( ['foo'] );
+$p->set_theme( qw(c b a) ); #unsorted
 
 #Test theme again...
-is_deeply( $p->default_theme(), ['pc'] );   #Still the same
-is_deeply( $p->get_theme(), ['foo'] );  #Should have new value
+is_deeply( [$p->default_theme()], [] ); #Still the same
+is_deeply( [$p->get_theme()], [qw(a b c)] );  #Should have new value (sorted)
 
 #Append theme
-$p->add_theme( [qw(bar baz) ] );
+$p->add_theme( qw(f e d) ); #unsorted
 
 #Test theme again...
-is_deeply( $p->default_theme(), ['pc'] );               #Still the same
-is_deeply( $p->get_theme(), [ qw(foo bar baz) ] );  #Should have new value
+is_deeply( [$p->default_theme()], [] ); #Still the same
+is_deeply( [$p->get_theme()], [ qw(a b c d e f) ] );  #Should have new value (sorted)
