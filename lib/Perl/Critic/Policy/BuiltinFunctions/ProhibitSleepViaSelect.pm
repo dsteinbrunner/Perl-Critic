@@ -23,7 +23,8 @@ my $expl = [168];
 #------------------------------------------------------------------------
 
 sub default_severity { return $SEVERITY_HIGHEST  }
-sub applies_to { return 'PPI::Token::Word' }
+sub default_theme    { return qw( pbp danger )   }
+sub applies_to       { return 'PPI::Token::Word' }
 
 #------------------------------------------------------------------------
 

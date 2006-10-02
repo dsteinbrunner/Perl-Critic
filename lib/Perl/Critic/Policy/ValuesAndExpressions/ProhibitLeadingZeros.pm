@@ -23,9 +23,9 @@ my $expl       = [ 58 ];
 
 #---------------------------------------------------------------------------
 
-sub default_theme { return qw(pbp bugs) }
-sub default_severity { return $SEVERITY_HIGHEST }
-sub applies_to { return 'PPI::Token::Number' }
+sub default_severity { return $SEVERITY_HIGHEST    }
+sub default_theme    { return qw( pbp danger )     }
+sub applies_to       { return 'PPI::Token::Number' }
 
 #---------------------------------------------------------------------------
 

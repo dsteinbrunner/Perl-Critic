@@ -25,7 +25,8 @@ my $expl = [139, 140];
 #---------------------------------------------------------------------------
 
 sub default_severity { return $SEVERITY_LOWEST }
-sub applies_to { return 'PPI::Document' }
+sub default_theme    { return qw( pbp )        }
+sub applies_to       { return 'PPI::Document'  }
 
 #---------------------------------------------------------------------------
 
