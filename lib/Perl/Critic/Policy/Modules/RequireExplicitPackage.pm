@@ -23,7 +23,8 @@ my $desc = q{Code not contained in explicit package};
 #----------------------------------------------------------------------------
 
 sub default_severity { return $SEVERITY_HIGH  }
-sub applies_to { return 'PPI::Document' }
+sub default_theme    { return qw( risky )     }
+sub applies_to       { return 'PPI::Document' }
 
 #----------------------------------------------------------------------------
 
