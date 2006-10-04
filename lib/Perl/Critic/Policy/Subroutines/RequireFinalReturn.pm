@@ -24,7 +24,7 @@ my $expl = [ 197 ];
 #---------------------------------------------------------------------------
 
 sub default_severity { return $SEVERITY_HIGH        }
-sub devfault_theme   { return qw( risky pbp )       }
+sub default_theme    { return qw( risky pbp )       }
 sub applies_to       { return 'PPI::Statement::Sub' }
 
 #---------------------------------------------------------------------------

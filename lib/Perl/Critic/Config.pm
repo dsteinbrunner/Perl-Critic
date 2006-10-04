@@ -26,7 +26,7 @@ my $NAMESPACE = $EMPTY;
 my @SITE_POLICIES = ();
 my $TEST_MODE = 0;
 
-#-------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
 
 sub import {
 
@@ -71,82 +71,117 @@ sub _was_loaded_from_blib {
     my $full_path = $INC{$path};
     return $full_path && $full_path =~ m/\b blib \b/xms;
 }
-#-------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
 
 sub new {
 
     my ( $class, %args ) = @_;
     my $self = bless {}, $class;
-    $self->{_policies}  = [];
+    $self->_init(%args);
+    return $self;
+}
 
-    # Set defaults
-    my $profile_path    = $args{-profile};
-    my $min_severity    = $args{-severity}  || $SEVERITY_HIGHEST;
-    my $excludes_ref    = $args{-exclude}   || [];  #empty array
-    my $includes_ref    = $args{-include}   || [];  #empty array
-    my $wanted_themes   = $args{-theme}     || undef;
-    my $unwanted_themes = $args{-notheme}   || undef;
+#-----------------------------------------------------------------------------
+
+sub _init {
+
+    my ($self, %args) = @_;
+    $self->{_policies} = [];
 
 
-    # Allow null config.  This is useful for testing
+    # Establish the user's profile
+    my $profile_path  = $args{-profile};
     return $self if defined $profile_path && $profile_path eq 'NONE';
 
-    # Load user's profile.
     my $profile = _load_profile( $profile_path ) || {};
+    my $user_defaults = $profile->{$EMPTY}       || {};
 
-    # Smell-test the user's profile.
-    _screen_user_profile( $profile, $NAMESPACE );
+
+    # Set attributes based on arguments and defaults
+    $self->_set_attributes( $user_defaults, %args );
+
 
     # Apply logic to decide if Policy should be loaded
-    for my $policy_long_name ( @SITE_POLICIES ) {
-
-        # First, create an instance of the policy w/ user's parameters
-        my $params = _get_policy_params_from_profile( $policy_long_name, $profile );
-        my $policy = _create_policy( $policy_long_name, $params );
-
-        # Start by assuming the policy should be loaded
-        my $load_me = $TRUE;
-
-        # Don't load policy if it is negated in the profile
-        if ( _policy_is_disabled( $policy_long_name, $profile ) ){
-            $load_me = $FALSE;
-        }
-
-        # Don't load policy if it is below the severity threshold
-        if ( $policy->get_severity() < $min_severity ) {
-            $load_me = $FALSE;
-        }
-
-        # Don't load policy if it doesn't match a requested theme.
-        # If no themes were requested, then this policy will be loaded.
-        if ( $wanted_themes && ! _theme_match( [$policy->get_theme()], $wanted_themes ) ){
-            $load_me = $FALSE;
-        }
-
-        # Don't load policy if it matches an unwanted
-        if ( _theme_match( [$policy->get_theme()], $unwanted_themes ) ){
-            $load_me = $FALSE;
-        }
-
-        # Do load if policy matches one of the inclusions patterns
-        if (any { $policy_long_name =~ m{ $_ }imx } @{ $includes_ref } ) {
-            $load_me = $TRUE;
-        }
-
-        # But don't load if policy matches any of the exclusion patterns
-        if (any  { $policy_long_name =~ m{ $_ }imx } @{ $excludes_ref } ) {
-            $load_me = $FALSE;
-        }
-
-        #Now load (or not)
-        if( $load_me ){
-            $self->add_policy( -policy => $policy );
-        }
-    }
+    $self->_load_policies( $profile );
 
     #All done!
     return $self;
 }
+
+#-----------------------------------------------------------------------------
+
+sub _set_attributes {
+
+    my ($self, $user_defaults, %args) = @_;
+
+    my $default_min_severity = $user_defaults->{-severity} || $SEVERITY_HIGHEST;
+    $self->{_severity} = $args{-severity} || $default_min_severity;
+
+    my $default_exclusions = $user_defaults->{-exclude} || [];
+    $self->{_exclusions} = $args{-exclude} || $default_exclusions;
+
+    my $default_inclusions = $user_defaults->{-include} || [];
+    $self->{_inclusions} = $args{-include} || $default_inclusions;
+
+    my $default_themes = $user_defaults->{-theme} || [];
+    $self->{_themes}= $args{-theme} || $default_themes;
+
+    return $self;
+}
+
+#-----------------------------------------------------------------------------
+
+sub _load_policies {
+
+    my ( $self, $profile ) = @_;
+
+        for my $policy_long_name ( @SITE_POLICIES ) {
+
+            # First, create an instance of the policy w/ user's parameters
+            my $params = _get_policy_params_from_profile( $policy_long_name, $profile );
+            my $policy = _create_policy( $policy_long_name, $params );
+
+            # Start by assuming the policy should be loaded
+            my $load_me = $TRUE;
+
+            # Don't load policy if it is disabled in the profile
+            if ( _policy_is_disabled( $policy_long_name, $profile ) ){
+                $load_me = $FALSE;
+            }
+
+            # Don't load policy if it is below the severity threshold
+            if ( $policy->get_severity() < $self->severity() ) {
+                $load_me = $FALSE;
+            }
+
+            # Don't load policy if it doesn't match a requested theme.
+            # If no themes were requested, then this policy will be loaded.
+            my @themes = $self->themes();
+            if ( @themes && ! _theme_match( [$policy->get_theme()], \@themes ) ){
+                $load_me = $FALSE;
+            }
+
+            # Do load if policy matches one of the inclusions patterns
+            if (any { $policy_long_name =~ m{ $_ }imx } $self->inclusions() ) {
+                $load_me = $TRUE;
+            }
+
+            # But don't load if policy matches any of the exclusion patterns
+            if (any  { $policy_long_name =~ m{ $_ }imx } $self->exclusions() ) {
+                $load_me = $FALSE;
+            }
+
+            #Now load (or not)
+            if( $load_me ){
+                $self->add_policy( -policy => $policy );
+            }
+        }
+
+    return $self;
+}
+
+#-----------------------------------------------------------------------------
 
 sub _create_policy {
     my ($policy_long_name, $params) = @_;
@@ -237,6 +272,26 @@ sub add_policy {
 sub policies {
     my $self = shift;
     return $self->{_policies};
+}
+
+sub severity {
+    my $self = shift;
+    return $self->{_severity};
+}
+
+sub inclusions {
+    my $self = shift;
+    return @{ $self->{_inclusions} };
+}
+
+sub exclusions {
+    my $self = shift;
+    return @{ $self->{_exclusions} };
+}
+
+sub themes {
+    my $self = shift;
+    return @{ $self->{_themes} };
 }
 
 #------------------------------------------------------------------------

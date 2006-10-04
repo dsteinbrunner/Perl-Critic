@@ -71,7 +71,6 @@ for my $severity ($SEVERITY_LOWEST .. $SEVERITY_HIGHEST) {
 
 SKIP:
 {
-    #skip('Third-party policies break these tests', 6) if ($have_third_party_policies);
     $profile = "$samples_dir/perlcriticrc.none";
     for my $severity (undef, $SEVERITY_LOWEST .. $SEVERITY_HIGHEST) {
         my $c = Perl::Critic->new( -profile => $profile, -severity => $severity);
@@ -186,7 +185,8 @@ my %profile = (
 );
 
 @in = qw(mixedcase RCS);
-$pols = Perl::Critic->new( -severity => 1, -profile => \%profile, -include => \@in )->policies();
+my %pc_config = (-severity => 1, -profile => \%profile, -include => \@in);
+$pols = Perl::Critic->new( %pc_config )->policies();
 is(scalar @{$pols}, $total_policies, 'pattern matching');
 
 #--------------------------------------------------------------
@@ -214,9 +214,9 @@ ok( @{[any {/builtinfunc/imx} @pol_names]}, 'pattern match' );
 
 #--------------------------------------------------------------
 
-# For this test, we'll load the default config, but screen out
-# the policies that don't match the requested theme.  Then we
-# make sure that all remaining polices have the right theme.
+# For this test, we'll load the default config, but screen out the
+# policies that don't match the requested theme.  Then we make sure
+# that all remaining polices have the right theme.
 
 {
     my @theme = qw(cosmetic);
@@ -225,15 +225,24 @@ ok( @{[any {/builtinfunc/imx} @pol_names]}, 'pattern match' );
     ok($ok, 'themes matching');
 }
 
-# This test is the same as above, but tests that none of the
-# policies matching -notheme are loaded.
+# This test just verifies the behavior when the theme list is empty.
+# I'm not sure what the right behavior should be, but this test lets
+# us know when it has changed.
 
 {
-    my @no_theme = qw(cosmetic);
-    $pols = Perl::Critic->new( -severity => 1, -notheme => \@no_theme )->policies();
-    my $ok = none { _intersection( [$_->get_theme()], \@no_theme) }  @{$pols};
-    ok($ok, 'themes anti-matching');
+    $pols = Perl::Critic->new( -severity => 1, -theme => [] )->policies();
+    is_deeply($pols, [], 'empty theme list');
 }
+
+# This test just verifies the behavior when the theme list doesn't
+# match any known themes.  I'm not sure what the right behavior should
+# be, but this test lets us know when it has changed.
+
+{
+    $pols = Perl::Critic->new( -severity => 1, -theme => ['bogus'] )->policies();
+    is_deeply($pols, [], 'bogus theme list');
+}
+
 
 #--------------------------------------------------------------
 #Testing other private subs
