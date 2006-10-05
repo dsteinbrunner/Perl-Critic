@@ -124,8 +124,8 @@ sub _set_attributes {
     my $default_inclusions = $user_defaults->{-include} || [];
     $self->{_inclusions} = $args{-include} || $default_inclusions;
 
-    my $default_themes = $user_defaults->{-theme} || [];
-    $self->{_themes}= $args{-theme} || $default_themes;
+    my $default_themes = $user_defaults->{-themes} || [];
+    $self->{_themes}= $args{-themes} || $default_themes;
 
     return $self;
 }
@@ -158,7 +158,7 @@ sub _load_policies {
             # Don't load policy if it doesn't match a requested theme.
             # If no themes were requested, then this policy will be loaded.
             my @themes = $self->themes();
-            if ( @themes && ! _theme_match( [$policy->get_theme()], \@themes ) ){
+            if ( @themes && ! _compare_themes( [$policy->get_themes()], \@themes ) ){
                 $load_me = $FALSE;
             }
 
@@ -187,29 +187,29 @@ sub _create_policy {
     my ($policy_long_name, $params) = @_;
 
     # Pull base attributes from user config
-    my $user_severity  = delete $params->{severity};
-    my $user_set_theme = delete $params->{set_theme};
-    my $user_add_theme = delete $params->{add_theme};
+    my $user_severity   = delete $params->{severity};
+    my $user_set_themes = delete $params->{set_themes};
+    my $user_add_themes = delete $params->{add_themes};
 
     # Construct policy from remaining configs
     my $policy = $policy_long_name->new( %{ $params } );
 
-    # Set base attributes
+    # Set base attributes on policy
     if ( $user_severity ) {
         $policy->set_severity( $user_severity );
     }
 
-    if ( $user_set_theme ) {
-        my @user_set_theme_list = _parse_theme_string( $user_set_theme );
-        $policy->set_theme( @user_set_theme_list );
+    if ( $user_set_themes ) {
+        my @user_set_themes_list = _parse_theme_string( $user_set_themes );
+        $policy->set_themes( @user_set_themes_list );
     }
 
-    if ( $user_add_theme ) {
-        my @user_add_theme_list = _parse_theme_string( $user_add_theme );
-        $policy->add_theme( @user_add_theme_list );
+    if ( $user_add_themes ) {
+        my @user_add_themes_list = _parse_themes_string( $user_add_themes );
+        $policy->add_themes( @user_add_themes_list );
     }
 
-    # Return constructed object
+    # Return constructed policy
     return $policy;
 }
 
@@ -226,11 +226,12 @@ sub _policy_is_disabled {
         exists $profile->{"-$policy_long_name"};
 }
 
-sub _theme_match {
-    my ($theme_ref1, $theme_ref2) = @_;
-    my $lc_theme_ref1 = [ map{ lc } @{ $theme_ref1 } ];
-    my $lc_theme_ref2 = [ map{ lc } @{ $theme_ref2 } ];
-    return _intersection($lc_theme_ref1, $lc_theme_ref2);
+sub _compare_themes {
+    my ($themes_ref1, $themes_ref2) = @_;
+    my $lc_themes_ref1 = [ map{ lc } @{ $themes_ref1 } ];
+    my $lc_themes_ref2 = [ map{ lc } @{ $themes_ref2 } ];
+    return 1 if _intersection($lc_themes_ref1, $lc_themes_ref2);
+    return 0;
 }
 
 sub _parse_theme_string {
@@ -268,10 +269,11 @@ sub add_policy {
 }
 
 #------------------------------------------------------------------------
+# Begin ACCESSSOR methods
 
 sub policies {
     my $self = shift;
-    return $self->{_policies};
+    return @{ $self->{_policies} };
 }
 
 sub severity {

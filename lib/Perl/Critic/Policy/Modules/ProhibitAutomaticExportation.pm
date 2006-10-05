@@ -24,7 +24,7 @@ my $expl = q{Use '@EXPORT_OK' or '%EXPORT_TAGS' instead};  ## no critic
 #---------------------------------------------------------------------------
 
 sub default_severity { return $SEVERITY_HIGH  }
-sub default_theme    { return qw( risky )     }
+sub default_themes    { return qw( risky )     }
 sub applies_to       { return 'PPI::Document' }
 
 #---------------------------------------------------------------------------

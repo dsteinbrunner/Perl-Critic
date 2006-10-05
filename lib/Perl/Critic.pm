@@ -116,7 +116,7 @@ sub critique {
     }
 
     my @violations = ();
-    for my $policy ( @{ $self->policies() } ) {
+    for my $policy ( $self->policies() ){
 
       TYPE:
         for my $type ( $policy->applies_to() ) {

@@ -335,7 +335,7 @@ sub policy_listing {
     require Perl::Critic::Config;
     Perl::Critic::Config->import( -namespace => $namespace );
     my $config = Perl::Critic::Config->new(-severity => 1);
-    my @policies = _sort_objects_by_type( @{$config->policies()} );
+    my @policies = _sort_objects_by_type( $config->policies() );
 
 
     my $format = '%1d %1d %s [%s]';
@@ -346,7 +346,7 @@ sub policy_listing {
         $name =~ s{\A Perl::Critic::Policy::}{}mxg;
         my $def_sev  = $policy->default_severity();
         my $user_sev = $policy->get_severity();
-        my $themes = join $SPACE, $policy->get_theme();
+        my $themes = join $SPACE, $policy->get_themes();
         my $line = sprintf $format, $def_sev, $user_sev, $name, $themes;
         push @listing, "$line\n";
     }

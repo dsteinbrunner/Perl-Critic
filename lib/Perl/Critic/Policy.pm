@@ -52,33 +52,33 @@ sub default_severity {
 
 #----------------------------------------------------------------------------
 
-sub set_theme {
+sub set_themes {
     my ($self, @themes) = @_;
-    $self->{_theme} = \@themes;
+    $self->{_themes} = [ sort @themes ];
     return $self;
 }
 
 #----------------------------------------------------------------------------
 
-sub get_theme {
+sub get_themes {
     my ($self) = @_;
-    return $self->{_theme} ? sort @{ $self->{_theme} }
-                           : $self->default_theme();
+    return @{ $self->{_themes} } if defined $self->{_themes};
+    return $self->default_themes();
 }
 
 #----------------------------------------------------------------------------
 
-sub add_theme {
+sub add_themes {
     my ($self, @additional_themes) = @_;
     #By hashifying the themes, we squish duplicates
-    my %merged = hashify( $self->get_theme(), @additional_themes);
-    $self->{_theme} = [keys %merged];
+    my %merged = hashify( $self->get_themes(), @additional_themes);
+    $self->{_themes} = [ sort keys %merged];
     return $self;
 }
 
 #----------------------------------------------------------------------------
 
-sub default_theme {
+sub default_themes {
     return ();
 }
 
@@ -190,25 +190,28 @@ different severity to the Policy if they don't agree with the
 C<default_severity>.  See the C<$SEVERITY> constants in
 L<Perl::Critic::Utils> for an enumeration of possible values.
 
-=item C<default_theme()>
+=item C<default_themes()>
 
-Returns a reference to a list of the default themes associated
-with this Policy.
+Returns a sorted list of the default themes associated with this
+Policy.  The default method returns an empty list.  Policy authors
+should override this method to return a list of themes that are
+appropriate for their policy.
 
-=item C<get_theme()>
+=item C<get_themes()>
 
-Returns a reference to a list of the themes associated
-with this Policy.
+Returns a sorted list of the themes associated with this Policy.  If
+you haven't added themes or set the themes explicilty, this method
+just returns the default themes.
 
-=item C<set_theme( \@THEMES )>
+=item C<set_themes( @THEME_LIST )>
 
 Sets the themes associated with this Policy.  Any existing themes are
-overwritten.
+overwritten.  Duplicate themes will be removed.
 
-=item C<add_theme( \@THEMES )>
+=item C<add_themes( @THEME_LIST )>
 
 Appends additional themes to this Policy.  Any existing themes are
-preserved.
+preserved.  Duplicate themes will be removed.
 
 =back
 

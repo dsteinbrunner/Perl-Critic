@@ -27,7 +27,7 @@ my $expl = [ 169 ];
 #----------------------------------------------------------------------------
 
 sub default_severity { return $SEVERITY_HIGH     }
-sub default_theme    { return qw( risky pbp )    }
+sub default_themes    { return qw( risky pbp )    }
 sub applies_to       { return 'PPI::Token::Word' }
 
 #----------------------------------------------------------------------------

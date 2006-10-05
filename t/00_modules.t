@@ -56,10 +56,10 @@ can_ok('Perl::Critic::Policy', 'applies_to');
 can_ok('Perl::Critic::Policy', 'default_severity');
 can_ok('Perl::Critic::Policy', 'get_severity');
 can_ok('Perl::Critic::Policy', 'set_severity');
-can_ok('Perl::Critic::Policy', 'default_theme');
-can_ok('Perl::Critic::Policy', 'get_theme');
-can_ok('Perl::Critic::Policy', 'set_theme');
-can_ok('Perl::Critic::Policy', 'add_theme');
+can_ok('Perl::Critic::Policy', 'default_themes');
+can_ok('Perl::Critic::Policy', 'get_themes');
+can_ok('Perl::Critic::Policy', 'set_themes');
+can_ok('Perl::Critic::Policy', 'add_themes');
 
 
 $obj = Perl::Critic::Policy->new();
@@ -96,10 +96,10 @@ for my $mod ( Perl::Critic::Config::native_policies() ) {
     can_ok($mod, 'default_severity');
     can_ok($mod, 'get_severity');
     can_ok($mod, 'set_severity');
-    can_ok($mod, 'default_theme');
-    can_ok($mod, 'get_theme');
-    can_ok($mod, 'set_theme');
-    can_ok($mod, 'set_theme');
+    can_ok($mod, 'default_themes');
+    can_ok($mod, 'get_themes');
+    can_ok($mod, 'set_themes');
+    can_ok($mod, 'set_themes');
 
     $obj = $mod->new();
     isa_ok($obj, 'Perl::Critic::Policy');

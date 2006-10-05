@@ -45,19 +45,19 @@ is( $p->default_severity(), 1 ); #Still the same
 is( $p->get_severity(), 3 );     #Should have new value
 
 #Test default theme...
-is_deeply( [$p->default_theme()], [], 'default_theme');
-is_deeply( [$p->get_theme()], [], 'get_theme');
+is_deeply( [$p->default_themes()], [], 'default_themes');
+is_deeply( [$p->get_themes()], [], 'get_themes');
 
 #Change theme
-$p->set_theme( qw(c b a) ); #unsorted
+$p->set_themes( qw(c b a) ); #unsorted
 
 #Test theme again...
-is_deeply( [$p->default_theme()], [] ); #Still the same
-is_deeply( [$p->get_theme()], [qw(a b c)] );  #Should have new value (sorted)
+is_deeply( [$p->default_themes()], [] ); #Still the same
+is_deeply( [$p->get_themes()], [qw(a b c)] );  #Should have new value, sorted
 
 #Append theme
-$p->add_theme( qw(f e d) ); #unsorted
+$p->add_themes( qw(f e d) ); #unsorted
 
 #Test theme again...
-is_deeply( [$p->default_theme()], [] ); #Still the same
-is_deeply( [$p->get_theme()], [ qw(a b c d e f) ] );  #Should have new value (sorted)
+is_deeply( [$p->default_themes()], [] ); #Still the same
+is_deeply( [$p->get_themes()], [ qw(a b c d e f) ] );  #Should have new value, sorted
