@@ -18,6 +18,7 @@ use File::Spec::Unix qw();
 use List::MoreUtils qw(any none);
 use Scalar::Util qw(blessed);
 use Perl::Critic::Utils;
+use Perl::Critic::Config::Defaults;
 
 our $VERSION = 0.20;
 
@@ -56,6 +57,9 @@ sub import {
     return 1;
 }
 
+#---------------------------------------------------------------------------
+# Some static helper subs
+
 sub _modules_from_blib {
     my (@modules) = @_;
     return grep { _was_loaded_from_blib( _module2path($_) ) } @modules;
@@ -73,11 +77,15 @@ sub _was_loaded_from_blib {
 }
 
 #-----------------------------------------------------------------------------
+# Constructor
 
 sub new {
 
     my ( $class, %args ) = @_;
     my $self = bless {}, $class;
+    $self->{_policies} = [];
+    $self->{_exclude}  = [];
+    $self->{_themes}   = [];
     $self->_init(%args);
     return $self;
 }
@@ -87,124 +95,74 @@ sub new {
 sub _init {
 
     my ($self, %args) = @_;
-    $self->{_policies} = [];
 
-
-    # Establish the user's profile
-    my $profile_path  = $args{-profile};
+    # Locate the user's profile
+    my $profile_path = $args{-profile} || find_profile_path();
     return $self if defined $profile_path && $profile_path eq 'NONE';
+    $self->{_profile_path} = $profile_path;
 
-    my $profile = _load_profile( $profile_path ) || {};
-    my $user_defaults = $profile->{$EMPTY}       || {};
+    # Now load the profile
+    $self->_load_profile();
 
+    # Set attributes from arguments and defaults
+    $self->_set_attributes( %args );
 
-    # Set attributes based on arguments and defaults
-    $self->_set_attributes( $user_defaults, %args );
-
-
-    # Apply logic to decide if Policy should be loaded
-    $self->_load_policies( $profile );
+    # Load policies
+    $self->_load_policies();
 
     #All done!
     return $self;
 }
 
-#-----------------------------------------------------------------------------
-
-sub _set_attributes {
-
-    my ($self, $user_defaults, %args) = @_;
-
-    my $default_min_severity = $user_defaults->{-severity} || $SEVERITY_HIGHEST;
-    $self->{_severity} = $args{-severity} || $default_min_severity;
-
-    my $default_exclusions = $user_defaults->{-exclude} || [];
-    $self->{_exclusions} = $args{-exclude} || $default_exclusions;
-
-    my $default_inclusions = $user_defaults->{-include} || [];
-    $self->{_inclusions} = $args{-include} || $default_inclusions;
-
-    my $default_themes = $user_defaults->{-themes} || [];
-    $self->{_themes}= $args{-themes} || $default_themes;
-
-    return $self;
-}
-
-#-----------------------------------------------------------------------------
-
 sub _load_policies {
 
-    my ( $self, $profile ) = @_;
+    my ($self) = @_;
 
-        for my $policy_long_name ( @SITE_POLICIES ) {
+    for my $policy_name ( @SITE_POLICIES ) {
 
-            # First, create an instance of the policy w/ user's parameters
-            my $params = _get_policy_params_from_profile( $policy_long_name, $profile );
-            my $policy = _create_policy( $policy_long_name, $params );
+        my $params = $self->_get_policy_params( $policy_name );
+        my $policy = $self->_create_policy( $policy_name, $params );
+        my $load_me = $TRUE; #Assume policy should be loaded
 
-            # Start by assuming the policy should be loaded
-            my $load_me = $TRUE;
+        ##no critic (ProhibitPostfixControls)
+        $load_me = $FALSE if $self->_policy_is_disabled( $policy );
+        $load_me = $FALSE if $self->_policy_is_unimportant( $policy );
+        $load_me = $FALSE if not $self->_policy_fits_themes( $policy );
+        $load_me = $TRUE  if $self->_policy_is_included( $policy );
+        $load_me = $FALSE if $self->_policy_is_excluded( $policy);
 
-            # Don't load policy if it is disabled in the profile
-            if ( _policy_is_disabled( $policy_long_name, $profile ) ){
-                $load_me = $FALSE;
-            }
-
-            # Don't load policy if it is below the severity threshold
-            if ( $policy->get_severity() < $self->severity() ) {
-                $load_me = $FALSE;
-            }
-
-            # Don't load policy if it doesn't match a requested theme.
-            # If no themes were requested, then this policy will be loaded.
-            my @themes = $self->themes();
-            if ( @themes && ! _compare_themes( [$policy->get_themes()], \@themes ) ){
-                $load_me = $FALSE;
-            }
-
-            # Do load if policy matches one of the inclusions patterns
-            if (any { $policy_long_name =~ m{ $_ }imx } $self->inclusions() ) {
-                $load_me = $TRUE;
-            }
-
-            # But don't load if policy matches any of the exclusion patterns
-            if (any  { $policy_long_name =~ m{ $_ }imx } $self->exclusions() ) {
-                $load_me = $FALSE;
-            }
-
-            #Now load (or not)
-            if( $load_me ){
-                $self->add_policy( -policy => $policy );
-            }
-        }
+        next if not $load_me;
+        $self->add_policy( -policy => $policy );
+    }
 
     return $self;
 }
 
 #-----------------------------------------------------------------------------
+# Factory method
 
 sub _create_policy {
-    my ($policy_long_name, $params) = @_;
+    my ($self, $policy_name, $params) = @_;
 
-    # Pull base attributes from user config
-    my $user_severity   = delete $params->{severity};
-    my $user_set_themes = delete $params->{set_themes};
-    my $user_add_themes = delete $params->{add_themes};
+    # Pull out base parameters
+    my $user_severity   = $params->{severity};
+    my $user_set_themes = $params->{set_themes};
+    my $user_add_themes = $params->{add_themes};
 
-    # Construct policy from remaining configs
-    my $policy = $policy_long_name->new( %{ $params } );
+    # Construct policy from remaining params
+    my $policy = $policy_name->new( %{$params} );
 
     # Set base attributes on policy
-    if ( $user_severity ) {
+    if ( defined $user_severity ) {
         $policy->set_severity( $user_severity );
     }
 
-    if ( $user_set_themes ) {
+    if ( defined $user_set_themes ) {
         my @user_set_themes_list = _parse_theme_string( $user_set_themes );
         $policy->set_themes( @user_set_themes_list );
     }
 
-    if ( $user_add_themes ) {
+    if ( defined $user_add_themes ) {
         my @user_add_themes_list = _parse_themes_string( $user_add_themes );
         $policy->add_themes( @user_add_themes_list );
     }
@@ -213,26 +171,88 @@ sub _create_policy {
     return $policy;
 }
 
-sub _get_policy_params_from_profile {
-    my ($policy_long_name, $profile) = @_;
-    my $policy_short_name = _short_name($policy_long_name, $NAMESPACE);
-    return $profile->{$policy_long_name} ||  $profile->{$policy_short_name} || {};
-}
+#-----------------------------------------------------------------------------
 
 sub _policy_is_disabled {
-    my ($policy_long_name, $profile) = @_;
-    my $policy_short_name = _short_name($policy_long_name, $NAMESPACE);
+    my ($self, $policy) = @_;
+    my $policy_long_name  = ref $policy;
+    my $policy_short_name = _policy_short_name($policy_long_name, $NAMESPACE);
+    my $profile = $self->{_profile};
+
     return exists $profile->{"-$policy_short_name"} ||
         exists $profile->{"-$policy_long_name"};
 }
 
-sub _compare_themes {
-    my ($themes_ref1, $themes_ref2) = @_;
-    my $lc_themes_ref1 = [ map{ lc } @{ $themes_ref1 } ];
-    my $lc_themes_ref2 = [ map{ lc } @{ $themes_ref2 } ];
-    return 1 if _intersection($lc_themes_ref1, $lc_themes_ref2);
+#-----------------------------------------------------------------------------
+
+sub _policy_fits_themes {
+    my ($self, $policy) = @_;
+    my @policy_themes    = $policy->get_themes();
+    my @requested_themes = $self->themes();
+
+    return 1 if not @requested_themes; #If none requested, then it always fits
+    return 1 if _intersection(\@policy_themes, \@requested_themes);
     return 0;
 }
+
+#-----------------------------------------------------------------------------
+
+sub _policy_is_unimportant {
+    my ($self, $policy) = @_;
+    my $policy_severity = $policy->get_severity();
+    my $min_severity    = $self->severity();
+    return $policy_severity < $min_severity;
+}
+
+#-----------------------------------------------------------------------------
+
+sub _policy_is_included {
+    my ($self, $policy) = @_;
+    my $policy_long_name = ref $policy || _policy_long_name($policy, $NAMESPACE);
+    my @inclusions  = $self->include();
+    return any { $policy_long_name =~ m/$_/imx } @inclusions;
+}
+
+#-----------------------------------------------------------------------------
+
+sub _policy_is_excluded {
+    my ($self, $policy) = @_;
+    my $policy_long_name = ref $policy || _policy_long_name($policy, $NAMESPACE);
+    my @exclusions  = $self->exclude();
+    return any { $policy_long_name =~ m/$_/imx } @exclusions;
+}
+
+#-----------------------------------------------------------------------------
+
+sub _get_policy_params {
+    my ($self, $policy) = @_;
+    my $policy_long_name  = ref $policy || _policy_long_name($policy, $NAMESPACE);
+    my $policy_short_name = _policy_short_name($policy_long_name, $NAMESPACE);
+
+    my $profile = $self->{_profile};
+    return $profile->{$policy_short_name}    ||
+           $profile->{$policy_long_name}     ||
+           $profile->{"-$policy_short_name"} ||
+           $profile->{"-$policy_long_name"}  ||
+           {};
+}
+
+#-----------------------------------------------------------------------------
+
+sub _set_attributes {
+    my ($self, %args) = @_;
+    my $profile = $self->{_profile};
+    my $user_defaults = $profile->{_} || {};
+    my $defaults = Perl::Critic::Config::Defaults->new( %{ $user_defaults } );
+    $self->{_severity} = $args{-severity} || $defaults->default_severity();
+    $self->{_exclude}  = $args{-exclude}  || $defaults->default_exclude();
+    $self->{_include}  = $args{-include}  || $defaults->default_include();
+    $self->{_themes}   = $args{-themes}   || $defaults->default_themes();
+    $self->{_defaults} = $defaults;
+    return $self;
+}
+
+#-----------------------------------------------------------------------------
 
 sub _parse_theme_string {
     my ($theme_string) = @_;
@@ -256,8 +276,8 @@ sub add_policy {
 
     if( not blessed($policy) ) {
 
-        my $policy_long_name = _long_name($policy, $NAMESPACE);
-        eval { $policy  = _create_policy($policy_long_name, $config) };
+        my $policy_long_name = _policy_long_name($policy, $NAMESPACE);
+        eval { $policy  = $self->_create_policy($policy_long_name, $config) };
 
         if ($EVAL_ERROR) {
             confess qq{Failed to create policy "$policy": $EVAL_ERROR};
@@ -271,9 +291,25 @@ sub add_policy {
 #------------------------------------------------------------------------
 # Begin ACCESSSOR methods
 
+
 sub policies {
     my $self = shift;
     return @{ $self->{_policies} };
+}
+
+sub profile_path {
+    my $self = shift;
+    return $self->{_profile_path};
+}
+
+sub profile {
+    my $self = shift;
+    return $self->{_profile};
+}
+
+sub defaults {
+    my $self = shift;
+    return $self->{_defaults};
 }
 
 sub severity {
@@ -281,14 +317,14 @@ sub severity {
     return $self->{_severity};
 }
 
-sub inclusions {
+sub include {
     my $self = shift;
-    return @{ $self->{_inclusions} };
+    return @{ $self->{_include} };
 }
 
-sub exclusions {
+sub exclude {
     my $self = shift;
-    return @{ $self->{_exclusions} };
+    return @{ $self->{_exclude} };
 }
 
 sub themes {
@@ -301,25 +337,27 @@ sub themes {
 
 sub _load_profile {
 
-    my ($profile) = (@_);
+    my ($self, $profile) = (@_);
+    $profile ||= $self->profile_path();
     return {} if defined $profile && $profile eq $EMPTY;
     my $ref_type = ref $profile || 'DEFAULT';
 
     my %handlers = (
-        SCALAR  => \&_load_from_string,
-        ARRAY   => \&_load_from_array,
-        HASH    => \&_load_from_hash,
-        DEFAULT => \&_load_from_file,
+        SCALAR  => \&_load_profile_from_string,
+        ARRAY   => \&_load_profile_from_array,
+        HASH    => \&_load_profile_from_hash,
+        DEFAULT => \&_load_profile_from_file,
     );
 
-    my $handler_ref = $handlers{$ref_type};
-    confess qq{Can't create Config from $ref_type} if ! $handler_ref;
-    return $handler_ref->($profile);
+    my $handler = $handlers{$ref_type};
+    confess qq{Can't create Config from $ref_type} if ! $handler;
+    $self->{_profile} = $handler->($profile);
+    return $self;
 }
 
 #------------------------------------------------------------------------
 
-sub _load_from_file {
+sub _load_profile_from_file {
     my $file = shift;
     $file ||= find_profile_path() || return {};
     confess qq{'$file' is not a file} if ! -f $file;
@@ -328,7 +366,7 @@ sub _load_from_file {
 
 #------------------------------------------------------------------------
 
-sub _load_from_array {
+sub _load_profile_from_array {
     my $array_ref = shift;
     my $joined    = join qq{\n}, @{ $array_ref };
     return Config::Tiny->read_string( $joined );
@@ -336,21 +374,21 @@ sub _load_from_array {
 
 #------------------------------------------------------------------------
 
-sub _load_from_string {
+sub _load_profile_from_string {
     my $string = shift;
     return Config::Tiny->read_string( ${ $string } );
 }
 
 #------------------------------------------------------------------------
 
-sub _load_from_hash {
+sub _load_profile_from_hash {
     my $hash_ref = shift;
     return $hash_ref;
 }
 
 #-----------------------------------------------------------------------------
 
-sub _long_name {
+sub _policy_long_name {
     my ($module_name, $namespace) = @_;
     if ( $module_name !~ m{ \A $namespace }mx ) {
         $module_name = $namespace . q{::} . $module_name;
@@ -358,7 +396,7 @@ sub _long_name {
     return $module_name;
 }
 
-sub _short_name {
+sub _policy_short_name {
     my ($module_name, $namespace) = @_;
     $module_name =~ s{\A $namespace ::}{}mx;
     return $module_name;
@@ -375,9 +413,9 @@ sub _normalize_severity {
 
 #----------------------------------------------------------------------------
 
-sub _screen_user_profile {
-    my ($profile_ref, $namespace) = @_;
-    for my $policy_name ( sort keys %{ $profile_ref } ) {
+sub _validate_user_profile {
+    my ($profile, $namespace) = @_;
+    for my $policy_name ( sort keys %{ $profile } ) {
         next if _is_valid_policy( $policy_name, $namespace );
         carp qq{Can't find policy module '$policy_name'\n};
     }
@@ -387,8 +425,8 @@ sub _screen_user_profile {
 sub _is_valid_policy {
     my ($policy_name, $namespace) = @_;
     $policy_name =~ s{\A \s* -}{}mx;
-    $policy_name = _long_name($policy_name, $namespace);
-    return any { $policy_name eq $_ } @SITE_POLICIES;
+    my $policy_long_name = _policy_long_name($policy_name, $namespace);
+    return any { $policy_long_name eq $_ } @SITE_POLICIES;
 }
 
 #----------------------------------------------------------------------------
@@ -604,15 +642,19 @@ cannot be instantiated, it will throw a warning and return a false
 value.  Otherwise, it returns a reference to this Config.  Arguments
 are key-value pairs as follows:
 
-B<-policy> is the name of a L<Perl::Critic::Policy> subclass
-module.  The C<'Perl::Critic::Policy'> portion of the name can be
-omitted for brevity.  This argument is required.
+B<-policy> is the name of a L<Perl::Critic::Policy> subclass or an
+reference to an actual Policy object.  If given a class name, The
+C<'Perl::Critic::Policy'> portion of the name can be omitted for
+brevity.  This argument is required.
 
 B<-config> is an optional reference to a hash of Policy configuration
-parameters (Note that this is B<not> a Perl::Critic::Config object). The
-contents of this hash reference will be passed into to the constructor
-of the Policy module.  See the documentation in the relevant Policy
-module for a description of the arguments it supports.
+parameters (Note that this is B<not> a Perl::Critic::Config
+object). The contents of this hash reference will be passed into to
+the constructor of the Policy module.  See the documentation in the
+relevant Policy module for a description of the arguments it supports.
+NOTE: this parameter is ignored when the -policy argument is a
+reference to an actual policy object.
+
 
 =item C<policies()>
 

@@ -10,7 +10,7 @@
 use strict;
 use warnings;
 use PPI::Document;
-use Test::More tests => 1137;  # Add 13 for each new policy created
+use Test::More tests => 1145;  # Add 13 for each new policy created
 use English qw(-no_match_vars);
 
 our $VERSION = 0.20;
@@ -44,6 +44,20 @@ can_ok('Perl::Critic::Config', 'native_policies');
 #Set -profile to avoid messing with .perlcriticrc
 $obj = Perl::Critic::Config->new( -profile => 'NONE');
 isa_ok($obj, 'Perl::Critic::Config');
+is($obj->VERSION(), $VERSION);
+
+#---------------------------------------------------------------
+# Test Perl::Critic::Config::Defaults module interface
+
+use_ok('Perl::Critic::Config::Defaults');
+can_ok('Perl::Critic::Config::Defaults', 'new');
+can_ok('Perl::Critic::Config::Defaults', 'default_severity');
+can_ok('Perl::Critic::Config::Defaults', 'default_include');
+can_ok('Perl::Critic::Config::Defaults', 'default_exclude');
+can_ok('Perl::Critic::Config::Defaults', 'default_themes');
+
+$obj = Perl::Critic::Config::Defaults->new();
+isa_ok($obj, 'Perl::Critic::Config::Defaults');
 is($obj->VERSION(), $VERSION);
 
 #---------------------------------------------------------------

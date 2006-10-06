@@ -17,7 +17,6 @@ use Perl::Critic::Config (-test => 1);
 use Perl::Critic;
 
 # common P::C testing tools
-
 use Perl::Critic::TestUtils qw();
 Perl::Critic::TestUtils::block_perlcriticrc();
 
@@ -292,10 +291,10 @@ ok( @{[any {/builtinfunc/imx} @pol_names]}, 'pattern match' );
     my $namespace = 'Foo::Bar';
     my $module_name = 'Baz::Nuts';
     my $long_name = "${namespace}::$module_name";
-    is( Perl::Critic::Config::_long_name(  $module_name,  $namespace), $long_name   );
-    is( Perl::Critic::Config::_long_name(  $long_name,    $namespace), $long_name   );
-    is( Perl::Critic::Config::_short_name( $module_name,  $namespace), $module_name );
-    is( Perl::Critic::Config::_short_name( $long_name,    $namespace), $module_name );
+    is( Perl::Critic::Config::_policy_long_name(  $module_name,  $namespace), $long_name   );
+    is( Perl::Critic::Config::_policy_long_name(  $long_name,    $namespace), $long_name   );
+    is( Perl::Critic::Config::_policy_short_name( $module_name,  $namespace), $module_name );
+    is( Perl::Critic::Config::_policy_short_name( $long_name,    $namespace), $module_name );
 }
 
 #--------------------------------------------------------------

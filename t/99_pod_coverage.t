@@ -47,7 +47,7 @@ sub get_trusted_methods {
         new
         violates
         applies_to
-        default_theme
+        default_themes
         default_severity
     );
 }
