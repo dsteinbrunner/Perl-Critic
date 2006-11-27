@@ -1,0 +1,2027 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: lib/Perl/Critic/Violation.pm:116
+msgid "    No diagnostics available\n"
+msgstr ""
+
+#: lib/Perl/Critic/Utils.pm:375
+msgid "%f: %m at line %l near '%r'.  (Severity: %s)\n"
+msgstr ""
+
+#: lib/Perl/Critic/Utils.pm:373
+msgid "%f: %m at line %l, column %c.  %e.  (Severity: %s)\n"
+msgstr ""
+
+#: lib/Perl/Critic/Utils.pm:370
+msgid "%f: (%l:%c) %m\n"
+msgstr ""
+
+#: lib/Perl/Critic/Utils.pm:369
+msgid "%f:%l:%c:%m\n"
+msgstr ""
+
+#: lib/Perl/Critic/Utils.pm:371
+msgid "%m at %f line %l\n"
+msgstr ""
+
+#: lib/Perl/Critic/Utils.pm:376
+msgid ""
+"%m at line %l, column %c.\n"
+"  %p (Severity: %s)\n"
+"%d\n"
+msgstr ""
+
+#: lib/Perl/Critic/Utils.pm:372
+msgid "%m at line %l, column %c.  %e.  (Severity: %s)\n"
+msgstr ""
+
+#: lib/Perl/Critic/Violation.pm:23
+msgid "%m at line %l, column %c. %e.\n"
+msgstr ""
+
+#: lib/Perl/Critic/Utils.pm:377
+msgid ""
+"%m at line %l, near '%r'.\n"
+"  %p (Severity: %s)\n"
+"%d\n"
+msgstr ""
+
+#: lib/Perl/Critic/Utils.pm:374
+msgid "%m at line %l, near '%r'.  (Severity: %s)\n"
+msgstr ""
+
+#: lib/Perl/Critic/Violation.pm:146
+#. ($loc_expl)
+msgid "See page %1 of PBP"
+msgstr ""
+
+#: lib/Perl/Critic/Violation.pm:146
+#. ($loc_expl)
+msgid "See pages %1 of PBP"
+msgstr ""
+
+#: lib/Perl/Critic/Utils.pm:376
+msgid "[%p] %m at line %l, column %c.  (Severity: %s)\n"
+msgstr ""
+
+#: lib/Perl/Critic/Utils.pm:377
+msgid "[%p] %m at line %l, near '%r'.  (Severity: %s)\n"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/InputOutput/RequireBracedFileHandleWithPrint.pm
+msgid "File handle for \"print\" is not braced"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/InputOutput/RequireBracedFileHandleWithPrint.pm
+msgid "PageNumber InputOutput::RequireBracedFileHandleWithPrint"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/InputOutput/RequireBracedFileHandleWithPrint.pm
+msgid "    The `print' function has a unique syntax that supports an optional file"
+"    handle argument. Conway suggests wrapping this argument in braces to"
+"    make it visually stand out from the other arguments. When you put braces"
+"    around any of the special package-level file handles like `STDOUT',"
+"    `STDERR', and `DATA', you must the `'*'' sigil or else it won't compile"
+"    under `use strict 'subs''."
+""
+"      print $FH   \"Mary had a little lamb\\n\";  #not ok"
+"      print {$FH} \"Mary had a little lamb\\n\";  #ok"
+""
+"      print   STDERR   $foo, $bar, $baz;  #not ok"
+"      print  {STDERR}  $foo, $bar, $baz;  #won't compile under 'strict'"
+"      print {*STDERR}  $foo, $bar, $baz;  #perfect!"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/InputOutput/ProhibitBarewordFileHandles.pm
+msgid "Bareword file handle opened"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/InputOutput/ProhibitBarewordFileHandles.pm
+msgid "PageNumber InputOutput::ProhibitBarewordFileHandles"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/InputOutput/ProhibitBarewordFileHandles.pm
+msgid "    Using bareword symbols to refer to file handles is particularly evil"
+"    because they are global, and you have no idea if that symbol already"
+"    points to some other file handle. You can mitigate some of that risk by"
+"    `local'izing the symbol first, but that's pretty ugly. Since Perl 5.6,"
+"    you can use an undefined scalar variable as a lexical reference to an"
+"    anonymous filehandle. Alternatively, see the the IO::Handle manpage or"
+"    the IO::File manpage or the FileHandle manpage modules for an"
+"    object-oriented approach."
+""
+"        open FH, '<', $some_file;           #not ok"
+"        open my $fh, '<', $some_file;       #ok"
+"        my $fh = IO::File->new($some_file); #ok"
+""
+"    There are three exceptions: STDIN, STDOUT and STDERR. These three"
+"    standard filehandles are always package variables."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/InputOutput/ProhibitTwoArgOpen.pm
+msgid "Two-argument \"open\" used"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/InputOutput/ProhibitTwoArgOpen.pm
+msgid "PageNumber InputOutput::ProhibitTwoArgOpen"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/InputOutput/ProhibitTwoArgOpen.pm
+msgid "    The three-argument form of `open' (introduced in Perl 5.6) prevents"
+"    subtle bugs that occur when the filename starts with funny characters"
+"    like '>' or '<'. The the IO::File manpage module provides a nice"
+"    object-oriented interface to filehandles, which I think is more elegant"
+"    anyway."
+""
+"      open( $fh, '>output.txt' );          # not ok"
+"      open( $fh, q{>}, 'output.txt );      # ok"
+""
+"      use IO::File;"
+"      my $fh = IO::File->new( 'output.txt', q{>} ); # even better!"
+""
+"    It's also more explicitly clear to define the input mode of the file, as"
+"    in the difference between these two:"
+""
+"      open( $fh, 'foo.txt' );       # BAD: Reader must think what default mode is"
+"      open( $fh, '<', 'foo.txt' );  # GOOD: Reader can see open mode"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/InputOutput/ProhibitBacktickOperators.pm
+msgid "Backtick operator used"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/InputOutput/ProhibitBacktickOperators.pm
+msgid "Use IPC::Open3 instead"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/InputOutput/ProhibitBacktickOperators.pm
+msgid "    Backticks are super-convenient, especially for CGI programs, but I find"
+"    that they make a lot of noise by filling up STDERR with messages when"
+"    they fail. I think its better to use IPC::Open3 to trap all the output"
+"    and let the application decide what to do with it."
+""
+"      use IPC::Open3 'open3';"
+"      $SIG{CHLD} = 'IGNORE';"
+""
+"      @output = `some_command`;                      #not ok"
+""
+"      my ($writer, $reader, $err);"
+"      open3($writer, $reader, $err, 'some_command'); #ok;"
+"      @output = <$reader>;  #Output here"
+"      @errors = <$err>;     #Errors here, instead of the console"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/InputOutput/ProhibitOneArgSelect.pm
+msgid "One-argument \"select\" used"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/InputOutput/ProhibitOneArgSelect.pm
+msgid "PageNumber InputOutput::ProhibitOneArgSelect"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/InputOutput/ProhibitOneArgSelect.pm
+msgid "    Conway discourages the use of a raw `select()' when setting autoflushes."
+"    We'll extend that further by simply prohibiting the one-argument form of"
+"    `select()' entirely; if you really need it you should know"
+"    when/where/why that is. For performing autoflushes, Conway recommends"
+"    the use of `IO::Handle' instead."
+""
+"      select((select($fh), $|=1)[0]);     # not ok"
+"      select $fh;                         # not ok"
+""
+"       use IO::Handle;"
+"       $fh->autoflush();                   # ok"
+"       *STDOUT->autoflush();               # ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/InputOutput/ProhibitReadlineInForLoop.pm
+msgid "Readline inside \"for\" loop"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/InputOutput/ProhibitReadlineInForLoop.pm
+msgid "PageNumber InputOutput::ProhibitReadlineInForLoop"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/InputOutput/ProhibitReadlineInForLoop.pm
+msgid "    Using the readline operator in a `for' or `foreach' loop is very slow."
+"    The iteration list of the loop creates a list context, which causes the"
+"    readline operator to read the entire input stream before iteration even"
+"    starts. Instead, just use a `while' loop, which only reads one line at a"
+"    time."
+""
+"      for my $line ( <$file_handle> ){ do_something($line) }      #not ok"
+"      while ( my $line = <$file_handle> ){ do_something($line) }  #ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/InputOutput/ProhibitInteractiveTest.pm
+msgid "Use IO::Interactive::is_interactive() instead of -t"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/InputOutput/ProhibitInteractiveTest.pm
+msgid "PageNumber InputOutput::ProhibitInteractiveTest"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/InputOutput/ProhibitInteractiveTest.pm
+msgid "    The `-t' operator is fragile and complicated. When you are testing"
+"    whether `STDIN' is interactive, It's much more robust to use well-tested"
+"    CPAN modules like the IO::Interactive manpage."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/References/ProhibitDoubleSigils.pm
+msgid "Double-sigil dereference"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/References/ProhibitDoubleSigils.pm
+msgid "PageNumber References::ProhibitDoubleSigils"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/References/ProhibitDoubleSigils.pm
+msgid "    When dereferencing a reference, put braces around the reference to"
+"    separate the sigils. Especially for newbies, the braces eliminate any"
+"    potential confusion about the relative precedence of the sigils."
+""
+"      push @$array_ref, 'foo', 'bar', 'baz';      #not ok"
+"      push @{ $array_ref }, 'foo', 'bar', 'baz';  #ok"
+""
+"      foreach ( keys %$hash_ref ){}               #not ok"
+"      foreach ( keys %{ $hash_ref } ){}           #ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Subroutines/ProhibitExplicitReturnUndef.pm
+msgid "\"return\" statement with explicit \"undef\""
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Subroutines/ProhibitExplicitReturnUndef.pm
+msgid "PageNumber Subroutines::ProhibitExplicitReturnUndef"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Subroutines/ProhibitExplicitReturnUndef.pm
+msgid "    Returning `undef' upon failure from a subroutine is pretty common. But"
+"    if the subroutine is called in list context, an explicit `return undef;'"
+"    statement will return a one-element list containing `(undef)'. Now if"
+"    that list is subsequently put in a boolean context to test for failure,"
+"    then it evaluates to true. But you probably wanted it to be false."
+""
+"      sub read_file {"
+"          my $file = shift;"
+"          -f $file || return undef;  #file doesn't exist!"
+""
+"          #Continue reading file..."
+"      }"
+""
+"      #and later..."
+""
+"      if ( my @data = read_file($filename) ){"
+""
+"          # if $filename doesn't exist,"
+"          # @data will be (undef),"
+"          # but I'll still be in here!"
+""
+"          process(@data);"
+"      }"
+"      else{"
+""
+"          # This is my error handling code."
+"          # I probably want to be in here"
+"          # if $filname doesn't exist."
+""
+"          die \"$filename not found\";"
+"      }"
+""
+"    The solution is to just use a bare `return' statement whenever you want"
+"    to return failure. In list context, Perl will then give you an empty"
+"    list (which is false), and `undef' in scalar context (which is also"
+"    false)."
+""
+"      sub read_file {"
+"          my $file = shift;"
+"          -f $file || return;  #DWIM!"
+""
+"          #Continue reading file..."
+"      }"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Subroutines/ProhibitAmpersandSigils.pm
+msgid "Subroutine called with \"&\" sigil"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Subroutines/ProhibitAmpersandSigils.pm
+msgid "PageNumber Subroutines::ProhibitAmpersandSigils"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Subroutines/ProhibitAmpersandSigils.pm
+msgid "    Since Perl 5, the ampersand sigil is completely optional when invoking"
+"    subroutines. And it's easily confused with the bitwise 'and' operator."
+""
+"      @result = &some_function(); #Not ok"
+"      @result = some_function();  #ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Subroutines/RequireFinalReturn.pm
+msgid "Subroutine does not end with \"return\""
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Subroutines/RequireFinalReturn.pm
+msgid "PageNumber Subroutines::RequireFinalReturn"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Subroutines/RequireFinalReturn.pm
+msgid "    Require all subroutines to terminate explicitly with one of the"
+"    following: `return', `goto', `die', `exit', `carp' or `croak'."
+""
+"    Subroutines without explicit return statements at their ends can be"
+"    confusing. It can be challenging to deduce what the return value will"
+"    be."
+""
+"    Furthermore, if the programmer did not mean for there to be a"
+"    significant return value, and omits a return statement, some of the"
+"    subroutine's inner data can leak to the outside. Consider this case:"
+""
+"       package Password;"
+"       # every time the user guesses the password wrong, it's value"
+"       # is rotated by one character"
+"       my $password;"
+"       sub set_password {"
+"          $password = shift;"
+"       }"
+"       sub check_password {"
+"          my $guess = shift;"
+"          if ($guess eq $password) {"
+"             unlock_secrets();"
+"          } else {"
+"             $password = (substr $password, 1).(substr $password, 0, 1);"
+"          }"
+"       }"
+"       1;"
+""
+"    In this case, the last statement in check_password() is the assignment."
+"    The result of that assignment is the implicit return value, so a wrong"
+"    guess returns the right password! Adding a `return;' at the end of that"
+"    subroutine solves the problem."
+""
+"    The only exception allowed is an empty subroutine."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Subroutines/ProtectPrivateSubs.pm
+msgid "Private variable used"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Subroutines/ProtectPrivateSubs.pm
+msgid "Use published APIs"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Subroutines/ProtectPrivateSubs.pm
+msgid "    By convention Perl authors (like authors in many other languages)"
+"    indicate private methods and variables by inserting a leading underscore"
+"    before the identifier. This policy catches attempts to access private"
+"    variables from outside the package itself."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Subroutines/ProhibitSubroutinePrototypes.pm
+msgid "Subroutine prototypes used"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Subroutines/ProhibitSubroutinePrototypes.pm
+msgid "PageNumber Subroutines::ProhibitSubroutinePrototypes"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Subroutines/ProhibitSubroutinePrototypes.pm
+msgid "    Contrary to common belief, subroutine prototypes do not enable"
+"    compile-time checks for proper arguments. Don't use them."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Subroutines/ProhibitExcessComplexity.pm
+msgid "Subroutine with high complexity score ($count)"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Subroutines/ProhibitExcessComplexity.pm
+msgid "Consider refactoring"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Subroutines/ProhibitExcessComplexity.pm
+msgid "    All else being equal, complicated code is more error-prone and more"
+"    expensive to maintain than simpler code. The first step towards managing"
+"    complexity is to establish formal complexity metrics. One such metric is"
+"    the McCabe score, which describes the number of possible paths through a"
+"    subroutine. This Policy approximates the McCabe score by summing the"
+"    number of conditional statements and operators within a subroutine."
+"    Research has shown that a McCabe score higher than 20 is a sign of"
+"    high-risk, potentially untestable code. See"
+"    http://www.sei.cmu.edu/str/descriptions/cyclomatic_body.html for some"
+"    discussion about the McCabe number and other complexity metrics."
+""
+"    The usual prescription for reducing complexity is to refactor code into"
+"    smaller subroutines. Mark Dominus book \"Higher Order Perl\" also"
+"    describes callbacks, recursion, memoization, iterators, and other"
+"    techniques that help create simple and extensible Perl code."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Subroutines/ProhibitBuiltinHomonyms.pm
+msgid "Subroutine name is a homonym for builtin function"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Subroutines/ProhibitBuiltinHomonyms.pm
+msgid "PageNumber Subroutines::ProhibitBuiltinHomonyms"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Subroutines/ProhibitBuiltinHomonyms.pm
+msgid "    Common sense dictates that you shouldn't declare subroutines with the"
+"    same name as one of Perl's built-in functions. See ``perldoc perlfunc`'"
+"    for a list of built-ins."
+""
+"      sub open {}  #not ok"
+"      sub exit {}  #not ok"
+"      sub print {} #not ok"
+""
+"      #You get the idea..."
+""
+"    Exceptions are made for `BEGIN', `END', `INIT' and `CHECK' blocks, as"
+"    well as `AUTOLOAD', `DESTROY', and `import' subroutines."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitMutatingListFunctions.pm
+msgid "Don't modify $_ in list functions"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitMutatingListFunctions.pm
+msgid "PageNumber ControlStructures::ProhibitMutatingListFunctions"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitMutatingListFunctions.pm
+msgid "    `map', `grep' and other list operators are intended to transform arrays"
+"    into other arrays by applying code to the array elements one by one. For"
+"    speed, the elements are referenced via a `$_' alias rather than copying"
+"    them. As a consequence, if the code block of the `map' or `grep' modify"
+"    `$_' in any way, then it is actually modifying the source array. This IS"
+"    technically allowed, but those side effects can be quite surprising,"
+"    especially when the array being passed is `@_' or perhaps"
+"    `values(%ENV)'! Instead authors should restrict in-place array"
+"    modification to `for(@array) { ... }' constructs instead, or use"
+"    `List::MoreUtils::apply()'."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitUnreachableCode.pm
+msgid "Unreachable code"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitUnreachableCode.pm
+msgid "Consider removing it"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitUnreachableCode.pm
+msgid "    This policy prohibits code following a statement which unconditionally"
+"    alters the program flow. This includes calls to `exit', `die', `return',"
+"    `next', `last' and `goto'. Due to common usage, `croak' and `confess'"
+"    from the Carp manpage are also included."
+""
+"    Code is reachable if any of the following conditions are true:"
+""
+"    * Flow-altering statement has a conditional attached to it"
+"    * Statement is on the right side of an operator `&&', `||', `and', or"
+"    `or'."
+"    * Code is prefixed with a label (can potentially be reached via `goto')"
+"    * Code is a subroutine"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitCascadingIfElse.pm
+msgid "Cascading if-elsif chain"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitCascadingIfElse.pm
+msgid "PageNumber ControlStructures::ProhibitCascadingIfElse"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitCascadingIfElse.pm
+msgid "    Long `if-elsif' chains are hard to digest, especially if they are longer"
+"    than a single page or screen. If testing for equality, use a hash lookup"
+"    instead. See the Switch manpage for another approach."
+""
+"      if ($condition1) {         #ok"
+"          $foo = 1;"
+"      }"
+"      elseif ($condition2) {     #ok"
+"          $foo = 2;"
+"      }"
+"      elsif ($condition3) {      #ok"
+"          $foo = 3;"
+"      }"
+"      elsif ($condition4) {      #too many!"
+"          $foo = 4;"
+"      }"
+"      else{                      #ok"
+"          $foo = $default;"
+"      }"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitUnlessBlocks.pm
+msgid "\"unless\" block used"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitUnlessBlocks.pm
+msgid "PageNumber ControlStructures::ProhibitUnlessBlocks"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitUnlessBlocks.pm
+msgid "    Conway discourages using `unless' because it leads to double-negatives"
+"    that are hard to understand. Instead, reverse the logic and use `if'."
+""
+"      unless($condition) { do_something() } #not ok"
+"      unless(! $no_flag) { do_something() } #really bad"
+"      if( ! $condition)  { do_something() } #ok"
+""
+"    This Policy only covers the block-form of `unless'. For the postfix"
+"    variety, see `ProhibitPostfixControls'."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitCStyleForLoops.pm
+msgid "C-style \"for\" loop used"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitCStyleForLoops.pm
+msgid "PageNumber ControlStructures::ProhibitCStyleForLoops"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitCStyleForLoops.pm
+msgid "    The 3-part `for' loop that Perl inherits from C is butt-ugly, and only"
+"    really necessary if you need irregular counting. The very Perlish `..'"
+"    operator is much more elegant and readable."
+""
+"      for($i=0; $i<=$max; $i++){      #ick!"
+"          do_something($i);"
+"      }"
+""
+"      for(0..$max){                   #very nice"
+"        do_something($_);"
+"      }"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitUntilBlocks.pm
+msgid "\"until\" block used"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitUntilBlocks.pm
+msgid "PageNumber ControlStructures::ProhibitUntilBlocks"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitUntilBlocks.pm
+msgid "    Conway discourages using `until' because it leads to double-negatives"
+"    that are hard to understand. Instead, reverse the logic and use `while'."
+""
+"      until($condition)     { do_something() } #not ok"
+"      until(! $no_flag)     { do_something() } #really bad"
+"      while( ! $condition)  { do_something() } #ok"
+""
+"    This Policy only covers the block-form of `until'. For the postfix"
+"    variety, see `ProhibitPostfixControls'."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitDeepNests.pm
+msgid "Code structure is deeply nested"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitDeepNests.pm
+msgid "    Deeply nested code is often hard to understand and may be a sign that it"
+"    needs to be refactored. There are several good books on how to refactor"
+"    code. I like Martin Fowler's \"Refactoring: Improving The Design of"
+"    Existing Code\"."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitPostfixControls.pm
+msgid "Postfix control \"$elem\" used"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitPostfixControls.pm
+msgid "$pages_of{$elem}"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ControlStructures/ProhibitPostfixControls.pm
+msgid "    Conway discourages using postfix control structures (`if', `for',"
+"    `unless', `until', `while'). The `unless' and `until' controls are"
+"    particularly evil because they lead to double-negatives that are hard to"
+"    comprehend. The only tolerable usage of a postfix `if' is when it"
+"    follows a loop break such as `last', `next', `redo', or `continue'."
+""
+"      do_something() if $condition;         #not ok"
+"      if($condition){ do_something() }      #ok"
+""
+"      do_something() while $condition;      #not ok"
+"      while($condition){ do_something() }   #ok"
+""
+"      do_something() unless $condition;     #not ok"
+"      do_something() unless ! $condition;   #really bad"
+"      if(! $condition){ do_something() }    #ok"
+""
+"      do_something() until $condition;      #not ok"
+"      do_something() until ! $condition;    #really bad"
+"      while(! $condition){ do_something() } #ok "
+""
+"      do_something($_) for @list;           #not ok"
+""
+"     LOOP:"
+"      for my $n (0..100){"
+"          next if $condition;               #ok"
+"          last LOOP if $other_condition;    #also ok"
+"      }"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitMixedBooleanOperators.pm
+msgid "Mixed high and low-precedence booleans"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitMixedBooleanOperators.pm
+msgid "PageNumber ValuesAndExpressions::ProhibitMixedBooleanOperators"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitMixedBooleanOperators.pm
+msgid "    Conway advises against combining the low-precedence booleans ( `and or"
+"    not' ) with the high-precedence boolean operators ( `&& || !' ) in the"
+"    same expression. Unless you fully understand the differences between the"
+"    high and low-precedence operators, it is easy to misinterpret"
+"    expressions that use both. And even if you do understand them, it is not"
+"    always clear if the author actually intended it."
+""
+"      next if not $foo || $bar;  #not ok"
+"      next if !$foo || $bar;     #ok"
+"      next if !( $foo || $bar ); #ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitEscapedCharacters.pm
+msgid "Numeric escapes in interpolated string"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitEscapedCharacters.pm
+msgid "PageNumber ValuesAndExpressions::ProhibitEscapedCharacters"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitEscapedCharacters.pm
+msgid "    Escaped numeric values are hard to read and debug. Instead, use named"
+"    values. The syntax is less compact, but dramatically more readable."
+""
+"      $str = \"\\X7F\\x06\\x22Z\";                         # not ok"
+"  "
+"      use charnames ':full';"
+"      $str = \"\\N{DELETE}\\N{ACKNOWLEDGE}\\N{CANCEL}Z\";  # ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/RequireNumberSeparators.pm
+msgid "Long number not separated with underscores"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/RequireNumberSeparators.pm
+msgid "PageNumber ValuesAndExpressions::RequireNumberSeparators"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/RequireNumberSeparators.pm
+msgid "    Long numbers can be difficult to read. To improve legibility, Perl"
+"    allows numbers to be split into groups of digits separated by"
+"    underscores. This policy requires number sequences of more than three"
+"    digits to be separated."
+""
+"     $long_int = 123456789;   #not ok"
+"     $long_int = 123_456_789; #ok"
+""
+"     $long_float = 12345678.001;   #not ok"
+"     $long_float = 12_345_678.001; #ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitLeadingZeros.pm
+msgid "Integer with leading zeros"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitLeadingZeros.pm
+msgid "PageNumber ValuesAndExpressions::ProhibitLeadingZeros"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitLeadingZeros.pm
+msgid "    Perl interprets numbers with leading zeros as octal. If that's what you"
+"    really want, its better to use `oct' and make it obvious."
+""
+"      $var = 041;     #not ok, actually 33"
+"      $var = oct(41); #ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitInterpolationOfLiterals.pm
+msgid "Useless interpolation of literal string"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitInterpolationOfLiterals.pm
+msgid "PageNumber ValuesAndExpressions::ProhibitInterpolationOfLiterals"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitInterpolationOfLiterals.pm
+msgid "    Don't use double-quotes or `qq//' if your string doesn't require"
+"    interpolation. This saves the interpreter a bit of work and it lets the"
+"    reader know that you really did intend the string to be literal."
+""
+"      print \"foobar\";     #not ok"
+"      print 'foobar';     #ok"
+"      print qq/foobar/;   #not ok"
+"      print q/foobar/;    #ok"
+""
+"      print \"$foobar\";    #ok"
+"      print \"foobar\\n\";   #ok"
+"      print qq/$foobar/;  #ok"
+"      print qq/foobar\\n/; #ok"
+""
+"      print qq{$foobar};  #preferred"
+"      print qq{foobar\\n}; #preferred"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/RequireQuotedHeredocTerminator.pm
+msgid "Heredoc terminator must be quoted"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/RequireQuotedHeredocTerminator.pm
+msgid "PageNumber ValuesAndExpressions::RequireQuotedHeredocTerminator"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/RequireQuotedHeredocTerminator.pm
+msgid "    Putting single or double-quotes around your HEREDOC terminator make it"
+"    obvious to the reader whether the content is going to be interpolated or"
+"    not."
+""
+"      print <<END_MESSAGE;    #not ok"
+"      Hello World"
+"      END_MESSAGE"
+""
+"      print <<'END_MESSAGE';  #ok"
+"      Hello World"
+"      END_MESSAGE"
+""
+"      print <<\"END_MESSAGE\";  #ok"
+"      $greeting"
+"      END_MESSAGE"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitMismatchedOperators.pm
+msgid "Mismatched operator"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitMismatchedOperators.pm
+msgid "Numeric/string operators and operands should match"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitMismatchedOperators.pm
+msgid "    Using the wrong operator type for a value can obscure coding intent and"
+"    possibly lead to subtle errors. An example of this is mixing a string"
+"    equality operator with a numeric value, or vice-versa."
+""
+"      if ($foo == 'bar') {}     #not ok"
+"      if ($foo eq 'bar') {}     #ok"
+"      if ($foo eq 123) {}       #not ok"
+"      if ($foo == 123) {}       #ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitEmptyQuotes.pm
+msgid "Quotes used with an empty string"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitEmptyQuotes.pm
+msgid "PageNumber ValuesAndExpressions::ProhibitEmptyQuotes"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitEmptyQuotes.pm
+msgid "    Don't use quotes for an empty string or any string that is pure"
+"    whitespace. Instead, use `q{}' to improve legibility. Better still,"
+"    created named values like this. Use the `x' operator to repeat"
+"    characters."
+""
+"      $message = '';      #not ok"
+"      $message = \"\";      #not ok"
+"      $message = \"     \"; #not ok"
+""
+"      $message = q{};     #better"
+"      $message = q{     } #better"
+""
+"      $EMPTY = q{};"
+"      $message = $EMPTY;      #best"
+""
+"      $SPACE = q{ };"
+"      $message = $SPACE x 5;  #best"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitVersionStrings.pm
+msgid "Version string used"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitVersionStrings.pm
+msgid "Use a real number instead"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitVersionStrings.pm
+msgid "    Whenever you `use' or `require' a module, you can specify a minimum"
+"    version requirement. To ensure compatibility with older Perls, this"
+"    version number should be expressed as a floating-point number. Do not"
+"    use v-strings or three-part numbers. The Perl convention for expressing"
+"    version numbers as floats is: version + (patch level / 1000)."
+""
+"      use Foo v1.2    qw(foo bar);  # not ok"
+"      use Foo 1.2.03  qw(foo bar);  # not ok"
+"      use Foo 1.00203 qw(foo bar);  # ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/RequireInterpolationOfMetachars.pm
+msgid "String *may* require interpolation"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/RequireInterpolationOfMetachars.pm
+msgid "PageNumber ValuesAndExpressions::RequireInterpolationOfMetachars"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/RequireInterpolationOfMetachars.pm
+msgid "    This policy warns you if you use single-quotes or `q//' with a string"
+"    that has unescaped metacharacters that may need interpolation. Its hard"
+"    to know for sure if a string really should be interpolated without"
+"    looking into the symbol table. This policy just makes an educated guess"
+"    by looking for metacharacters and sigils which usually indicate that the"
+"    string should be interpolated."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitConstantPragma.pm
+msgid "Pragma \"constant\" used"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitConstantPragma.pm
+msgid "PageNumber ValuesAndExpressions::ProhibitConstantPragma"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitConstantPragma.pm
+msgid "    Named constants are a good thing. But don't use the `constant' pragma"
+"    because barewords don't interpolate. Instead use the the Readonly"
+"    manpage module."
+""
+"      use constant FOOBAR => 42;  #not ok"
+""
+"      use Readonly;"
+"      Readonly  my $FOOBAR => 42;  #ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/RequireUpperCaseHeredocTerminator.pm
+msgid "Heredoc terminator not alphanumeric and upper-case"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/RequireUpperCaseHeredocTerminator.pm
+msgid "PageNumber ValuesAndExpressions::RequireUpperCaseHeredocTerminator"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/RequireUpperCaseHeredocTerminator.pm
+msgid "    For legibility, HEREDOC terminators should be all UPPER CASE letters"
+"    (and numbers), without any whitespace. Conway also recommends using a"
+"    standard prefix like \"END_\" but this policy doesn't enforce that."
+""
+"      print <<'the End';  #not ok"
+"      Hello World"
+"      the End"
+""
+"      print <<'THE_END';  #ok"
+"      Hello World"
+"      THE_END"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitNoisyQuotes.pm
+msgid "Quotes used with a noisy string"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitNoisyQuotes.pm
+msgid "PageNumber ValuesAndExpressions::ProhibitNoisyQuotes"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ValuesAndExpressions/ProhibitNoisyQuotes.pm
+msgid "    Don't use quotes for one or two-character strings of non-alphanumeric"
+"    characters (i.e. noise). These tend to be hard to read. For legibility,"
+"    use `q{}' or a named value. However, braces, parens, and brackets tend"
+"    do to look better in quotes, so those are allowed."
+""
+"      $str = join ',', @list;     #not ok"
+"      $str = join \",\", @list;     #not ok"
+"      $str = join q{,}, @list;    #better"
+""
+"      $COMMA = q{,};"
+"      $str = join $COMMA, @list;  #best"
+""
+"      $lbrace = '(';          #ok"
+"      $rbrace = ')';          #ok"
+"      print '(', @list, ')';  #ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ErrorHandling/RequireCarping.pm
+msgid "\"$elem\" used instead of \"$alternative\""
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ErrorHandling/RequireCarping.pm
+msgid "PageNumber ErrorHandling::RequireCarping"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ErrorHandling/RequireCarping.pm
+msgid "    The `die' and `warn' functions both report the file and line number"
+"    where the exception occurred. But if someone else is using your"
+"    subroutine, they usually don't care where your code blew up. Instead,"
+"    they want to know where their code invoked the subroutine. The the Carp"
+"    manpage module provides alternative methods that report the exception"
+"    from the caller's file and line number."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/NamingConventions/ProhibitAmbiguousNames.pm
+msgid "Ambiguous name for variable or subroutine"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/NamingConventions/ProhibitAmbiguousNames.pm
+msgid "PageNumber NamingConventions::ProhibitAmbiguousNames"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/NamingConventions/ProhibitAmbiguousNames.pm
+msgid "    Conway lists a collection of English words which are highly ambiguous as"
+"    variable or subroutine names. For example, `$last' can mean previous or"
+"    final."
+""
+"    This policy tests against a list of ambiguous words for variable names."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/NamingConventions/ProhibitMixedCaseVars.pm
+msgid "Mixed-case variable name(s)"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/NamingConventions/ProhibitMixedCaseVars.pm
+msgid "PageNumber NamingConventions::ProhibitMixedCaseVars"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/NamingConventions/ProhibitMixedCaseVars.pm
+msgid "    Conway's recommended naming convention is to use lower-case words"
+"    separated by underscores. Well-recognized acronyms can be in ALL CAPS,"
+"    but must be separated by underscores from other parts of the name."
+""
+"      my $foo_bar   #ok"
+"      my $foo_BAR   #ok"
+"      my @FOO_bar   #ok"
+"      my %FOO_BAR   #ok"
+""
+"      my $FooBar   #not ok"
+"      my $FOObar   #not ok"
+"      my @fooBAR   #not ok"
+"      my %fooBar   #not ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/NamingConventions/ProhibitMixedCaseSubs.pm
+msgid "Mixed-case subroutine name"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/NamingConventions/ProhibitMixedCaseSubs.pm
+msgid "PageNumber NamingConventions::ProhibitMixedCaseSubs"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/NamingConventions/ProhibitMixedCaseSubs.pm
+msgid "    Conway's recommended naming convention is to use lower-case words"
+"    separated by underscores. Well-recognized acronyms can be in ALL CAPS,"
+"    but must be separated by underscores from other parts of the name."
+""
+"      sub foo_bar{}   #ok"
+"      sub foo_BAR{}   #ok"
+"      sub FOO_bar{}   #ok"
+"      sub FOO_BAR{}   #ok"
+""
+"      sub Some::Class::foo{}   #ok, grudgingly"
+""
+"      sub FooBar {}   #not ok"
+"      sub FOObar {}   #not ok"
+"      sub fooBAR {}   #not ok"
+"      sub fooBar {}   #not ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitUniversalIsa.pm
+msgid "UNIVERSAL::isa should not be used as a function"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitUniversalIsa.pm
+msgid "Use eval{$obj->isa($pkg)} instead"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitUniversalIsa.pm
+msgid "      print UNIVERSAL::isa($obj, 'Foo::Bar') ? 'yes' : 'no';  #not ok"
+"      print eval { $obj->isa('Foo::Bar') } ? 'yes' : 'no';    #ok"
+""
+"    As of Perl 5.9.3, the use of `UNIVERSAL::isa' as a function has been"
+"    deprecated and the method form is preferred instead. Formerly, the"
+"    functional form was recommended because it gave valid results even when"
+"    the object was `undef' or an unblessed scalar. However, the functional"
+"    form makes it impossible for packages to override `isa()', a technique"
+"    which is crucial for implementing mock objects and some facades."
+""
+"    Another alternative to UNIVERSAL::isa is the `_INSTANCE' method of"
+"    Param::Util, which is faster."
+""
+"    See the CPAN module the UNIVERSAL::isa manpage for an incendiary"
+"    discussion of this topic."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/RequireBlockGrep.pm
+msgid "Expression form of \"grep\""
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/RequireBlockGrep.pm
+msgid "PageNumber BuiltinFunctions::RequireBlockGrep"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/RequireBlockGrep.pm
+msgid "    The expression forms of `grep' and `map' are awkward and hard to read."
+"    Use the block forms instead."
+""
+"      @matches = grep  /pattern/,    @list;        #not ok"
+"      @matches = grep { /pattern/ }  @list;        #ok"
+""
+"      @mapped = map  transform($_),    @list;      #not ok"
+"      @mapped = map { transform($_) }  @list;      #ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/RequireBlockMap.pm
+msgid "Expression form of \"map\""
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/RequireBlockMap.pm
+msgid "PageNumber BuiltinFunctions::RequireBlockMap"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/RequireBlockMap.pm
+msgid "    The expression forms of `grep' and `map' are awkward and hard to read."
+"    Use the block forms instead."
+""
+"      @matches = grep   /pattern/,   @list;        #not ok"
+"      @matches = grep { /pattern/ }  @list;        #ok"
+""
+"      @mapped = map   transform($_),   @list;      #not ok"
+"      @mapped = map { transform($_) }  @list;      #ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/RequireSimpleSortBlock.pm
+msgid "Sort blocks should have a single statement"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/RequireSimpleSortBlock.pm
+msgid "PageNumber BuiltinFunctions::RequireSimpleSortBlock"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/RequireSimpleSortBlock.pm
+msgid "    Conway advises that sort functions should be simple. Any complicated"
+"    operations on list elements should be computed and cached (perhaps via a"
+"    Schwartzian Transform) before the sort, rather than computed inside the"
+"    sort block, because the sort block is called `N log N' times instead of"
+"    just `N' times."
+""
+"    This policy prohibits the most blatant case of complicated sort blocks:"
+"    multiple statements. Future policies may wish to examine the sort block"
+"    in more detail -- looking for subroutine calls or large numbers of"
+"    operations."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/RequireGlobFunction.pm
+msgid "Glob written as <...>"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/RequireGlobFunction.pm
+msgid "PageNumber BuiltinFunctions::RequireGlobFunction"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/RequireGlobFunction.pm
+msgid "    Conway discourages the use of the ` <..' > construct for globbing, as it"
+"    is easily confused with the angle bracket file input operator. Instead,"
+"    he recommends the use of the `glob()' function as it makes it much more"
+"    obvious what you're attempting to do."
+""
+"      @files = <*.pl>;              # not ok"
+"      @files = glob( \"*.pl\" );      # ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitStringyEval.pm
+msgid "Expression form of \"eval\""
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitStringyEval.pm
+msgid "PageNumber BuiltinFunctions::ProhibitStringyEval"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitStringyEval.pm
+msgid "    The string form of `eval' is recompiled every time it is executed,"
+"    whereas the block form is only compiled once. Also, the string form"
+"    doesn't give compile-time warnings."
+""
+"      eval \"print $foo\";        #not ok"
+"      eval {print $foo};        #ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitSleepViaSelect.pm
+msgid "\"select\" used to emulate \"sleep\""
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitSleepViaSelect.pm
+msgid "PageNumber BuiltinFunctions::ProhibitSleepViaSelect"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitSleepViaSelect.pm
+msgid "    Conway discourages the use of `select()' for performing non-integer"
+"    sleeps. Although documented in the perlfunc manpage, it's something that"
+"    generally requires the reader to read `perldoc -f select' to figure out"
+"    what it should be doing. Instead, Conway recommends that you use the"
+"    `Time::HiRes' module when you want to sleep."
+""
+"      select undef, undef, undef, 0.25;         # not ok"
+""
+"      use Time::HiRes;"
+"      sleep( 0.25 );                            # ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitUniversalCan.pm
+msgid "UNIVERSAL::can should not be used as a function"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitUniversalCan.pm
+msgid "Use eval{$obj->can($pkg)} instead"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitUniversalCan.pm
+msgid "      print UNIVERSAL::can($obj, 'Foo::Bar') ? 'yes' : 'no';  #not ok"
+"      print eval { $obj->can('Foo::Bar') } ? 'yes' : 'no';    #ok"
+""
+"    As of Perl 5.9.3, the use of UNIVERSAL::can as a function has been"
+"    deprecated and the method form is preferred instead. Formerly, the"
+"    functional form was recommended because it gave valid results even when"
+"    the object was `undef' or an unblessed scalar. However, the functional"
+"    form makes it impossible for packages to override `can()', a technique"
+"    which is crucial for implementing mock objects and some facades."
+""
+"    See the CPAN module the UNIVERSAL::can manpage for a more thorough"
+"    discussion of this topic."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitLvalueSubstr.pm
+msgid "Lvalue form of \"substr\" used"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitLvalueSubstr.pm
+msgid "PageNumber BuiltinFunctions::ProhibitLvalueSubstr"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitLvalueSubstr.pm
+msgid "    Conway discourages the use of `substr()' as an lvalue, instead"
+"    recommending that the 4-argument version of `substr()' be used instead."
+""
+"      substr($something, 1, 2) = $newvalue;     # not ok"
+"      substr($something, 1, 2, $newvalue);      # ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitStringySplit.pm
+msgid "String delimiter used with \"split\""
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitStringySplit.pm
+msgid "Express it as a regex instead"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitStringySplit.pm
+msgid "    The `split' function always interprets the PATTERN argument as a regular"
+"    expression, even if you specify it as a string. This causes much"
+"    confusion if the string contains regex metacharacters. So for clarity,"
+"    always express the PATTERN argument as a regex."
+""
+"      $string = 'Fred|Barney';"
+"      @names = split '|', $string; #not ok, is ('F', 'r', 'e', 'd', '|', 'B', 'a' ...)"
+"      @names = split m/[|]/, $string; #ok, is ('Fred', Barney')"
+""
+"    When the PATTERN is a single space the `split' function has special"
+"    behavior, so Perl::Critic forgives that usage. See `\"perldoc -f split\"'"
+"    for more information."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitReverseSortBlock.pm
+msgid "Forbid $b before $a in sort blocks"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitReverseSortBlock.pm
+msgid "PageNumber BuiltinFunctions::ProhibitReverseSortBlock"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitVoidGrep.pm
+msgid "\"grep\" used in void context"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitVoidGrep.pm
+msgid "Use a \"for\" loop instead"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitVoidGrep.pm
+msgid "    `map' and `grep' are intended to be pure functions, not mutators. If you"
+"    want to iterate with side-effects, then you should use a proper `for' or"
+"    `foreach' loop."
+""
+"      grep{ print frobulate($_) } @list;           #not ok"
+"      print map{ frobulate($_) } @list;            #ok"
+""
+"      grep{ $_ = lc $_ } @list;                    #not ok"
+"      for( @list ){ $_ = lc $_  };                 #ok"
+""
+"      map{ push @frobbed, frobulate($_) } @list;   #not ok"
+"      @frobbed = map { frobulate($_) } @list;      #ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/BuiltinFunctions/ProhibitVoidMap.pm
+msgid "\"map\" used in void context"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/RegularExpressions/ProhibitCaptureWithoutTest.pm
+msgid "Capture variable used outside conditional"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/RegularExpressions/ProhibitCaptureWithoutTest.pm
+msgid "PageNumber RegularExpressions::ProhibitCaptureWithoutTest"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/RegularExpressions/ProhibitCaptureWithoutTest.pm
+msgid "    If a regexp match fails, then any capture variables (`$1', `$2', ...)"
+"    will be undefined. Therefore it's important to check the return value of"
+"    a match before using those variables."
+""
+"    This policy checks that capture variables are inside a conditional and"
+"    do not follow an regexps."
+""
+"    This policy does not check whether that conditional is actually testing"
+"    a regexp result, nor does it check whether a regexp actually has a"
+"    capture in it. Those checks are too hard."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/RegularExpressions/RequireExtendedFormatting.pm
+msgid "Regular expression without \"/x\" flag"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/RegularExpressions/RequireExtendedFormatting.pm
+msgid "PageNumber RegularExpressions::RequireExtendedFormatting"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/RegularExpressions/RequireExtendedFormatting.pm
+msgid "    Extended regular expression formatting allows you mix whitespace and"
+"    comments into the pattern, thus making them much more readable."
+""
+"        # Match a single-quoted string efficiently..."
+""
+"        m{'[^\\\\']*(?:\\\\.[^\\\\']*)*'};  #Huh?"
+""
+"        #Same thing with extended format..."
+""
+"        m{ '           #an opening single quote"
+"           [^\\\\']      #any non-special chars (i.e. not backslash or single quote)"
+"           (?:         #then all of..."
+"              \\\\ .     #   any explicitly backslashed char"
+"              [^\\\\']*  #   followed by an non-special chars"
+"           )*          #...repeated zero or more times"
+"           '           # a closing single quote"
+"         }x;"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/RegularExpressions/RequireLineBoundaryMatching.pm
+msgid "Regular expression without \"/m\" flag"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/RegularExpressions/RequireLineBoundaryMatching.pm
+msgid "PageNumber RegularExpressions::RequireLineBoundaryMatching"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/RegularExpressions/RequireLineBoundaryMatching.pm
+msgid "    Folks coming from a `sed' or `awk' background tend to assume that `'$''"
+"    and `'^'' match the beginning and and of the line, rather than then"
+"    beginning and ed of the string. Adding the '/m' flag to your regex makes"
+"    it behave as most people expect it should."
+""
+"      my $match = m{ ^ $pattern $ }x;  #not ok"
+"      my $match = m{ ^ $pattern $ }xm; #ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/ProhibitConditionalDeclarations.pm
+msgid "Variable declared in conditional statement"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/ProhibitConditionalDeclarations.pm
+msgid "Declare variables outside of the condition"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/ProhibitConditionalDeclarations.pm
+msgid "    Declaring a variable with a postfix conditional is really confusing. If"
+"    the conditional is false, its not clear if the variable will be false,"
+"    undefined, undeclared, or what. It's much more straightforward to make"
+"    variable declarations separately."
+""
+"      my $foo = $baz if $bar;          #not ok"
+"      my $foo = $baz unless $bar;      #not ok"
+"      our $foo = $baz for @list;       #not ok"
+"      local $foo = $baz foreach @list; #not ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/RequireLexicalLoopIterators.pm
+msgid "Loop iterator is not lexical"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/RequireLexicalLoopIterators.pm
+msgid "PageNumber Variables::RequireLexicalLoopIterators"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/ProhibitPunctuationVars.pm
+msgid "Magic punctuation variable used"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/ProhibitPunctuationVars.pm
+msgid "PageNumber Variables::ProhibitPunctuationVars"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/ProhibitPunctuationVars.pm
+msgid "    Perl's vocabulary of punctuation variables such as `$!', `$.', and `$^'"
+"    are perhaps the leading cause of its reputation as inscrutable line"
+"    noise. The simple alternative is to use the the English manpage module"
+"    to give them clear names."
+""
+"      $| = undef;                      #not ok"
+""
+"      use English qw(-no_match_vars);"
+"      local $OUTPUT_AUTOFLUSH = undef;        #ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/ProhibitLocalVars.pm
+msgid "Variable declared as \"local\""
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/ProhibitLocalVars.pm
+msgid "PageNumber Variables::ProhibitLocalVars"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/ProhibitLocalVars.pm
+msgid "    Since Perl 5, there are very few reasons to declare `local' variables."
+"    The most common exceptions are Perl's magical global variables. If you"
+"    do need to modify one of those global variables, you should localize it"
+"    first. You should also use the the English manpage module to give those"
+"    variables more meaningful names."
+""
+"      local $foo;   #not ok"
+"      my $foo;      #ok"
+""
+"      use English qw(-no_match_vars);"
+"      local $INPUT_RECORD_SEPARATOR    #ok"
+"      local $RS                        #ok"
+"      local $/;                        #not ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/ProhibitPackageVars.pm
+msgid "Package variable declared or used"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/ProhibitPackageVars.pm
+msgid "PageNumber Variables::ProhibitPackageVars"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/ProhibitPackageVars.pm
+msgid "    Conway suggests avoiding package variables completely, because they"
+"    expose your internals to other packages. Never use a package variable"
+"    when a lexical variable will suffice. If your package needs to keep some"
+"    dynamic state, consider using an object or closures to keep the state"
+"    private."
+""
+"    This policy assumes that you're using `strict vars' so that naked"
+"    variable declarations are not package variables by default. Thus, it"
+"    complains you declare a variable with `our' or `use vars', or if you"
+"    make reference to variable with a fully-qualified package name."
+""
+"      $Some::Package::foo = 1;    #not ok"
+"      our $foo            = 1;    #not ok"
+"      use vars '$foo';            #not ok"
+"      $foo = 1;                   #not allowed by 'strict'"
+"      local $foo = 1;             #bad taste, but technically ok."
+"      use vars '$FOO';            #ok, because it's ALL CAPS"
+"      my $foo = 1;                #ok"
+""
+"    In practice though, its not really practical to prohibit all package"
+"    variables. Common variables like `$VERSION' and `@EXPORT' need to be"
+"    global, as do any variables that you want to Export. To work around"
+"    this, the Policy overlooks any variables that are in ALL_CAPS. This"
+"    forces you to put all your exported variables in ALL_CAPS too, which"
+"    seems to be the usual practice anyway."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/ProhibitMatchVars.pm
+msgid "Match variable used"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/ProhibitMatchVars.pm
+msgid "PageNumber Variables::ProhibitMatchVars"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/ProhibitMatchVars.pm
+msgid "    Using the \"match variables\" `$`', `$&', and/or `$'' can significantly"
+"    degrade the performance of a program. This policy forbids using them or"
+"    their English equivalents. It also forbids plain `use English;' so you"
+"    should instead employ `use English '-no_match_vars';' which avoids the"
+"    match variables. See perldoc English or PBP page 82 for more"
+"    information."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/RequireNegativeIndices.pm
+msgid "Negative array index should be used"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/RequireNegativeIndices.pm
+msgid "PageNumber Variables::RequireNegativeIndices"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/RequireNegativeIndices.pm
+msgid "    Conway points out that"
+""
+"      $arr[$#arr];"
+"      $arr[$#arr-1];"
+"      $arr[@arr-1];"
+"      $arr[@arr-2];"
+""
+"    are equivalent to"
+""
+"      $arr[-1];"
+"      $arr[-2];"
+"      $arr[-1];"
+"      $arr[-2];"
+""
+"    and the latter are more readable, performant and maintainable. The"
+"    latter is because the programmer no longer needs to keep two variable"
+"    names matched."
+""
+"    This policy notices all of the simple forms of the above problem, but"
+"    does not recognize any of these more complex examples:"
+""
+"       $some->[$data_structure]->[$#{$some->[$data_structure]} -1];"
+"       my $ref = \\@arr;"
+"       $ref->[$#arr];"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/RequireInitializationForLocalVars.pm
+msgid "\"local\" variable not initialized"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/RequireInitializationForLocalVars.pm
+msgid "PageNumber Variables::RequireInitializationForLocalVars"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Variables/RequireInitializationForLocalVars.pm
+msgid "    Most people don't realize that a localized copy of a variable does not"
+"    retain its original value. Unless you initialize the variable when you"
+"    `local'-ize it, it defaults to `undef'. If you want the variable to"
+"    retain its original value, just initialize it to itself. If you really"
+"    do want the localized copy to be undef, then make it explicit."
+""
+"      package Foo;"
+"      $Bar = '42';"
+""
+"      package Baz;"
+""
+"      sub frobulate {"
+""
+"          local $Foo::Bar;              #not ok, local $Foo::Bar is 'undef'"
+"          local $Foo::Bar = undef;      #ok, local $Foo::Bar is obviously 'undef'"
+"          local $Foo::Bar = $Foo::Bar;  #ok, local $Foo::Bar still equals '42'"
+""
+"      }"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/CodeLayout/RequireConsistentNewlines.pm
+msgid "Use the same newline through the source"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/CodeLayout/RequireConsistentNewlines.pm
+msgid "Change your newlines to be the same throughout"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/CodeLayout/RequireConsistentNewlines.pm
+msgid "    Source code files are divided into lines with line endings of `\\r', `\\n'"
+"    or `\\r\\n'. Mixing these different line endings causes problems in many"
+"    text editors and, notably, Module::Signature and GnuPG."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/CodeLayout/RequireTrailingCommas.pm
+msgid "List declaration without trailing comma"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/CodeLayout/RequireTrailingCommas.pm
+msgid "PageNumber CodeLayout::RequireTrailingCommas"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/CodeLayout/RequireTrailingCommas.pm
+msgid "    Conway suggests that all elements in a multi-line list should be"
+"    separated by commas, including the last element. This makes it a little"
+"    easier to re-order the list by cutting and pasting."
+""
+"      my @list = ($foo,"
+"                  $bar,"
+"                  $baz);  #not ok"
+""
+"      my @list = ($foo,"
+"                  $bar,"
+"                  $baz,); #ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/CodeLayout/ProhibitHardTabs.pm
+msgid "Hard tabs used"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/CodeLayout/ProhibitHardTabs.pm
+msgid "PageNumber CodeLayout::ProhibitHardTabs"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/CodeLayout/ProhibitHardTabs.pm
+msgid "    Putting hard tabs in your source code (or POD) is one of the worst"
+"    things you can do to your co-workers and colleagues, especially if those"
+"    tabs are anywhere other than a leading position. Because various"
+"    applications and devices represent tabs differently, they can cause you"
+"    code to look vastly different to other people. Any decent editor can be"
+"    configured to expand tabs into spaces. the Perl::Tidy manpage also does"
+"    this for you."
+""
+"    This Policy catches all tabs in your source code, including POD, quotes,"
+"    and HEREDOCS. The contents of the `__DATA__' section are not examined."
+"    Tabs in a leading position are allowed, but if you want to forbid all"
+"    tabs everywhere, put this to your .perlcriticrc file:"
+""
+"      [CodeLayout::ProhibitHardTabs]"
+"      allow_leading_tabs = 0"
+""
+"    Beware that Perl::Critic may report the location of the string that"
+"    contains the tab, not the actual location of the tab, so you may need to"
+"    do some hunting. I'll try and fix this in the future."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/CodeLayout/ProhibitParensWithBuiltins.pm
+msgid "Builtin function called with parens"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/CodeLayout/ProhibitParensWithBuiltins.pm
+msgid "PageNumber CodeLayout::ProhibitParensWithBuiltins"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/CodeLayout/ProhibitParensWithBuiltins.pm
+msgid "    Conway suggests that all built-in functions be called without"
+"    parentheses around the argument list. This reduces visual clutter and"
+"    disambiguates built-in functions from user functions. Exceptions are"
+"    made for `my', `local', and `our' which require parentheses when called"
+"    with multiple arguments."
+""
+"      open($handle, '>', $filename); #not ok"
+"      open $handle, '>', $filename;  #ok"
+""
+"      split(/$pattern/, @list); #not ok"
+"      split /$pattern/, @list;  #ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/CodeLayout/ProhibitQuotedWordLists.pm
+msgid "List of quoted literal words"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/CodeLayout/ProhibitQuotedWordLists.pm
+msgid "Use 'qw()' instead"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/CodeLayout/ProhibitQuotedWordLists.pm
+msgid "    Conway doesn't mention this, but I think `qw()' is an underused feature"
+"    of Perl. Whenever you need to declare a list of one-word literals, the"
+"    `qw()' operator is wonderfully concise, and makes it easy to add to the"
+"    list in the future."
+""
+"      @list = ('foo', 'bar', 'baz');  #not ok"
+"      @list = qw(foo bar baz);        #ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/CodeLayout/RequireTidyCode.pm
+msgid "Code is not tidy"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/CodeLayout/RequireTidyCode.pm
+msgid "PageNumber CodeLayout::RequireTidyCode"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/CodeLayout/RequireTidyCode.pm
+msgid "    Conway does make specific recommendations for whitespace and"
+"    curly-braces in your code, but the most important thing is to adopt a"
+"    consistent layout, regardless of the specifics. And the easiest way to"
+"    do that is to use the Perl::Tidy manpage. This policy will complain if"
+"    you're code hasn't been run through Perl::Tidy."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/ProhibitAutomaticExportation.pm
+msgid "Symbols are exported by default"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/ProhibitAutomaticExportation.pm
+msgid "Use '@EXPORT_OK' or '%EXPORT_TAGS' instead"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/ProhibitAutomaticExportation.pm
+msgid "    When using the Exporter manpage, symbols placed in the `@EXPORT'"
+"    variable are automatically exported into the caller's namespace."
+"    Although convenient, this practice is not polite, and may cause serious"
+"    problems if the caller declares the same symbols. The best practice is"
+"    to place your symbols in `@EXPORT_OK' or `%EXPORT_TAGS' and let the"
+"    caller choose exactly which symbols to export."
+""
+"      package Foo;"
+""
+"      use base qw(Exporter);"
+"      our @EXPORT      = qw(&foo &bar);                  # not ok"
+"      our @EXPORT_OK   = qw(&foo &bar);                  # ok"
+"      our %EXPORT_TAGS = ( all => [ qw(&foo &bar) ] );   # ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/RequireBarewordIncludes.pm
+msgid "\"$type\" statement with library name as string"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/RequireBarewordIncludes.pm
+msgid "Use a bareword instead"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/RequireBarewordIncludes.pm
+msgid "    When including another module (or library) via the `require' or `use'"
+"    statements, it is best to identify the module (or library) using a"
+"    bareword rather than an explicit path. This is because paths are usually"
+"    not portable from one machine to another. Also, Perl automatically"
+"    assumes that the filename ends in '.pm' when the library is expressed as"
+"    a bareword. So as a side-effect, this Policy encourages people to write"
+"    '*.pm' modules instead of the old-school '*.pl' libraries."
+""
+"      use 'My/Perl/Module.pm';  #not ok"
+"      use My::Perl::Module;     #ok"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/ProhibitEvilModules.pm
+msgid "Prohibited module used"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/ProhibitEvilModules.pm
+msgid "Find an alternative module"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/ProhibitEvilModules.pm
+msgid "    Use this policy if you wish to prohibit the use of specific modules."
+"    These may be modules that you feel are deprecated, buggy, unsupported,"
+"    insecure, or just don't like."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/RequireExplicitPackage.pm
+msgid "Code not contained in explicit package"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/RequireExplicitPackage.pm
+msgid "Violates encapsulation"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/RequireExplicitPackage.pm
+msgid "    In general, the first statement of any Perl module or library should be"
+"    a `package' statement. Otherwise, all the code that comes before the"
+"    `package' statement is getting executed in the caller's package, and you"
+"    have no idea who that is. Good encapsulation and common decency require"
+"    your module to keep its innards to itself."
+""
+"    As for scripts, most people understand that the default package is"
+"    `main', so this Policy doesn't apply to files that begin with a perl"
+"    shebang. If you want to require an explicit `package' declaration in all"
+"    files, including programs, then add the following to your .perlcriticrc"
+"    file"
+""
+"      [Modules::RequireExplicitPackage]"
+"      exempt_scripts = 0"
+""
+"    There are some valid reasons for not having a `package' statement at"
+"    all. But make sure you understand them before assuming that you should"
+"    do it too."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/ProhibitMultiplePackages.pm
+msgid "Multiple \"package\" declarations"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/ProhibitMultiplePackages.pm
+msgid "Limit to one per file"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/ProhibitMultiplePackages.pm
+msgid "    Conway doesn't specifically mention this, but I find it annoying when"
+"    there are multiple packages in the same file. When searching for methods"
+"    or keywords in your editor, it makes it hard to find the right chunk of"
+"    code, especially if each package is a subclass of the same base."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/RequireVersionVar.pm
+msgid "No \"VERSION\" variable found"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/RequireVersionVar.pm
+msgid "PageNumber Modules::RequireVersionVar"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/RequireVersionVar.pm
+msgid "    Every Perl file (modules, libraries, and programs) should have a"
+"    `$VERSION' variable. The `$VERSION' allows clients to insist on a"
+"    particular revision of your file like this:"
+""
+"      use SomeModule 2.4;  #Only loads version 2.4"
+""
+"    This Policy scans your file for any package variable named `$VERSION'."
+"    I'm assuming that you are using `strict', so you'll have to declare it"
+"    like one of these:"
+""
+"      our $VERSION = 1.01;"
+"      $MyPackage::VERSION = 1.01;"
+"      use vars qw($VERSION);"
+""
+"    A common practice is to use the `$Revision: 881 $' keyword to"
+"    automatically define the `$VERSION' variable like this:"
+""
+"      our ($VERSION) = '$Revision: 881 $' =~ m{ \\$Revision: \\s+ (\\S+) }x;"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/RequireFilenameMatchesPackage.pm
+msgid "Package declaration must match filename"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/RequireFilenameMatchesPackage.pm
+msgid "Correct the filename or package statement"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/RequireFilenameMatchesPackage.pm
+msgid "    The package declaration should always match the name of the file that"
+"    contains it. For example, `package Foo::Bar;' should be in a file called"
+"    `Bar.pm'."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/RequireEndWithOne.pm
+msgid "Module does not end with \"1;\""
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/RequireEndWithOne.pm
+msgid "Must end with a recognizable true value"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Modules/RequireEndWithOne.pm
+msgid "    All files included via `use' or `require' must end with a true value to"
+"    indicate to the caller that the include was successful. The standard"
+"    practice is to conclude your .pm files with `1;', but some authors like"
+"    to get clever and return some other true value like `return \"Club"
+"    sandwich\";'. We cannot tolerate such frivolity! OK, we can, but we don't"
+"    recommend it since it confuses the newcomers."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Documentation/RequirePodSections.pm
+msgid "Missing \"$required\" section in POD"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Documentation/RequirePodSections.pm
+msgid "PageNumber Documentation::RequirePodSections"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Documentation/RequirePodSections.pm
+msgid "    This Policy requires your POD to contain certain `=head1' sections. If"
+"    the file doesn't contain any POD at all, then this Policy does not"
+"    apply. Tools like the Module::Starter manpage make it really easy to"
+"    ensure that every module has the same documentation framework, and they"
+"    can save you lots of keystrokes."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Documentation/RequirePodAtEnd.pm
+msgid "POD before __END__"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Documentation/RequirePodAtEnd.pm
+msgid "PageNumber Documentation::RequirePodAtEnd"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Documentation/RequirePodAtEnd.pm
+msgid "    Perl stops processing code when it sees an `__END__' statement. So, to"
+"    save processing time, it's faster to put documentation after the"
+"    `__END__'. Also, writing all the POD in one place usually leads to a"
+"    more cohesive document, rather than being forced to follow the layout of"
+"    your code. This policy issues violations if any POD is found before an"
+"    `__END__'."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/TestingAndDebugging/ProhibitNoWarnings.pm
+msgid "Warnings disabled"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/TestingAndDebugging/ProhibitNoWarnings.pm
+msgid "PageNumber TestingAndDebugging::ProhibitNoWarnings"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/TestingAndDebugging/ProhibitNoWarnings.pm
+msgid "    There are good reasons for disabling certain kinds of warnings. But if"
+"    you were wise enough to `use warnings' in the first place, then it"
+"    doesn't make sense to disable them completely. By default, any `no"
+"    warnings' statement will violate this policy. However, you can configure"
+"    this Policy to allow certain types of warnings to be disabled (See the"
+"    Configuration manpage). A bare `no warnings' statement will always raise"
+"    a violation."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/TestingAndDebugging/ProhibitNoStrict.pm
+msgid "Stricture disabled"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/TestingAndDebugging/ProhibitNoStrict.pm
+msgid "PageNumber TestingAndDebugging::ProhibitNoStrict"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/TestingAndDebugging/ProhibitNoStrict.pm
+msgid "    There are good reasons for disabling certain kinds of strictures, But if"
+"    you were wise enough to `use strict' in the first place, then it doesn't"
+"    make sense to disable it completely. By default, any `no strict'"
+"    statement will violate this policy. However, you can configure this"
+"    Policy to allow certain types of strictures to be disabled (See the"
+"    Configuration manpage). A bare `no strict' statement will always raise a"
+"    violation."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/TestingAndDebugging/RequireTestLabels.pm
+msgid "Test without a label"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/TestingAndDebugging/RequireTestLabels.pm
+msgid "Add a label argument to all Test::More functions"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/TestingAndDebugging/RequireTestLabels.pm
+msgid "    Most Perl modules with regression tests use the Test::More manpage as"
+"    infrastructure for writing and running those tests. It has an easy,"
+"    procedural syntax for writing comparisons of results to expectations."
+""
+"    Most of the Test::More functions allow the programmer to add an optional"
+"    label that describes what each test is trying to judge. When a test goes"
+"    wrong, these labels are very useful for quickly determining where the"
+"    problem originated."
+""
+"    This policy enforces that all Test::More functions have labels where"
+"    applicable. This only applies to code that has a `use Test::More' or"
+"    `require Test::More' declaration (see below to add more test modules to"
+"    the list)."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/TestingAndDebugging/RequireUseWarnings.pm
+msgid "Code before warnings are enabled"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/TestingAndDebugging/RequireUseWarnings.pm
+msgid "PageNumber TestingAndDebugging::RequireUseWarnings"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/TestingAndDebugging/RequireUseWarnings.pm
+msgid "    Using warnings, and paying attention to what they say, is probably the"
+"    single most effective way to improve the quality of your code. This"
+"    policy requires that the `'use warnings'' statement must come before any"
+"    other statements except `package', `require', and other `use'"
+"    statements. Thus, all the code in the entire package will be affected."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/TestingAndDebugging/ProhibitProlongedStrictureOverride.pm
+msgid "Don't turn off strict for large blocks of code"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/TestingAndDebugging/ProhibitProlongedStrictureOverride.pm
+msgid "PageNumber TestingAndDebugging::ProhibitProlongedStrictureOverride"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/TestingAndDebugging/ProhibitProlongedStrictureOverride.pm
+msgid "    Every agrees that `use strict' is the first step to writing maintainable"
+"    code in Perl. However, sometimes `strict' is a little too strict. In"
+"    those cases, you can turn it off briefly with a `no strict' directive."
+""
+"    This policy checks that `no strict' is only in effect for a small number"
+"    of statements."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/TestingAndDebugging/RequireUseStrict.pm
+msgid "Code before strictures are enabled"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/TestingAndDebugging/RequireUseStrict.pm
+msgid "PageNumber TestingAndDebugging::RequireUseStrict"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/TestingAndDebugging/RequireUseStrict.pm
+msgid "    Using strictures is probably the single most effective way to improve"
+"    the quality of your code. This policy requires that the `'use strict''"
+"    statement must come before any other statements except `package',"
+"    `require', and other `use' statements. Thus, all the code in the entire"
+"    package will be affected."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ClassHierarchies/ProhibitOneArgBless.pm
+msgid "One-argument \"bless\" used"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ClassHierarchies/ProhibitOneArgBless.pm
+msgid "PageNumber ClassHierarchies::ProhibitOneArgBless"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ClassHierarchies/ProhibitOneArgBless.pm
+msgid "    Always use the two-argument form of `bless' because it allows subclasses"
+"    to inherit your constructor."
+""
+"      sub new {"
+"          my $class = shift;"
+"          my $self = bless {};          # not ok"
+"          my $self = bless {}, $class;  # ok"
+"          return $self;"
+"      }"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ClassHierarchies/ProhibitAutoloading.pm
+msgid "AUTOLOAD method declared"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ClassHierarchies/ProhibitAutoloading.pm
+msgid "PageNumber ClassHierarchies::ProhibitAutoloading"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ClassHierarchies/ProhibitAutoloading.pm
+msgid "    Declaring a subroutine with the name `\"AUTOLOAD\"' will violate this"
+"    Policy. The `AUTOLOAD' mechanism is an easy way to generate methods for"
+"    your classes, but unless they are carefully written, those classes are"
+"    difficult to inherit from. And over time, the `AUTOLOAD' method will"
+"    become more and more complex as it becomes responsible for dispatching"
+"    more and more functions. You're better off writing explicit accessor"
+"    methods. Editor macros can help make this a little easier."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ClassHierarchies/ProhibitExplicitISA.pm
+msgid "@ISA used instead of \"use base\""
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ClassHierarchies/ProhibitExplicitISA.pm
+msgid "PageNumber ClassHierarchies::ProhibitExplicitISA"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/ClassHierarchies/ProhibitExplicitISA.pm
+msgid "    Conway recommends employing `use base qw(Foo)' instead of the usual `our"
+"    @ISA = qw(Foo)' because the former happens at compile time and the"
+"    latter at runtime. The `base' pragma also automatically loads `Foo' for"
+"    you so you save a line of easily-forgotten code."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Miscellanea/ProhibitFormats.pm
+msgid "Format used"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Miscellanea/ProhibitFormats.pm
+msgid "PageNumber Miscellanea::ProhibitFormats"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Miscellanea/ProhibitFormats.pm
+msgid "    Formats are one of the oldest features of Perl. Unfortunately, they"
+"    suffer from several limitations. Formats are static and cannot be easily"
+"    defined at run time. Also, formats depend on several obscure global"
+"    variables."
+""
+"    For more modern reporting tools, consider using one of the template"
+"    frameworks like the Template manpage or try the the Perl6::Form manpage"
+"    module."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Miscellanea/ProhibitTies.pm
+msgid "Tied variable used"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Miscellanea/ProhibitTies.pm
+msgid "PageNumber Miscellanea::ProhibitTies"
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Miscellanea/ProhibitTies.pm
+msgid "    Conway discourages using `tie' to bind Perl primitive variables to"
+"    user-defined objects. Unless the tie is done close to where the object"
+"    is used, other developers probably won't know that the variable has"
+"    special behavior. If you want to encapsulate complex behavior, just use"
+"    a proper object or subroutine."
+msgstr ""
+
+#: lib/Perl/Critic/Policy/Miscellanea/RequireRcsKeywords.pm
+msgid "    Every code file, no matter how small, should be kept in a source-control"
+"    repository. Adding the magical RCS keywords to your file helps the"
+"    reader know where the file comes from, in case he or she needs to modify"
+"    it. This Policy scans your file for comments that look like this:"
+""
+"      # $Revision: 882 $"
+"      # $Source: /myproject/lib/foo.pm $"
+""
+"    A common practice is to use the `Revision' keyword to automatically"
+"    define the `$VERSION' variable like this:"
+""
+"      our ($VERSION) = '$Revision: 882 $' =~ m{ \\$Revision: \\s+ (\\S+) }x;"
+msgstr ""

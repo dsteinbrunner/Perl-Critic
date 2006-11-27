@@ -1,0 +1,119 @@
+#!/usr/bin/perl -w
+
+use strict;
+use FindBin;
+use File::Find;
+use Text::Wrap;
+use PPI;
+use lib "$FindBin::Bin/../lib";
+use Perl::Critic::Violation;
+
+sub cleanup_string {
+	my $str = shift;
+	if ($str =~ /^"(.*)"$/) {
+		$str = $1;
+	}
+	elsif ($str =~ /^'(.*)'$/) {
+		$str = $1;
+		$str =~ s{"}{\\"}g;
+	}
+	elsif ($str =~ /[q]+{(.*)}/) {
+		$str = $1;
+		$str =~ s{"}{\\"}g;
+	}
+	return $str;
+}
+
+chdir "$FindBin::Bin/..";
+
+my @files = ( glob('bin/*'), 'lib/Perl/Critic.pm', glob('lib/Perl/Critic/*.pm') );
+my @pms;
+find( sub { push @pms, $File::Find::name if -f and /\.pm$/ },
+    'lib/Perl/Critic/Policy' );
+
+my $default_po_file = 'lib/Perl/Critic/I18N/i_default.po';
+
+unlink $default_po_file;
+
+system( "xgettext.pl", "-u", "-o", $default_po_file, @files );
+system( $^X, "-pi", "-es/charset=CHARSET/charset=UTF-8/", $default_po_file );
+
+open my $po, '>>', $default_po_file
+  or die "Can't open $default_po_file : $!\n";
+
+my %expls;
+my %descs;
+my %diags;
+$diags{""} = "";
+
+foreach my $pm (@pms) {
+    print "$pm\n";
+    my ( $package, $desc, $expl );
+    open my $fh, $pm or die "Can't open $pm : $!\n";
+  LINE:
+    while ( my $line = <$fh> ) {
+
+        $line =~ /package\s+Perl::Critic::Policy::(.*)\s*;/
+          and do { $package = $1; next LINE; };
+
+        $line =~ /my \s+ \$desc \s* = \s* (.*) [;] \s* (?:\#.*)* /xms
+          and do { $desc = $1; next LINE; };
+
+        $line =~ /my \s+ \$expl \s* = \s* (.*) [;] \s* (?:\#.*)* /xms
+          and do { $expl = $1; next LINE; };
+
+    }
+    close $fh;
+
+    if ( defined $package and defined $desc and defined $expl ) {
+
+		$desc = cleanup_string($desc);
+
+		if (not exists $descs{$desc}) {
+			print $po "\n#: $pm\n";
+			print $po qq{msgid "$desc"\n};
+			print $po qq{msgstr ""\n};
+		}
+		else {
+			print STDERR qq{Descritption "$desc" already present\n};
+		}
+		$descs{$desc}++;
+
+		if ($expl =~ /^\[.*\]$/) {
+			$expl = "PageNumber $package";
+		}
+		else {
+			$expl = cleanup_string($expl);
+		}
+		if (not exists $expls{$expl}) {
+			print $po "\n#: $pm\n";
+			print $po qq{msgid "$expl"\n};
+			print $po qq{msgstr ""\n};
+		}
+		else {
+			print STDERR qq{Explanation "$expl" already present\n};
+		}
+		$expls{$expl}++;
+
+    }
+    else {
+        print "Missing package\n" unless defined $package;
+        print "Missing desc\n"    unless defined $desc;
+        print "Missing expl\n"    unless defined $expl;
+    }
+
+    #	print "$package $desc $expl\n" if ;
+    my $diag = Perl::Critic::Violation::_get_diagnostics($pm);
+    $diag =~ s{\\}{\\\\}g;
+    $diag =~ s/\"/\\\"/g;
+    $diag =~ s{\n}{\"\n\"}g;
+
+    if (not exists $diags{$diag}) {
+	print $po "\n#: $pm\n";
+	print $po qq{msgid "$diag"\n};
+	print $po qq{msgstr ""\n};
+    }
+    $diags{$diag}++;
+}
+
+close $po;

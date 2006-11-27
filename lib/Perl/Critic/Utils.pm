@@ -11,6 +11,7 @@ use strict;
 use warnings;
 use File::Spec qw();
 use base 'Exporter';
+use Perl::Critic::I18N;
 
 our $VERSION = 0.22;
 
@@ -366,17 +367,17 @@ sub _split_nodes_on_comma {
 #-----------------------------------------------------------------------------
 
 my %FORMAT_OF = (
-    1 => "%f:%l:%c:%m\n",
-    2 => "%f: (%l:%c) %m\n",
-    3 => "%m at %f line %l\n",
-    4 => "%m at line %l, column %c.  %e.  (Severity: %s)\n",
-    5 => "%f: %m at line %l, column %c.  %e.  (Severity: %s)\n",
-    6 => "%m at line %l, near '%r'.  (Severity: %s)\n",
-    7 => "%f: %m at line %l near '%r'.  (Severity: %s)\n",
-    8 => "[%p] %m at line %l, column %c.  (Severity: %s)\n",
-    9 => "[%p] %m at line %l, near '%r'.  (Severity: %s)\n",
-   10 => "%m at line %l, column %c.\n  %p (Severity: %s)\n%d\n",
-   11 => "%m at line %l, near '%r'.\n  %p (Severity: %s)\n%d\n",
+    1 => loc("%f:%l:%c:%m\n"),
+    2 => loc("%f: (%l:%c) %m\n"),
+    3 => loc("%m at %f line %l\n"),
+    4 => loc("%m at line %l, column %c.  %e.  (Severity: %s)\n"),
+    5 => loc("%f: %m at line %l, column %c.  %e.  (Severity: %s)\n"),
+    6 => loc("%m at line %l, near '%r'.  (Severity: %s)\n"),
+    7 => loc("%f: %m at line %l near '%r'.  (Severity: %s)\n"),
+    8 => loc("[%p] %m at line %l, column %c.  (Severity: %s)\n"),
+    9 => loc("[%p] %m at line %l, near '%r'.  (Severity: %s)\n"),
+   10 => loc("%m at line %l, column %c.\n  %p (Severity: %s)\n%d\n"),
+   11 => loc("%m at line %l, near '%r'.\n  %p (Severity: %s)\n%d\n"),
 );
 
 my $DEFAULT_FORMAT = $FORMAT_OF{4};

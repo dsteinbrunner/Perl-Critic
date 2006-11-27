@@ -16,11 +16,12 @@ use Pod::PlainText qw();
 use Perl::Critic::Utils;
 use String::Format qw(stringf);
 use overload ( q{""} => 'to_string', cmp => '_compare' );
+use Perl::Critic::I18N;
 
 our $VERSION = 0.22;
 
 #Class variables...
-our $FORMAT = "%m at line %l, column %c. %e.\n"; #Default stringy format
+our $FORMAT = loc("%m at line %l, column %c. %e.\n"); #Default stringy format
 my %DIAGNOSTICS = ();  #Cache of diagnostic messages
 
 #----------------------------------------------------------------------------
@@ -73,7 +74,7 @@ sub sort_by_location {
     ## TODO: What if $a and $b are not Violation objects?
     return
         map {$_->[0]}
-            sort { ($a->[1] <=> $b->[1]) || ($a->[2] <=> $b->[2]) } 
+            sort { ($a->[1] <=> $b->[1]) || ($a->[2] <=> $b->[2]) }
                 map {[$_, $_->location->[0] || 0, $_->location->[1] || 0]}
                     @_;
 }
@@ -89,7 +90,7 @@ sub sort_by_severity {
     ## TODO: What if $a and $b are not Violation objects?
     return
         map {$_->[0]}
-            sort { $a->[1] <=> $b->[1] } 
+            sort { $a->[1] <=> $b->[1] }
                 map {[$_, $_->severity() || 0]}
                     @_;
 }
@@ -110,10 +111,10 @@ sub diagnostics {
     if (!$DIAGNOSTICS{$pol}) {
         if ( my $file = _mod2file($pol) ) {
             if ( my $diags = _get_diagnostics($file) ) {
-               $DIAGNOSTICS{$pol} = $diags;
+               $DIAGNOSTICS{$pol} = loc($diags);
             }
         }
-        $DIAGNOSTICS{$pol} ||= "    No diagnostics available\n";
+        $DIAGNOSTICS{$pol} ||= loc("    No diagnostics available\n");
     }
     return $DIAGNOSTICS{$pol};
 }
@@ -122,7 +123,7 @@ sub diagnostics {
 
 sub description {
     my $self = shift;
-    return $self->{_description};
+    return loc($self->{_description});
 }
 
 #-----------------------------------------------------------------------------
@@ -134,9 +135,19 @@ sub explanation {
        $expl = '(no explanation)';
     }
     if ( ref $expl eq 'ARRAY' ) {
-        my $page = @{$expl} > 1 ? 'pages' : 'page';
-        $page .= $SPACE . join $COMMA, @{$expl};
-        $expl = "See $page of PBP";
+        (my $short_policy = $self->policy()) =~ s/ \A Perl::Critic::Policy:: //xms;
+        my $expl_key = "PageNumber $short_policy";
+        my $loc_expl = loc($expl_key);
+        if ($loc_expl eq $expl_key) {
+            $loc_expl = join $COMMA, @{$expl};
+            $expl = ($loc_expl =~ /,/)? "See pages $loc_expl of PBP" : "See pages $loc_expl of PBP";
+        }
+        else {
+            $expl = ($loc_expl =~ /,/)? loc('See pages %1 of PBP', $loc_expl) : loc('See page %1 of PBP', $loc_expl);
+        }
+    }
+    else {
+        $expl = loc($expl);
     }
     return $expl;
 }
@@ -199,8 +210,8 @@ sub to_string {
          's' => $self->severity(),
          'd' => sub { $self->diagnostics() },
          'r' => sub { $self->source() },
-         'P' => $long_policy,
-         'p' => $short_policy,
+         'P' => loc($long_policy),
+         'p' => loc($short_policy),
     );
     return stringf($FORMAT, %fspec);
 }
