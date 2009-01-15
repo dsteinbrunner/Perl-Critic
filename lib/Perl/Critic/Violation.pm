@@ -156,12 +156,38 @@ sub explanation {
     if ( !$expl ) {
        $expl = '(no explanation)';
     }
+    my @pages;
     if ( ref $expl eq 'ARRAY' ) {
-        my $page = @{$expl} > 1 ? 'pages' : 'page';
-        $page .= $SPACE . join $COMMA, @{$expl};
+        @pages = @{$expl};
+    }
+    elsif ( ref $expl eq 'HASH' ) {
+        if ( exists $expl->{book} ) {
+            @pages = @{$expl->{book}};
+        }
+    }
+    if ( @pages ) {
+        my $page = @pages > 1 ? 'pages' : 'page';
+        $page .= $SPACE . join $COMMA, @pages;
         $expl = "See $page of PBP";
     }
     return $expl;
+}
+
+#-----------------------------------------------------------------------------
+
+sub safari_url {
+    my $self = shift;
+    my $expl = $self->{_explanation};
+    if ( ref $expl ne 'HASH' ) {
+        return;
+    }
+    if ( ! exists $expl->{safari} ) {
+        return;
+    }
+    my ( $chapter, $sections ) = @{ $expl->{safari} };
+    my @sections = ref $sections eq 'ARRAY' ? @{ $sections } : $sections;
+    my @urls = map { "http://safari.oreilly.com/0596001738/perlbp-CHP-$chapter-SECT-$_" } @sections;
+    return wantarray ? @urls : join $COMMA . $SPACE, @urls;
 }
 
 #-----------------------------------------------------------------------------
@@ -326,6 +352,14 @@ words, this value may change on a per violation basis.
 Returns an explanation of the policy as a string or as reference to an
 array of page numbers in PBP.  This value will generally not change
 based upon the specific code violating the policy.
+
+
+=item C<safari_url()>
+
+Returns O'Reilly Safari URLs for the appropriate PBP section or
+sections if available. In scalar context, the return value is a string
+containing one or more URLs. In array context, an array of URLs is
+returned.
 
 
 =item C<location()>

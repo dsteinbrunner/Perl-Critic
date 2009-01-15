@@ -17,7 +17,7 @@ use PPI::Document;
 
 use Perl::Critic::Utils qw< :characters >;
 
-use Test::More tests => 42;
+use Test::More tests => 50;
 
 #-----------------------------------------------------------------------------
 
@@ -45,6 +45,7 @@ can_ok('Perl::Critic::Violation', 'location');
 can_ok('Perl::Critic::Violation', 'diagnostics');
 can_ok('Perl::Critic::Violation', 'description');
 can_ok('Perl::Critic::Violation', 'explanation');
+can_ok('Perl::Critic::Violation', 'safari_url');
 can_ok('Perl::Critic::Violation', 'filename');
 can_ok('Perl::Critic::Violation', 'source');
 can_ok('Perl::Critic::Violation', 'policy');
@@ -95,6 +96,20 @@ is($viol->explanation(), 'See page 28 of PBP', 'explanation');
 $viol = Perl::Critic::Violation->new('Foo', [28,30], $doc, 99);
 is($viol->explanation(), 'See pages 28,30 of PBP', 'explanation');
 
+$viol = Perl::Critic::Violation->new('Foo', { book => [28,30] }, $doc, 99);
+is($viol->explanation(), 'See pages 28,30 of PBP', 'explanation');
+
+$viol = Perl::Critic::Violation->new('Foo', { book => [28,30], safari => [2,1] }, $doc, 99);
+is($viol->explanation(), 'See pages 28,30 of PBP', 'explanation');
+is($viol->safari_url(), 'http://safari.oreilly.com/0596001738/perlbp-CHP-2-SECT-1', 'safari_url');
+
+$viol = Perl::Critic::Violation->new('Foo', { book => [28,30], safari => [2, [1,2]] }, $doc, 99);
+is($viol->explanation(), 'See pages 28,30 of PBP', 'explanation');
+is($viol->safari_url(), 'http://safari.oreilly.com/0596001738/perlbp-CHP-2-SECT-1, http://safari.oreilly.com/0596001738/perlbp-CHP-2-SECT-2', 'safari_url scalar');
+{
+    is(my @urls = $viol->safari_url(), 2, 'safari_url array');
+    is_deeply(\@urls, ['http://safari.oreilly.com/0596001738/perlbp-CHP-2-SECT-1', 'http://safari.oreilly.com/0596001738/perlbp-CHP-2-SECT-2'], 'safari_url');
+}
 
 #-----------------------------------------------------------------------------
 # Import tests
