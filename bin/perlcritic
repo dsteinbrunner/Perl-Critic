@@ -20,6 +20,7 @@ use Getopt::Long qw< GetOptions >;
 use List::Util qw< first >;
 use Pod::Usage qw< pod2usage >;
 
+use Perl::Critic::I18N;
 use Perl::Critic::Exception::Parse ();
 use Perl::Critic::Utils qw<
     :characters :severities policy_short_name
@@ -144,12 +145,14 @@ sub _validate_options {
 
 
     if ( $opts{-noprofile} && $opts{-profile} ) {
-        $msg .= qq{Warning: Cannot use -noprofile with -profile option.\n};
+        $msg .= __"Warning: Cannot use -noprofile with -profile option.";
+        $msg .= "\n";
     }
 
     if ( $opts{-verbose} && $opts{-verbose} !~ m{(?: \d+ | %[mfFlcedrpPs] )}xms) {
-        $msg .= qq<Warning: --verbose arg "$opts{-verbose}" looks odd.  >;
-        $msg .= qq<Perhaps you meant to say "--verbose 3 $opts{-verbose}."\n>;
+        $msg .= qq<Warning: --verbose arg "[_1]" looks odd.  >;
+        $msg .= qq<Perhaps you meant to say "--verbose 3 [_1].">;
+        $msg  = __($msg, $opts{-verbose})."\n"; 
     }
 
     if ( exists $opts{-top} && $opts{-top} < 0 ) {
