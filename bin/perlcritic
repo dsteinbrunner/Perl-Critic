@@ -145,19 +145,19 @@ sub _validate_options {
 
 
     if ( $opts{-noprofile} && $opts{-profile} ) {
-        $msg .= __"Warning: Cannot use -noprofile with -profile option.";
-        $msg .= "\n";
+        $msg .= translate("Warning: Cannot use -noprofile with -profile option.");
     }
 
     if ( $opts{-verbose} && $opts{-verbose} !~ m{(?: \d+ | %[mfFlcedrpPs] )}xms) {
         $msg .= qq<Warning: --verbose arg "[_1]" looks odd.  >;
         $msg .= qq<Perhaps you meant to say "--verbose 3 [_1].">;
-        $msg  = __($msg, $opts{-verbose})."\n"; 
+        $msg  = translate($msg, $opts{-verbose}); 
     }
 
     if ( exists $opts{-top} && $opts{-top} < 0 ) {
-        $msg .= qq<Warning: --top argument "$opts{-top}" is negative.  >;
-        $msg .= qq<Perhaps you meant to say "$opts{-top} --top".\n>;
+        $msg .= qq<Warning: --top argument "[_1]" is negative.  >;
+        $msg .= qq<Perhaps you meant to say "[_1] --top".>;
+        $msg  = translate($msg, $opts{-top}	);
     }
 
     if (
@@ -167,14 +167,15 @@ sub _validate_options {
                 ||  $opts{-severity} > $SEVERITY_HIGHEST
             )
     ) {
-        $msg .= qq<Warning: --severity arg "$opts{-severity}" out of range.  >;
-        $msg .= qq<Severities range from "$SEVERITY_LOWEST" (lowest) to >;
-        $msg .= qq<"$SEVERITY_HIGHEST" (highest).\n>;
+        $msg .= qq<Warning: --severity arg "[_1]" out of range.  >;
+        $msg .= qq<Severities range from "[_2]" (lowest) to >;
+        $msg .= qq<"[_3]" (highest).>;
+        $msg  = translate($msg, $opts{-severity}, $SEVERITY_LOWEST, $SEVERITY_HIGHEST);
     }
 
 
     if ( $msg ) {
-        pod2usage( -exitstatus => 1, -message => $msg, -verbose => 0); #Exits
+        pod2usage( -exitstatus => 1, -message => $msg."\n", -verbose => 0); #Exits
     }
 
 
@@ -198,7 +199,7 @@ sub get_input {
             $code_string = $EMPTY;
         }
 
-        $code_string =~ m{ \S+ }xms || die qq{Nothing to critique.\n};
+        $code_string =~ m{ \S+ }xms || die translate('Nothing to critique.')."\n";
         return \$code_string;    #Convert to SCALAR ref for PPI
     }
     else {
@@ -206,7 +207,7 @@ sub get_input {
         # Test to make sure all the specified files or directories
         # actually exist.  If any one of them is bogus, then die.
         if ( my $nonexistent = first { ! -e $_ } @args ) {
-            my $msg = qq{No such file or directory: '$nonexistent'};
+            my $msg = translate('No such file or directory: "[_1]"', $nonexistent);
             pod2usage( -exitstatus => 1, -message => $msg, -verbose => 0);
         }
 
@@ -223,7 +224,7 @@ sub get_input {
 sub critique {
 
     my ( $opts_ref, @files_to_critique ) = @_;
-    @files_to_critique || die "No perl files were found.\n";
+    @files_to_critique || die translate("No perl files were found")."\n";
 
     # Perl::Critic has lots of dependencies, so loading is delayed
     # until it is really needed.  This hack reduces startup time for
