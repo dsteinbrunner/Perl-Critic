@@ -33,10 +33,22 @@ our %Lexicon = (
 'Warnung: Das Argument "[_1]" für --severity liegt außerhalb des gültigen Bereichs.  '
 	  . 'Die Werte reichen von "[_2]" (niedrigster Wert) bis '
 	  . '"[_3]" (höchster Wert).',
-	  
-	  'Nothing to critique.' => 'Es gibt nichts zu kritisieren.',
-	  'No such file or directory: "[_1]"' => 'Es gibt weder eine Datei noch ein Verzeichnis dieses Namens: "[_1]"',
-'No perl files were found'=>'Es wurden keine Perl-Dateien gefunden'
+
+	'Nothing to critique.' => 'Es gibt nichts zu kritisieren.',
+	'No such file or directory: "[_1]"' =>
+	  'Es gibt weder eine Datei noch ein Verzeichnis dieses Namens: "[_1]"',
+	'No perl files were found' => 'Es wurden keine Perl-Dateien gefunden',
+	'No policies selected.'    => 'Keine Policys ausgewählt.',
+	'Problem while critiquing "[_1]": [_2]' =>
+	  'Es ist ein Problem beim Kritisieren der Datei [_1] aufgetreten: [_2]',
+	'Fatal error while critiquing "[_1]": [_2]' =>
+'Es ist ein schwerer Fehler beim Kritisieren der Datei [_1] aufgetreten: [_2]',
+	'Fatal error while critiquing "[_1]". Unfortunately, ',
+	q<$@/$EVAL_ERROR >,    ## no critic (RequireInterpolationOfMetachars)
+	qq<is empty, so the reason can't be shown.> =>
+'Es ist ein schwerer Fehler beim Kritisieren der Datei [_1] aufgetreten. Unglücklicherweise ist ',
+	q<$@/$EVAL_ERROR >,    ## no critic (RequireInterpolationOfMetachars)
+	'leer, so dass der Grund nicht mitgeteilt werden kann',
 );
 
 1;

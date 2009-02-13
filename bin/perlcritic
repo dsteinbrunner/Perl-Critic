@@ -234,7 +234,7 @@ sub critique {
 
     require Perl::Critic;
     $critic = Perl::Critic->new( %{$opts_ref} );
-    $critic->policies() || die "No policies selected.\n";
+    $critic->policies() || die translate("No policies selected.")."\n";
 
     set_up_pager($critic->config()->pager());
 
@@ -255,17 +255,23 @@ sub critique {
         or do {
             if ( my $exception = Perl::Critic::Exception::Parse->caught() ) {
                 $had_error_in_file = 1;
-                warn qq<Problem while critiquing "$file": $EVAL_ERROR\n>;
+                my $msg=qq<Problem while critiquing "[_1]": [_2]>;
+                $msg=translate($msg, $file, $EVAL_ERROR);
+                warn $msg.qq<\n>;
             }
             elsif ($EVAL_ERROR) {
                 # P::C::Exception::Fatal includes the stack trace in its
                 # stringification.
-                die qq<Fatal error while critiquing "$file": $EVAL_ERROR\n>;
+                my $msg=qq<Fatal error while critiquing "[_1]": [_2]>;
+                $msg=translate($msg, $file, $EVAL_ERROR);
+                die $msg.qq<\n>;
             }
             else {
-                die qq<Fatal error while critiquing "$file". Unfortunately, >,
+                my $msg=qq<Fatal error while critiquing "[_1]". Unfortunately, >,
                     q<$@/$EVAL_ERROR >, ## no critic (RequireInterpolationOfMetachars)
-                    qq<is empty, so the reason can't be shown.\n>;
+                    qq<is empty, so the reason can't be shown.>;
+                $msg=translate($msg, $file);
+                die $msg.qq<\n>;
             }
         }
     }
