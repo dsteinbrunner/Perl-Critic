@@ -82,7 +82,7 @@ our $VERSION = '1.104';
     # Perl::Critic::PPIx::Utilities::Statement once this is fixed.
 
     my $code = 'use constant 1.16 { ONE => 1, TWO => 2 }';
-    local $TODO = q<Clean up code in P::C::PPIx::Utilities::Statement::_constant_name_from_constant_pragma() once this test passes.>;
+    local $TODO = q<Clean up code in P::C::PPIx::Utilities::Statement::_constant_names_from_constant_pragma() once this test passes.>;
 
     my $doc = PPI::Document->new(\$code);
 
