@@ -33,6 +33,7 @@ our @EXPORT_OK = qw{
     $PROFILE_COLOR_SEVERITY_LOWEST_DEFAULT
     $DOCUMENT_TYPE_SCRIPT
     $DOCUMENT_TYPE_MODULE
+    $MODULE_VERSION_TERM_ANSICOLOR
 };
 
 our %EXPORT_TAGS = (
@@ -85,6 +86,10 @@ Readonly::Scalar our $PROFILE_COLOR_SEVERITY_LOWEST_DEFAULT     => $EMPTY;
 
 Readonly::Scalar our $DOCUMENT_TYPE_SCRIPT  => 'script';
 Readonly::Scalar our $DOCUMENT_TYPE_MODULE  => 'module';
+
+# If the following changes, the corresponding change needs to be made in
+# inc/Perl/Critic/BuildUtilities.pm, sub recommended_module_versions().
+Readonly::Scalar our $MODULE_VERSION_TERM_ANSICOLOR => 2.02;
 
 #-----------------------------------------------------------------------------
 
@@ -169,6 +174,10 @@ tag.
 
 The document type representing a module. Importable via the C<:document_type>
 tag.
+
+=item C<$MODULE_VERSION_TERM_ANSICOLOR>
+
+The minimum required version of the optional Term::ANSIColor module.
 
 =back
 
