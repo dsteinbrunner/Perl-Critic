@@ -173,7 +173,7 @@ C<$VERSION> is undefined.
 
 =head1 AUTHOR
 
-Jeffrey Ryan Thalhammer <thaljef@cpan.org>
+Jeffrey Ryan Thalhammer <jeff@imaginative-software.com>
 
 
 =head1 COPYRIGHT

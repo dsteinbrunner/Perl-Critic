@@ -414,7 +414,7 @@ Test that we have a t/*/*.run for each lib/*/*.pm
 
 =head1 AUTHOR
 
-Andy Lester, Jeffrey Ryan Thalhammer <thaljef@cpan.org>
+Andy Lester, Jeffrey Ryan Thalhammer <jeff@imaginative-software.com>
 
 =head1 COPYRIGHT
 
