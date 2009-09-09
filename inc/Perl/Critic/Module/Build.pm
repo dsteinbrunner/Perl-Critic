@@ -168,20 +168,21 @@ Perl::Critic::Module::Build - Customization of L<Module::Build> for L<Perl::Crit
 
 This is a custom subclass of L<Module::Build> that enhances existing
 functionality and adds more for the benefit of installing and
-developing L<Perl::Critic>.
+developing L<Perl::Critic>.  The following actions have been added
+or redefined:
 
 
-=head1 METHODS
+=head1 ACTIONS
 
 =over
 
-=item C<ACTION_test()>
+=item test
 
 In addition to the standard action, this adds a dependency upon the
 C<manifest> action.
 
 
-=item C<ACTION_authortest()>
+=item authortest
 
 Runs the regular tests plus the author tests (those in F<xt/author>).
 It used to be the case that author tests were run if an environment
@@ -193,20 +194,20 @@ something not expected to run elsewhere.  Now, you've got to
 explicitly ask for the author tests to be run.
 
 
-=item C<ACTION_authortestcover()>
+=item authortestcover
 
 As C<authortest> is to the standard C<test> action, C<authortestcover>
 is to the standard C<testcover> action.
 
 
-=item C<ACTION_distdir()>
+=item distdir
 
 In addition to the standard action, this adds a dependency upon the
 C<authortest> action so you can't do a release without passing the
 author tests.
 
 
-=item C<ACTION_policysummary()>
+=item policysummary
 
 Generates the F<PolicySummary.pod> file.  This should only be used by
 C<Perl::Critic> developers.  This action is also invoked by the C<authortest>
@@ -214,7 +215,7 @@ action, so the F<PolicySummary.pod> file will be generated whenever you create
 a distribution with the C<dist> or C<distdir> targets.
 
 
-=item C<ACTION_nytprof()>
+=item nytprof
 
 Runs perlcritic under the L<Devel::NYTProf> profiler and generates
 an HTML report in F<nytprof/index.html>.
