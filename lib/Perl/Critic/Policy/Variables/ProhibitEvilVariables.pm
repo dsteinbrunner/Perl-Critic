@@ -337,6 +337,8 @@ __END__
 
 =pod
 
+=for stopwords subscripted
+
 =head1 NAME
 
 Perl::Critic::Policy::Variables::ProhibitEvilVariables - Ban variables that aren't blessed by your shop.
