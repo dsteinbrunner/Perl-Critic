@@ -16,6 +16,7 @@ our $VERSION = '1.105';
 
 use Carp;
 use English qw< $OS_ERROR $EXECUTABLE_NAME -no_match_vars >;
+use Perl::Critic::PolicySummaryGenerator qw< generate_policy_summary >;
 
 use base 'Module::Build';
 
@@ -23,6 +24,7 @@ use base 'Module::Build';
 sub ACTION_test {
     my ($self, @arguments) = @_;
 
+    $self->depends_on('policysummary');
     $self->depends_on('manifest');
 
     return $self->SUPER::ACTION_test(@arguments);
@@ -49,6 +51,16 @@ sub ACTION_authortestcover {
 }
 
 
+sub ACTION_policysummary {
+    my ($self) = @_;
+
+    my $policy_summary_file = generate_policy_summary();
+    $self->add_to_cleanup( $policy_summary_file );
+
+    return;
+}
+
+
 sub ACTION_distdir {
     my ($self, @arguments) = @_;
 
@@ -60,8 +72,10 @@ sub ACTION_distdir {
 
 sub ACTION_nytprof {
     my ($self) = @_;
+
     $self->depends_on('build');
     $self->_run_nytprof();
+
     return;
 }
 
@@ -93,6 +107,7 @@ sub _authortest_dependencies {
     my ($self) = @_;
 
     $self->depends_on('build');
+    $self->depends_on('policysummary');
     $self->depends_on('manifest');
     $self->depends_on('distmeta');
 
@@ -131,6 +146,7 @@ sub _run_nytprof {
 
     return;
 }
+
 
 1;
 
@@ -188,6 +204,15 @@ is to the standard C<testcover> action.
 In addition to the standard action, this adds a dependency upon the
 C<authortest> action so you can't do a release without passing the
 author tests.
+
+
+=item C<ACTION_policysummary()>
+
+Generates the F<PolicySummary.pod> file.  This should only be used by
+C<Perl::Critic> developers.  This action is also invoked by the C<authortest>
+action, so the F<PolicySummary.pod> file will be generated whenever you create
+a distribution with the C<dist> or C<distdir> targets.
+
 
 =item C<ACTION_nytprof()>
 
