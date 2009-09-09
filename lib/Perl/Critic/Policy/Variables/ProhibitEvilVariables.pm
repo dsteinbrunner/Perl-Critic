@@ -368,7 +368,7 @@ prohibiting two specific variables in a F<.perlcriticrc> file:
     variables = $[ $^S $SIG{__DIE__}
 
 If you prohibit an array or hash (e.g. C<@INC>), use of elements of the array
-or hash will be prohibited as well. If you specify a subsripted variable (e.g.
+or hash will be prohibited as well. If you specify a subscripted variable (e.g.
 C<$SIG{__DIE__}>), only the literal subscript specified will be detected. The
 above <.perlcritic> file, for example, will cause C<perlcritic (1)> to detect
 C<$SIG{__DIE__} = \&foo>, but not
