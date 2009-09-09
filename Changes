@@ -18,6 +18,9 @@
       a convenient module that you can use to test your own Policies.  See
       Test::Perl::Critic::Policy for details.
 
+    Bug Fixes:
+    * The "## no critic" annotations now respect the #line directives.
+
     Policy Changes:
     * NamingConventions::Capitalization got confused when a single "use
       constant" declared multiple constants.  Reported by Kevin Ryde,
