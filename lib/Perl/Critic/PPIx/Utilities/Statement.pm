@@ -109,8 +109,7 @@ __END__
 
 =head1 NAME
 
-Perl::Critic::PPIx::Utilities::Statement - Utility functions for dealing with
-PPI statement objects.
+Perl::Critic::PPIx::Utilities::Statement - Utility functions for dealing with PPI statement objects.
 
 
 =head1 DESCRIPTION
