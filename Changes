@@ -1,19 +1,13 @@
 [1.xxx] Released on 2009-xx-xx
 
     New Features:
-    * There is a new global configuration item, 'script-extensions', which
+    * There is a new global configuration item, 'program-extensions', which
       configures Perl::Critic's idea of which file name extensions represent
-      scripts. The desired extensions are specified as a space-separated list,
+      programs. The desired extensions are specified as a space-separated list,
       with leading '.' on each if that is desired. Files whose names end in
-      '.PL' will always be considered scripts. This can be overridden by
-      command option --script-exctensions, which can be specified multiple
+      '.PL' will always be considered programs. This can be overridden by
+      command option --programs-extensions, which can be specified multiple
       times.
-    * Perlcritic has a new command option, --document-type, which overrides
-      perlcritic's document type logic. This takes one of three values:
-      - 'script' causes all documents to be considered scripts;
-      - 'module' causes all documents to be considered modules;
-      - 'auto' is an explicit request to use perlcritic's normal document type
-        logic, and is the default.
     * The framework that we use to test Perl::Critic has been packaged into
       a convenient module that you can use to test your own Policies.  See
       Test::Perl::Critic::Policy for details.
