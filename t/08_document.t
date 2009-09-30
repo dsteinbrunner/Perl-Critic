@@ -17,7 +17,7 @@ use version;
 
 use Perl::Critic::Utils::DataConversion qw< dor >;
 
-use Test::More tests => 33;
+use Test::More tests => 31;
 
 #-----------------------------------------------------------------------------
 
@@ -30,7 +30,6 @@ can_ok('Perl::Critic::Document', 'new');
 can_ok('Perl::Critic::Document', 'filename');
 can_ok('Perl::Critic::Document', 'highest_explicit_perl_version');
 can_ok('Perl::Critic::Document', 'ppi_document');
-can_ok('Perl::Critic::Document', 'document_type');
 can_ok('Perl::Critic::Document', 'is_program');
 can_ok('Perl::Critic::Document', 'is_module');
 
@@ -95,8 +94,6 @@ can_ok('Perl::Critic::Document', 'is_module');
 
     #-------------------------------------------------------------------------
 
-    is( $pc_doc->document_type(), 'module',
-                                q{default document_type is 'module'});
     ok( $pc_doc->is_module(), q{document type 'module' is a module});
     ok( ! $pc_doc->is_program(), q{document type 'module' is not a program});
 

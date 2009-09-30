@@ -31,8 +31,6 @@ our @EXPORT_OK = qw{
     $PROFILE_COLOR_SEVERITY_MEDIUM_DEFAULT
     $PROFILE_COLOR_SEVERITY_LOW_DEFAULT
     $PROFILE_COLOR_SEVERITY_LOWEST_DEFAULT
-    $DOCUMENT_TYPE_PROGRAM
-    $DOCUMENT_TYPE_MODULE
     $MODULE_VERSION_TERM_ANSICOLOR
 };
 
@@ -56,12 +54,6 @@ our %EXPORT_TAGS = (
             $PROFILE_COLOR_SEVERITY_LOWEST_DEFAULT
         }
     ],
-    document_type => [
-        qw{
-            $DOCUMENT_TYPE_PROGRAM
-            $DOCUMENT_TYPE_MODULE
-        }
-    ],
 );
 
 #-----------------------------------------------------------------------------
@@ -83,9 +75,6 @@ Readonly::Scalar our $PROFILE_COLOR_SEVERITY_HIGH_DEFAULT       => 'magenta';
 Readonly::Scalar our $PROFILE_COLOR_SEVERITY_MEDIUM_DEFAULT     => $EMPTY;
 Readonly::Scalar our $PROFILE_COLOR_SEVERITY_LOW_DEFAULT        => $EMPTY;
 Readonly::Scalar our $PROFILE_COLOR_SEVERITY_LOWEST_DEFAULT     => $EMPTY;
-
-Readonly::Scalar our $DOCUMENT_TYPE_PROGRAM  => 'program';
-Readonly::Scalar our $DOCUMENT_TYPE_MODULE  => 'module';
 
 # If the following changes, the corresponding change needs to be made in
 # inc/Perl/Critic/BuildUtilities.pm, sub recommended_module_versions().
@@ -164,16 +153,6 @@ C<:color_severity> tag.
 
 Default for the -color-severity-lowest option. Importable via the
 C<:color_severity> tag.
-
-=item C<$DOCUMENT_TYPE_PROGRAM>
-
-The document type representing a program. Importable via the C<:document_types>
-tag.
-
-=item C<$DOCUMENT_TYPE_MODULE>
-
-The document type representing a module. Importable via the C<:document_type>
-tag.
 
 =item C<$MODULE_VERSION_TERM_ANSICOLOR>
 
