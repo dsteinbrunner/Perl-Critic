@@ -45,50 +45,135 @@ my %diagnostics = ();  # Cache of diagnostic messages
 
 #-----------------------------------------------------------------------------
 
-Readonly::Scalar my $CONSTRUCTOR_ARG_COUNT => 5;
+Readonly::Scalar my $CONSTRUCTOR_ARG_COUNT_POSITIONAL => 4;
+Readonly::Scalar my $CONSTRUCTOR_ARG_COUNT_NAMED_MINIMUM => 8;
 
 sub new {
-    my ( $class, $desc, $expl, $elem, $sev ) = @_;
+    my ( $class, @remainder ) = @_;
 
-    # Check arguments to help out developers who might
-    # be creating new Perl::Critic::Policy modules.
+    # Determine whether called with named or positional arguments.
 
-    if ( @_ != $CONSTRUCTOR_ARG_COUNT ) {
-        throw_internal 'Wrong number of args to Violation->new()';
+    my %arg;
+    if ( $CONSTRUCTOR_ARG_COUNT_POSITIONAL == @remainder ) {
+
+        # Positional arguments.
+
+        @arg{ qw{ -description -explanation -element -severity } } =
+            @remainder;
+
+    } elsif ( $CONSTRUCTOR_ARG_COUNT_NAMED_MINIMUM <= @remainder ) {
+
+        # Named arguments
+
+        @remainder % 2
+            and throw_internal
+                'Violation->new() wants name/value pairs of arguments';
+        %arg = @remainder;
+
+    } else {
+
+        throw_internal @remainder < $CONSTRUCTOR_ARG_COUNT_POSITIONAL ?
+            'Not enough positional arguments to Violation->new()' :
+            'Too many positional arguments or not enough named arguments to Violation->new()';
+
     }
 
-    if ( eval { $elem->isa( 'Perl::Critic::Document' ) } ) {
-        # break the facade, return the real PPI::Document
-        $elem = $elem->ppi_document();
-    }
+    _constructor_arg_chomp_period     ( \%arg, '-description' );
+    _constructor_arg_validate_element ( \%arg, '-element' );
+    _constructor_arg_chomp_period     ( \%arg, '-explanation' );
+    _constructor_arg_validate_policy  ( \%arg, '-policy' );
+    # -policy must be validated before -severity
+    _constructor_arg_validate_severity( \%arg, '-severity' );
 
-    if ( not eval { $elem->isa( 'PPI::Element' ) } ) {
-        throw_internal '3rd arg to Violation->new() must be a PPI::Element';
+    {
+        my %unknown = map { $_ => 1 } keys %arg;
+        delete @unknown{ qw{
+            -description
+            -element
+            -explanation
+            -policy
+            -severity
+        } };
+        %unknown
+            and throw_internal 'Unknown Violation->new arguments: '
+                . join ', ', sort keys %unknown;
     }
-
-    # Strip punctuation.  These are controlled by the user via the
-    # formats.  He/She can use whatever makes sense to them.
-    ($desc, $expl) = _chomp_periods($desc, $expl);
 
     # Create object
     my $self = bless {}, $class;
-    $self->{_description} = $desc;
-    $self->{_explanation} = $expl;
-    $self->{_severity}    = $sev;
-    $self->{_policy}      = caller;
+    $self->{_description} = $arg{ '-description' };
+    $self->{_explanation} = $arg{ '-explanation' };
+    $self->{_severity}    = $arg{ '-severity' };
+    $self->{_policy}      = ref $arg{ '-policy' } || caller;
 
     # PPI eviscerates the Elements in a Document when the Document gets
     # DESTROY()ed, and thus they aren't useful after it is gone.  So we have
     # to preemptively grab everything we could possibly want.
-    $self->{_element_class} = blessed $elem;
+    $self->{_element_class} = blessed $arg{ '-element' };
 
-    my $top = $elem->top();
+    my $top = $arg{ '-element' }->top();
     $self->{_filename} = $top->can('filename') ? $top->filename() : undef;
-    $self->{_source}   = _first_line_of_source( $elem );
+    $self->{_source}   = _first_line_of_source( $arg{ '-element' } );
     $self->{_location} =
-        $elem->location() || [ 0, 0, 0, 0, $self->filename() ];
+        $arg{ '-element' }->location() || [ 0, 0, 0, 0, $self->filename() ];
 
     return $self;
+}
+
+# Validators for the individual named arguments. These are associated with the
+# arguments via the @CONSTRUCTOR_ARG_VALIDATE array, above.
+
+# Central code for checking for the presence of a required argument.
+sub _constructor_arg_required {
+    my ( $arg, $name ) = @_;
+    defined $arg->{$name}
+        and return;
+    throw_internal "Violation->new() requires the $name argument";
+}
+
+# -description and -explanation
+sub _constructor_arg_chomp_period {
+    my ( $arg, $name ) = @_;
+    _constructor_arg_required( $arg, $name );
+    ( $arg->{$name} ) = _chomp_periods( $arg->{$name} );
+    return;
+}
+
+# -element
+sub _constructor_arg_validate_element {
+    my ( $arg, $name ) = @_;
+    _constructor_arg_required( $arg, $name );
+    blessed( $arg->{$name} )
+        and $arg->{$name}->isa( 'Perl::Critic::Document' )
+        and $arg->{$name} = $arg->{$name}->ppi_document();
+    blessed( $arg->{$name} )
+        and $arg->{$name}->isa( 'PPI::Element' )
+        and return;
+    throw_internal
+        "The Violation->new() $name argument must be a PPI::Element";
+}
+
+# -policy. This is _not_ a required argument.
+sub _constructor_arg_validate_policy {
+    my ( $arg, $name ) = @_;
+    defined $arg->{$name} or return;
+    blessed( $arg->{$name} )
+        and $arg->{$name}->isa( 'Perl::Critic::Policy' )
+        and return;
+    throw_internal
+        "The Violation->new() $name argument must be a Perl::Critic::Policy";
+}
+
+# -severity. Assumes -policy has already been validated.
+sub _constructor_arg_validate_severity {
+    my ( $arg, $name ) = @_;
+    defined $arg->{$name}
+        and return;
+    defined $arg->{ '-policy' }
+        or throw_internal
+            "Violation->new requires either the $name or the -policy argument";
+    $arg->{$name} = $arg->{ '-policy' }->get_severity();
+    return;
 }
 
 #-----------------------------------------------------------------------------
@@ -344,7 +429,15 @@ Perl::Critic::Violation - A violation of a Policy found in some source code.
   my $expl = [1,45,67];           # Page numbers from PBP
   my $sev  = 5;                   # Severity level of this violation
 
-  my $vio  = Perl::Critic::Violation->new($desc, $expl, $node, $sev);
+  my $vio  = Perl::Critic::Violation->new($desc, $expl, $elem, $sev);
+  # or (preferred)
+  my $policy_object = the policy object the violation refers to
+  my $vio2 = Perl::Critic::Violation->new(
+    -description  => $desc,
+    -explanation  => $expl,
+    -element      => $elem,
+    -policy       => $policy_object,
+  );
 
 
 =head1 DESCRIPTION
@@ -376,6 +469,32 @@ PBP (as an ARRAY ref), a reference to the L<PPI|PPI> element that
 caused the violation, and the severity of the violation (as an
 integer).
 
+=item C<new( -description => $description ... )>
+
+Returns a reference to a new C<Perl::Critic::Violation> object. The
+arguments are passed as name/value pairs.
+
+The required arguments are:
+
+ -description => a description of the violation as a string;
+ -explanation => an explanation for the policy as a string,
+                 or a series of PBP page numbers as an ARRAY
+                 reference;
+ -element     => A reference to the PPI element that caused
+                 the violation;
+ -policy      => A reference to the policy object which
+                 detected the violation;
+ -severity    => The severity of the violation as an integer.
+
+The C<-policy> and C<-severity> arguments do not both need to be
+provided, but one of them must be, with C<-policy> being preferred if it
+is available.
+
+If only C<-severity> is provided, the name of the policy that detected
+the violation is assumed to be the package name of the caller.  If only
+C<-policy> is provided, the severity is obtained from that policy's
+C<get_severity()> method.  If both are passed, C<-policy> provides the
+policy name but C<-severity> provides the severity.
 
 =back
 

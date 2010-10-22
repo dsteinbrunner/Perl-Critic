@@ -15,6 +15,15 @@ sub violates {
     return $self->violation( 'desc', 'expl', $elem );
 }
 
+sub violates_with_named_arguments {
+    my ( $self, $elem, undef ) = @_;
+    return $self->make_violation(
+        -description    => 'desc',
+        -explanation    => 'expl',
+        -element        => $elem,
+    );
+}
+
 1;
 __END__
 

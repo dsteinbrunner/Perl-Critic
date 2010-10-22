@@ -21,7 +21,7 @@ use PPI::Document::File q< >;
 use Perl::Critic::Utils qw< :characters >;
 use Perl::Critic::Violation q< >;
 
-use Test::More tests => 69;
+use Test::More tests => 84;
 
 #-----------------------------------------------------------------------------
 
@@ -61,6 +61,18 @@ use Perl::Critic::Policy::Test;    # this is to test violation formatting
     ok($EVAL_ERROR, 'new, wrong number of args');
     eval { Perl::Critic::Violation->new('desc', 'expl', {}, 'severity'); };
     ok($EVAL_ERROR, 'new, bad arg');
+    eval { Perl::Critic::Violation->new(
+            -description => 'desc',
+            -explanation => 'expl',
+        ); };
+    ok($EVAL_ERROR, 'new (named arg) requires a full set of args' );
+    eval { Perl::Critic::Violation->new(
+            -description    => 'desc',
+            -explanation    => 'expl',
+            -element        => {},
+            -severity       => 'severity',
+        ) };
+    ok($EVAL_ERROR, 'new (named arg) requires valid -element' );
 } # end scope block
 
 #-----------------------------------------------------------------------------
@@ -95,6 +107,26 @@ use Perl::Critic::Policy::Test;    # this is to test violation formatting
 
         Perl::Critic::Violation::set_format($old_format);
     }
+
+    # Same thing (mostly) but with named arguments.
+    $viol = Perl::Critic::Violation->new(
+        -description    => 'Foo',
+        -explanation    => 'Bar',
+        -element        => $document,
+        -severity       => 99,
+    );
+
+    is(   $viol->description(),          'Foo',           'description');
+    is(   $viol->explanation(),          'Bar',           'explanation');
+    is(   $viol->line_number(),          1,               'line_number');
+    is(   $viol->logical_line_number(),  1,               'logical_line_number');
+    is(   $viol->column_number(),        1,               'column_number');
+    is(   $viol->visual_column_number(), 1,               'visual_column_number');
+    is(   $viol->severity(),             99,              'severity');
+    is(   $viol->source(),               $code,           'source');
+    is(   $viol->policy(),               $pkg,            'policy');
+    is(   $viol->element_class(),        'PPI::Document', 'element class');
+    like( $viol->diagnostics(), qr/ \A $no_diagnostics_msg \z /xms, 'diagnostics');
 
     $viol = Perl::Critic::Violation->new('Foo', [28], $document, 99);
     is($viol->explanation(), 'See page 28 of PBP', 'explanation');
@@ -200,6 +232,11 @@ END_PERL
     ok($v, 'got a violation');
 
     is($v->to_string(), $expected, 'to_string()');
+
+    $v = $p->violates_with_named_arguments($t[0]);
+    ok($v, 'got a violation with named arguments');
+
+    is($v->to_string(), $expected, 'to_string() with named arguments');
 }
 
 #-----------------------------------------------------------------------------

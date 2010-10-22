@@ -413,12 +413,22 @@ sub violates {
 
 #-----------------------------------------------------------------------------
 
-sub violation {  ## no critic (ArgUnpacking)
+sub violation {
     my ( $self, $desc, $expl, $elem ) = @_;
-    # HACK!! Use goto instead of an explicit call because P::C::V::new() uses caller()
-    my $sev = $self->get_severity();
-    @_ = ('Perl::Critic::Violation', $desc, $expl, $elem, $sev );
-    goto &Perl::Critic::Violation::new;
+    return Perl::Critic::Violation->new(
+        -description    => $desc,
+        -explanation    => $expl,
+        -element        => $elem,
+        -policy         => $self,
+    );
+}
+
+#-----------------------------------------------------------------------------
+
+sub make_violation {
+    my ( $self, %arg ) = @_;
+    $arg{ '-policy' } ||= $self;
+    return Perl::Critic::Violation->new( %arg );
 }
 
 #-----------------------------------------------------------------------------
@@ -614,6 +624,21 @@ caused the violation.
 These are the same as the constructor to
 L<Perl::Critic::Violation|Perl::Critic::Violation>, but without the
 severity.  The Policy itself knows the severity.
+
+The preferred way for a policy to make a C<Perl::Critic::Violation>
+object is with the C<make_violation()> method, which takes named
+arguments.
+
+
+=item C<< make_violation( -description => $description, ... ) >>
+
+Returns a reference to a new C<Perl::Critic::Violation> object. Possible
+arguments are the same as those to C<< Perl::Critic::Violation->new() >>,
+but the only required arguments are C<-description>, C<-explanation>, and
+C<-element>.
+
+This is the preferred way for a policy to make a C<Perl::Critic::Violation>
+object.
 
 
 =item C< new_parameter_value_exception( $option_name, $option_value, $source, $message_suffix ) >

@@ -44,9 +44,9 @@ my @concrete_exceptions = qw{
 };
 
 plan tests =>
-        144
+        145
     +   (  9 * scalar @concrete_exceptions  )
-    +   ( 17 * scalar @bundled_policy_names );
+    +   ( 18 * scalar @bundled_policy_names );
 
 # pre-compute for version comparisons
 my $version_string = __PACKAGE__->VERSION;
@@ -162,6 +162,7 @@ can_ok('Perl::Critic::Policy', 'throw_parameter_value_exception');
 can_ok('Perl::Critic::Policy', 'to_string');
 can_ok('Perl::Critic::Policy', 'violates');
 can_ok('Perl::Critic::Policy', 'violation');
+can_ok('Perl::Critic::Policy', 'make_violation');
 can_ok('Perl::Critic::Policy', 'is_safe');
 
 {
@@ -190,7 +191,7 @@ can_ok('Perl::Critic::Violation', 'to_string');
 
 my $code = q{print 'Hello World';};
 my $doc = PPI::Document->new(\$code);
-my $viol = Perl::Critic::Violation->new(undef, undef, $doc, undef);
+my $viol = Perl::Critic::Violation->new('Foo', 'Bar', $doc, 99);
 isa_ok($viol, 'Perl::Critic::Violation');
 is($viol->VERSION(), $version_string, 'Perl::Critic::Violation version');
 
@@ -302,6 +303,7 @@ can_ok('Perl::Critic::Command', 'run');
         can_ok($mod, 'set_themes');
         can_ok($mod, 'violates');
         can_ok($mod, 'violation');
+        can_ok($mod, 'make_violation');
         can_ok($mod, 'is_safe');
 
         my $policy = $mod->new();
