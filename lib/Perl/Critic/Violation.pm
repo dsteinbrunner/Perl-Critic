@@ -51,24 +51,40 @@ Readonly::Scalar my $CONSTRUCTOR_ARG_COUNT_NAMED_MINIMUM => 8;
 sub new {
     my ( $class, @remainder ) = @_;
 
-    # Determine whether called with named or positional arguments.
+    # Create object
+    my $self = bless {}, $class;
 
+    # Determine whether called with named or positional arguments.
     my %arg;
     if ( $CONSTRUCTOR_ARG_COUNT_POSITIONAL == @remainder ) {
 
         # Positional arguments.
-
-        @arg{ qw{ -description -explanation -element -severity } } =
+        $self->{_severity}  = pop @remainder;
+        $self->{_policy}    = caller;
+        @arg{ qw{ -description -explanation -element } } =
             @remainder;
 
     } elsif ( $CONSTRUCTOR_ARG_COUNT_NAMED_MINIMUM <= @remainder ) {
 
         # Named arguments
-
         @remainder % 2
             and throw_internal
                 'Violation->new() wants name/value pairs of arguments';
-        %arg = @remainder;
+        my %unknown = %arg = @remainder;
+        delete @unknown{ qw{
+            -description
+            -element
+            -explanation
+            -policy
+        } };
+        %unknown
+            and throw_internal 'Unknown Violation->new arguments: '
+                . join ', ', sort keys %unknown;
+
+        _constructor_arg_validate_policy  ( \%arg, '-policy' );
+
+        $self->{_severity}  = $arg{ '-policy' }->get_severity();
+        $self->{_policy}    = ref $arg{ '-policy' };
 
     } else {
 
@@ -81,30 +97,9 @@ sub new {
     _constructor_arg_chomp_period     ( \%arg, '-description' );
     _constructor_arg_validate_element ( \%arg, '-element' );
     _constructor_arg_chomp_period     ( \%arg, '-explanation' );
-    _constructor_arg_validate_policy  ( \%arg, '-policy' );
-    # -policy must be validated before -severity
-    _constructor_arg_validate_severity( \%arg, '-severity' );
 
-    {
-        my %unknown = map { $_ => 1 } keys %arg;
-        delete @unknown{ qw{
-            -description
-            -element
-            -explanation
-            -policy
-            -severity
-        } };
-        %unknown
-            and throw_internal 'Unknown Violation->new arguments: '
-                . join ', ', sort keys %unknown;
-    }
-
-    # Create object
-    my $self = bless {}, $class;
     $self->{_description} = $arg{ '-description' };
     $self->{_explanation} = $arg{ '-explanation' };
-    $self->{_severity}    = $arg{ '-severity' };
-    $self->{_policy}      = ref $arg{ '-policy' } || caller;
 
     # PPI eviscerates the Elements in a Document when the Document gets
     # DESTROY()ed, and thus they aren't useful after it is gone.  So we have
@@ -153,27 +148,16 @@ sub _constructor_arg_validate_element {
         "The Violation->new() $name argument must be a PPI::Element";
 }
 
-# -policy. This is _not_ a required argument.
+# -policy. This can be handled as a required argument because it is not called
+# if new() was called using the positional interface.
 sub _constructor_arg_validate_policy {
     my ( $arg, $name ) = @_;
-    defined $arg->{$name} or return;
+    _constructor_arg_required( $arg, $name );
     blessed( $arg->{$name} )
         and $arg->{$name}->isa( 'Perl::Critic::Policy' )
         and return;
     throw_internal
         "The Violation->new() $name argument must be a Perl::Critic::Policy";
-}
-
-# -severity. Assumes -policy has already been validated.
-sub _constructor_arg_validate_severity {
-    my ( $arg, $name ) = @_;
-    defined $arg->{$name}
-        and return;
-    defined $arg->{ '-policy' }
-        or throw_internal
-            "Violation->new requires either the $name or the -policy argument";
-    $arg->{$name} = $arg->{ '-policy' }->get_severity();
-    return;
 }
 
 #-----------------------------------------------------------------------------
