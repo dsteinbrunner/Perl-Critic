@@ -70,7 +70,8 @@ use Perl::Critic::Policy::Test;    # this is to test violation formatting
             -description    => 'desc',
             -explanation    => 'expl',
             -element        => {},
-            -severity       => 'severity',
+            -policy         => Perl::Critic::Policy::Test->new(
+                -severity   => 'severity' ),
         ) };
     ok($EVAL_ERROR, 'new (named arg) requires valid -element' );
 } # end scope block
@@ -113,7 +114,9 @@ use Perl::Critic::Policy::Test;    # this is to test violation formatting
         -description    => 'Foo',
         -explanation    => 'Bar',
         -element        => $document,
-        -severity       => 99,
+        -policy         => Perl::Critic::Policy::Test->new(
+            severity    => 5,
+        ),
     );
 
     is(   $viol->description(),          'Foo',           'description');
@@ -122,11 +125,12 @@ use Perl::Critic::Policy::Test;    # this is to test violation formatting
     is(   $viol->logical_line_number(),  1,               'logical_line_number');
     is(   $viol->column_number(),        1,               'column_number');
     is(   $viol->visual_column_number(), 1,               'visual_column_number');
-    is(   $viol->severity(),             99,              'severity');
+    is(   $viol->severity(),             5,               'severity');
     is(   $viol->source(),               $code,           'source');
-    is(   $viol->policy(),               $pkg,            'policy');
+    is(   $viol->policy(),               'Perl::Critic::Policy::Test',
+                                                          'policy');
     is(   $viol->element_class(),        'PPI::Document', 'element class');
-    like( $viol->diagnostics(), qr/ \A $no_diagnostics_msg \z /xms, 'diagnostics');
+    like( $viol->diagnostics(), qr/ \A \s* diagnostic \z /xms, 'diagnostics');
 
     $viol = Perl::Critic::Violation->new('Foo', [28], $document, 99);
     is($viol->explanation(), 'See page 28 of PBP', 'explanation');
