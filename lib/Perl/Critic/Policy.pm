@@ -39,6 +39,7 @@ use Perl::Critic::Exception::AggregateConfiguration;
 use Perl::Critic::Exception::Configuration;
 use Perl::Critic::Exception::Configuration::Option::Policy::ExtraParameter;
 use Perl::Critic::Exception::Configuration::Option::Policy::ParameterValue;
+use Perl::Critic::Exception::Fatal::Internal qw< throw_internal >;
 use Perl::Critic::Exception::Fatal::PolicyDefinition
     qw< throw_policy_definition >;
 use Perl::Critic::PolicyConfig qw<>;
@@ -427,7 +428,10 @@ sub violation {
 
 sub make_violation {
     my ( $self, %arg ) = @_;
-    $arg{ '-policy' } ||= $self;
+    exists $arg{ '-policy' }
+        and throw_internal
+            'Policy->make_violation does not allow the -policy argument';
+    $arg{ '-policy' } = $self;
     return Perl::Critic::Violation->new( %arg );
 }
 
@@ -634,8 +638,8 @@ arguments.
 
 Returns a reference to a new C<Perl::Critic::Violation> object. Possible
 arguments are the same as those to C<< Perl::Critic::Violation->new() >>,
-but the only required arguments are C<-description>, C<-explanation>, and
-C<-element>.
+except that the C<-policy> argument is forbidden, since this method
+explicitly sets it to the calling policy.
 
 This is the preferred way for a policy to make a C<Perl::Critic::Violation>
 object.

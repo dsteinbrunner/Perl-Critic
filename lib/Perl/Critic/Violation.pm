@@ -447,11 +447,11 @@ will go through a deprecation cycle.
 =item C<new( $description, $explanation, $element, $severity )>
 
 Returns a reference to a new C<Perl::Critic::Violation> object. The
-arguments are a description of the violation (as string), an
-explanation for the policy (as string) or a series of page numbers in
-PBP (as an ARRAY ref), a reference to the L<PPI|PPI> element that
-caused the violation, and the severity of the violation (as an
-integer).
+arguments are a description of the violation (as string), an explanation
+for the policy (as string) or a series of page numbers in PBP (as an
+ARRAY ref), a reference to the L<PPI|PPI> element that caused the
+violation, and the severity of the violation (as an integer). The name
+of the violated policy is obtained from the C<caller> built-in.
 
 =item C<new( -description => $description ... )>
 
@@ -467,18 +467,9 @@ The required arguments are:
  -element     => A reference to the PPI element that caused
                  the violation;
  -policy      => A reference to the policy object which
-                 detected the violation;
- -severity    => The severity of the violation as an integer.
+                 detected the violation.
 
-The C<-policy> and C<-severity> arguments do not both need to be
-provided, but one of them must be, with C<-policy> being preferred if it
-is available.
-
-If only C<-severity> is provided, the name of the policy that detected
-the violation is assumed to be the package name of the caller.  If only
-C<-policy> is provided, the severity is obtained from that policy's
-C<get_severity()> method.  If both are passed, C<-policy> provides the
-policy name but C<-severity> provides the severity.
+The C<-policy> provides both the severity and the policy name.
 
 =back
 
